@@ -9,12 +9,14 @@ const Particles = ({ count = 100 }) => {
   const particles = Array.from({ length: count }, (_, i) => {
     const theta = Math.random() * Math.PI * 2;
     const radius = 3 + Math.random() * 10;
+    // Explicitly type as [number, number, number] to satisfy TypeScript
+    const position: [number, number, number] = [
+      Math.sin(theta) * radius,
+      (Math.random() - 0.5) * 2,
+      Math.cos(theta) * radius
+    ];
     return {
-      position: [
-        Math.sin(theta) * radius,
-        (Math.random() - 0.5) * 2,
-        Math.cos(theta) * radius
-      ],
+      position,
       id: i
     };
   });
