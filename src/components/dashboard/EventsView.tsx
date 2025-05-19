@@ -32,7 +32,9 @@ const EventsView = () => {
   const { getFilteredEvents, addEvent, deleteEvent } = useData();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [eventDate, setEventDate] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState(''); // Adding time state
+  const [location, setLocation] = useState(''); // Adding location state
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const isTeacher = currentUser?.role === 'teacher';
@@ -45,13 +47,17 @@ const EventsView = () => {
       title,
       description,
       assignedClass: currentUser?.class || '',
-      eventDate
+      date, // Use 'date' instead of 'eventDate'
+      time, // Adding time field
+      location // Adding location field
     });
     
     // Reset form
     setTitle('');
     setDescription('');
-    setEventDate('');
+    setDate('');
+    setTime('');
+    setLocation('');
     setDialogOpen(false);
   };
 
@@ -112,14 +118,36 @@ const EventsView = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="eventDate">Event Date</Label>
+                    <Label htmlFor="location">Location</Label>
                     <Input 
-                      id="eventDate"
-                      type="date"
-                      value={eventDate}
-                      onChange={(e) => setEventDate(e.target.value)}
+                      id="location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder="e.g., School Auditorium"
                       required
                     />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="date">Event Date</Label>
+                      <Input 
+                        id="date"
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="time">Event Time</Label>
+                      <Input 
+                        id="time"
+                        type="time"
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
                 <DialogFooter>
@@ -168,7 +196,7 @@ const EventsView = () => {
                   <div>
                     <CardTitle>{event.title}</CardTitle>
                     <CardDescription>
-                      Date: {new Date(event.eventDate).toLocaleDateString()}
+                      Date: {new Date(event.date).toLocaleDateString()}
                     </CardDescription>
                   </div>
                   {isTeacher && (
@@ -185,6 +213,10 @@ const EventsView = () => {
               </CardHeader>
               <CardContent className="pt-4">
                 <p className="whitespace-pre-wrap">{event.description}</p>
+                <div className="mt-3 text-sm">
+                  <div><strong>Time:</strong> {event.time}</div>
+                  <div><strong>Location:</strong> {event.location}</div>
+                </div>
               </CardContent>
               <CardFooter className="border-t bg-gray-50 dark:bg-gray-900 text-xs text-muted-foreground pt-3">
                 <div className="flex justify-between w-full">

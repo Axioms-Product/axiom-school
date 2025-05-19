@@ -31,7 +31,7 @@ const NoticesView = () => {
   const { currentUser } = useAuth();
   const { getFilteredNotices, addNotice, deleteNotice } = useData();
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [description, setDescription] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const isTeacher = currentUser?.role === 'teacher';
@@ -42,13 +42,13 @@ const NoticesView = () => {
     
     addNotice({
       title,
-      content,
+      description,  // Changed from 'content' to 'description' to match the type
       assignedClass: currentUser?.class || '',
     });
     
     // Reset form
     setTitle('');
-    setContent('');
+    setDescription('');  // Changed from setContent
     setDialogOpen(false);
   };
 
@@ -98,11 +98,11 @@ const NoticesView = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="content">Content</Label>
+                    <Label htmlFor="description">Content</Label>
                     <Textarea 
-                      id="content"
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
+                      id="description"
+                      value={description}  // Changed from content
+                      onChange={(e) => setDescription(e.target.value)}  // Changed from setContent
                       placeholder="Details of the notice"
                       rows={4}
                       required
@@ -168,7 +168,7 @@ const NoticesView = () => {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <p className="whitespace-pre-wrap">{notice.content}</p>
+                <p className="whitespace-pre-wrap">{notice.description}</p>
               </CardContent>
               <CardFooter className="border-t bg-gray-50 dark:bg-gray-900 text-xs text-muted-foreground pt-3">
                 <div className="flex justify-between w-full">
