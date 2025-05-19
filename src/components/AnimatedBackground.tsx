@@ -1,31 +1,14 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere } from '@react-three/drei';
+import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
+// This component is used inside the Canvas
 const ParticleField = ({ count = 100 }) => {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const light = useRef<THREE.PointLight>(null);
   
-  useEffect(() => {
-    if (!mesh.current) return;
-    // Set initial positions of particles
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const radius = 3 + Math.random() * 10;
-      dummy.position.set(
-        Math.sin(theta) * radius,
-        (Math.random() - 0.5) * 5,
-        Math.cos(theta) * radius
-      );
-      dummy.updateMatrix();
-      mesh.current.setMatrixAt(i, dummy.matrix);
-    }
-    mesh.current.instanceMatrix.needsUpdate = true;
-  }, [count]);
-
   useFrame(({ clock }) => {
     if (!mesh.current || !light.current) return;
     
@@ -51,6 +34,21 @@ const ParticleField = ({ count = 100 }) => {
     mesh.current.instanceMatrix.needsUpdate = true;
   });
 
+  // Set initial positions
+  const dummyObj = new THREE.Object3D();
+  const positions = Array.from({ length: count }, (_, i) => {
+    const theta = Math.random() * Math.PI * 2;
+    const radius = 3 + Math.random() * 10;
+    return {
+      position: [
+        Math.sin(theta) * radius,
+        (Math.random() - 0.5) * 5,
+        Math.cos(theta) * radius
+      ],
+      scale: [0.05, 0.05, 0.05]
+    };
+  });
+
   return (
     <>
       <pointLight ref={light} distance={15} intensity={10} color="#8b5cf6" />
@@ -62,6 +60,7 @@ const ParticleField = ({ count = 100 }) => {
   );
 };
 
+// This component is used inside the Canvas
 const FloatingSphere = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   
@@ -81,6 +80,7 @@ const FloatingSphere = () => {
   );
 };
 
+// Main component that sets up the 3D scene
 const AnimatedBackground = () => {
   return (
     <div className="fixed inset-0 -z-10">
@@ -88,7 +88,7 @@ const AnimatedBackground = () => {
         <ambientLight intensity={0.4} />
         <FloatingSphere />
         <ParticleField count={200} />
-        <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+        {/* We're removing the OrbitControls because it's causing issues */}
       </Canvas>
     </div>
   );
