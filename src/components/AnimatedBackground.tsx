@@ -29,8 +29,14 @@ const Particles = ({ count = 100 }) => {
   );
 };
 
-const ParticlePoint = ({ position, index }) => {
-  const ref = useRef();
+// Type definition for particle point props
+interface ParticlePointProps {
+  position: [number, number, number];
+  index: number;
+}
+
+const ParticlePoint = ({ position, index }: ParticlePointProps) => {
+  const ref = useRef<THREE.Mesh>(null);
   
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
@@ -50,7 +56,7 @@ const ParticlePoint = ({ position, index }) => {
 
 // This component is used inside the Canvas
 const FloatingSphere = () => {
-  const meshRef = useRef();
+  const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
