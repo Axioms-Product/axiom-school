@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { Subject } from '@/models/types';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -16,12 +17,21 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<UserRole>('student');
   const [assignedClass, setAssignedClass] = useState('');
+  const [subject, setSubject] = useState<Subject | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const classes = ['VI', 'VII', 'VIII', 'IX', 'X'];
+  const subjects = Object.values(Subject);
+
+  // Reset subject when role changes
+  useEffect(() => {
+    if (role !== 'teacher') {
+      setSubject('');
+    }
+  }, [role]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +47,22 @@ const Register = () => {
       return;
     }
     
+    if (role === 'teacher' && !subject) {
+      setError('Please select a subject you teach');
+      return;
+    }
+    
     setLoading(true);
     
     try {
-      await register(name, email, password, role, assignedClass);
+      await register(
+        name, 
+        email, 
+        password, 
+        role, 
+        assignedClass, 
+        role === 'teacher' ? subject as Subject : undefined
+      );
       navigate('/login');
     } catch (err) {
       setError((err as Error).message || 'Failed to register');
@@ -165,6 +187,27 @@ const Register = () => {
                   </Select>
                 </div>
               </div>
+              
+              {role === 'teacher' && (
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject You Teach</Label>
+                  <Select
+                    value={subject}
+                    onValueChange={(value) => setSubject(value as Subject)}
+                  >
+                    <SelectTrigger id="subject">
+                      <SelectValue placeholder="Select Subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map((subj) => (
+                        <SelectItem key={subj} value={subj}>
+                          {subj}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               <Button 
                 type="submit" 

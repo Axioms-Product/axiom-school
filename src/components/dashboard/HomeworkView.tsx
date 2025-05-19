@@ -22,9 +22,11 @@ import {
   DialogTrigger,
   DialogClose 
 } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
+import { Subject } from '@/models/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Trash2 } from 'lucide-react';
 
@@ -34,10 +36,13 @@ const HomeworkView = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [subject, setSubject] = useState<Subject>((currentUser?.subject as Subject) || Subject.MATHEMATICS);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('all');
 
   const isTeacher = currentUser?.role === 'teacher';
   const homeworks = getFilteredHomeworks();
+  const subjectList = Object.values(Subject);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +50,7 @@ const HomeworkView = () => {
     addHomework({
       title,
       description,
+      subject: currentUser?.subject as Subject || subject,
       assignedClass: currentUser?.class || '',
       dueDate
     });
@@ -62,6 +68,11 @@ const HomeworkView = () => {
     }
   };
 
+  const getFilteredHomeworksBySubject = () => {
+    if (activeTab === 'all') return homeworks;
+    return homeworks.filter(hw => hw.subject === activeTab);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -69,7 +80,7 @@ const HomeworkView = () => {
           <h1 className="text-3xl font-bold tracking-tight">Homework</h1>
           <p className="text-muted-foreground mt-1">
             {isTeacher 
-              ? `Manage homework assignments for Class ${currentUser?.class}`
+              ? `Manage homework assignments for ${currentUser?.subject || 'your subject'} - Class ${currentUser?.class}`
               : `View homework assignments for Class ${currentUser?.class}`
             }
           </p>
@@ -100,6 +111,32 @@ const HomeworkView = () => {
                       placeholder="e.g., Math Assignment 1"
                       required
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    {currentUser?.subject ? (
+                      <Input 
+                        id="subject" 
+                        value={currentUser.subject} 
+                        disabled 
+                      />
+                    ) : (
+                      <Select
+                        value={subject}
+                        onValueChange={(val) => setSubject(val as Subject)}
+                      >
+                        <SelectTrigger id="subject">
+                          <SelectValue placeholder="Select Subject" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subjectList.map((subj) => (
+                            <SelectItem key={subj} value={subj}>
+                              {subj}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
@@ -137,6 +174,19 @@ const HomeworkView = () => {
         )}
       </div>
 
+      {homeworks.length > 0 && (
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-3 sm:grid-cols-6">
+            <TabsTrigger value="all">All</TabsTrigger>
+            {subjectList.map(subj => (
+              <TabsTrigger key={subj} value={subj}>
+                {subj.substring(0, 3)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
+
       {homeworks.length === 0 ? (
         <Card className="bg-gray-50 dark:bg-gray-800 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-10">
@@ -164,17 +214,28 @@ const HomeworkView = () => {
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {homeworks.map((homework) => (
+          {getFilteredHomeworksBySubject().map((homework) => (
             <Card key={homework.id} className="card-3d overflow-hidden">
-              <CardHeader className="bg-blue-50 dark:bg-gray-800 pb-4">
+              <CardHeader className={`${
+                homework.subject === Subject.MATHEMATICS ? 'bg-blue-50' :
+                homework.subject === Subject.SCIENCE ? 'bg-green-50' :
+                homework.subject === Subject.SOCIAL_SCIENCE ? 'bg-yellow-50' :
+                homework.subject === Subject.ENGLISH ? 'bg-purple-50' :
+                'bg-cyan-50'
+              } pb-4`}>
                 <div className="flex justify-between items-start">
                   <div>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-black/10">
+                        {homework.subject}
+                      </span>
+                    </div>
                     <CardTitle>{homework.title}</CardTitle>
                     <CardDescription>
                       Due: {new Date(homework.dueDate).toLocaleDateString()}
                     </CardDescription>
                   </div>
-                  {isTeacher && (
+                  {isTeacher && homework.createdBy === currentUser?.id && (
                     <Button 
                       variant="ghost" 
                       size="sm" 

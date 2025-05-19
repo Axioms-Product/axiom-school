@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Homework, Notice, Event, Message } from '../models/types';
+import { Homework, Notice, Event, Message, Mark, Subject } from '../models/types';
 import { useAuth, User } from './AuthContext';
 import { toast } from 'sonner';
 
@@ -9,18 +9,23 @@ interface DataContextType {
   notices: Notice[];
   events: Event[];
   messages: Message[];
+  marks: Mark[];
   addHomework: (homework: Omit<Homework, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addNotice: (notice: Omit<Notice, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addEvent: (event: Omit<Event, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
+  addMark: (mark: Omit<Mark, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   deleteHomework: (id: string) => void;
   deleteNotice: (id: string) => void;
   deleteEvent: (id: string) => void;
+  deleteMark: (id: string) => void;
   sendMessage: (content: string, receiverId: string) => void;
   getTeacherForClass: (className: string) => User | undefined;
+  getTeachersForClass: (className: string) => User[];
   getFilteredHomeworks: () => Homework[];
   getFilteredNotices: () => Notice[];
   getFilteredEvents: () => Event[];
   getFilteredMessages: () => Message[];
+  getFilteredMarks: (studentId?: string) => Mark[];
   markMessageAsRead: (id: string) => void;
 }
 
@@ -32,6 +37,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [notices, setNotices] = useState<Notice[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [marks, setMarks] = useState<Mark[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
   // Load data from localStorage on mount
@@ -40,12 +46,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedNotices = localStorage.getItem('notices');
     const storedEvents = localStorage.getItem('events');
     const storedMessages = localStorage.getItem('messages');
+    const storedMarks = localStorage.getItem('marks');
     const storedUsers = localStorage.getItem('users');
     
     if (storedHomeworks) setHomeworks(JSON.parse(storedHomeworks));
     if (storedNotices) setNotices(JSON.parse(storedNotices));
     if (storedEvents) setEvents(JSON.parse(storedEvents));
     if (storedMessages) setMessages(JSON.parse(storedMessages));
+    if (storedMarks) setMarks(JSON.parse(storedMarks));
     if (storedUsers) {
       try {
         const parsedUsers = JSON.parse(storedUsers);
@@ -80,9 +88,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('messages', JSON.stringify(messages));
   }, [messages]);
 
+  useEffect(() => {
+    localStorage.setItem('marks', JSON.stringify(marks));
+  }, [marks]);
+
   // Function to get the teacher for a specific class
   const getTeacherForClass = (className: string) => {
     return users.find(user => user.role === 'teacher' && user.class === className);
+  };
+
+  // Function to get all teachers for a class
+  const getTeachersForClass = (className: string) => {
+    return users.filter(user => user.role === 'teacher' && user.class === className);
   };
 
   // Function to add a new homework
@@ -133,6 +150,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Event added successfully');
   };
 
+  // Function to add a new mark
+  const addMark = (mark: Omit<Mark, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
+    if (!currentUser) return;
+    
+    const newMark: Mark = {
+      ...mark,
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      createdBy: currentUser.id,
+      creatorName: currentUser.name
+    };
+    
+    setMarks(prev => [...prev, newMark]);
+    toast.success('Mark added successfully');
+  };
+
   // Function to delete a homework
   const deleteHomework = (id: string) => {
     setHomeworks(prev => prev.filter(hw => hw.id !== id));
@@ -149,6 +182,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteEvent = (id: string) => {
     setEvents(prev => prev.filter(e => e.id !== id));
     toast.success('Event deleted successfully');
+  };
+
+  // Function to delete a mark
+  const deleteMark = (id: string) => {
+    setMarks(prev => prev.filter(m => m.id !== id));
+    toast.success('Mark deleted successfully');
   };
 
   // Function to send a message
@@ -183,7 +222,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!currentUser) return [];
     
     if (currentUser.role === 'teacher') {
-      return homeworks.filter(hw => hw.assignedClass === currentUser.class);
+      // Teacher should only see homeworks for their class and subject
+      return homeworks.filter(hw => 
+        hw.assignedClass === currentUser.class && 
+        (!currentUser.subject || hw.createdBy === currentUser.id)
+      );
     } else {
       return homeworks.filter(hw => hw.assignedClass === currentUser.class);
     }
@@ -214,7 +257,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // For teachers: Show messages where they are the receiver
     if (currentUser.role === 'teacher') {
-      return messages.filter(m => m.receiverId === currentUser.id);
+      return messages.filter(m => m.receiverId === currentUser.id || m.senderId === currentUser.id);
     } 
     // For students: Show messages they sent and received
     else {
@@ -224,23 +267,52 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Function to get marks filtered by student ID or current user
+  const getFilteredMarks = (studentId?: string) => {
+    if (!currentUser) return [];
+    
+    // For teachers: Show marks for their class and subject
+    if (currentUser.role === 'teacher') {
+      const studentsInClass = users.filter(
+        user => user.role === 'student' && user.class === currentUser.class
+      );
+      
+      const studentIds = studentsInClass.map(s => s.id);
+      
+      return marks.filter(m => 
+        studentIds.includes(m.studentId) && 
+        (!currentUser.subject || m.subject === currentUser.subject)
+      );
+    } 
+    // For students: Show only their marks
+    else {
+      const targetId = studentId || currentUser.id;
+      return marks.filter(m => m.studentId === targetId);
+    }
+  };
+
   const value = {
     homeworks,
     notices,
     events,
     messages,
+    marks,
     addHomework,
     addNotice,
     addEvent,
+    addMark,
     deleteHomework,
     deleteNotice,
     deleteEvent,
+    deleteMark,
     sendMessage,
     getTeacherForClass,
+    getTeachersForClass,
     getFilteredHomeworks,
     getFilteredNotices,
     getFilteredEvents,
     getFilteredMessages,
+    getFilteredMarks,
     markMessageAsRead
   };
 

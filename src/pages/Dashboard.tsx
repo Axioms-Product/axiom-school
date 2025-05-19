@@ -16,6 +16,8 @@ import HomeworkView from '@/components/dashboard/HomeworkView';
 import NoticesView from '@/components/dashboard/NoticesView';
 import EventsView from '@/components/dashboard/EventsView';
 import MessagesView from '@/components/dashboard/MessagesView';
+import MarksView from '@/components/dashboard/MarksView';
+import TeachersView from '@/components/dashboard/TeachersView';
 
 import { 
   Home, 
@@ -25,7 +27,9 @@ import {
   MessageCircle, 
   LogOut, 
   User,
-  Menu
+  Menu,
+  Book,
+  School
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -50,13 +54,32 @@ const Dashboard = () => {
     return location.pathname === `/dashboard/${path}`;
   };
   
-  const navigation = [
+  const commonNavigation = [
     { name: 'Home', path: 'home', icon: Home },
     { name: 'Homework', path: 'homework', icon: BookOpen },
     { name: 'Notices', path: 'notices', icon: Bell },
     { name: 'Events', path: 'events', icon: Calendar },
     { name: 'Messages', path: 'messages', icon: MessageCircle },
   ];
+
+  // Add student-specific navigation
+  const studentNavigation = [
+    ...commonNavigation,
+    { name: 'Marks', path: 'marks', icon: Book },
+    { name: 'Teachers', path: 'teachers', icon: School },
+  ];
+
+  // Add teacher-specific navigation
+  const teacherNavigation = [
+    ...commonNavigation,
+    { name: 'Marks', path: 'marks', icon: Book },
+  ];
+
+  // Choose the appropriate navigation based on user role
+  const navigation = currentUser?.role === 'student' ? studentNavigation : teacherNavigation;
+
+  // Select only 5 items for mobile bottom navigation
+  const mobileNavigation = navigation.slice(0, 5);
 
   return (
     <DataProvider>
@@ -84,7 +107,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-sm font-medium">{currentUser?.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {currentUser?.role === 'teacher' ? `Teacher - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
+                    {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
                   </p>
                 </div>
               </div>
@@ -139,7 +162,7 @@ const Dashboard = () => {
               <div>
                 <p className="font-medium text-sm">{currentUser?.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {currentUser?.role === 'teacher' ? `Teacher - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
+                  {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
                 </p>
               </div>
             </div>
@@ -178,17 +201,53 @@ const Dashboard = () => {
 
           {/* Main content */}
           <main className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
               <Routes>
                 <Route path="/home" element={<HomeView />} />
                 <Route path="/homework" element={<HomeworkView />} />
                 <Route path="/notices" element={<NoticesView />} />
                 <Route path="/events" element={<EventsView />} />
                 <Route path="/messages" element={<MessagesView />} />
+                <Route path="/marks" element={<MarksView />} />
+                <Route path="/teachers" element={<TeachersView />} />
               </Routes>
             </div>
           </main>
         </div>
+        
+        {/* Mobile Bottom Navigation */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
+          <div className="flex items-center justify-around">
+            {mobileNavigation.map((item) => (
+              <TooltipProvider key={item.path}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      to={`/dashboard/${item.path}`}
+                      className={cn(
+                        "flex flex-1 flex-col items-center justify-center py-2 text-xs",
+                        isActive(item.path)
+                          ? "text-cgs-blue"
+                          : "text-gray-500 dark:text-gray-400"
+                      )}
+                    >
+                      <item.icon className={cn(
+                        "h-6 w-6 mb-1",
+                        isActive(item.path)
+                          ? "text-cgs-blue"
+                          : "text-gray-500 dark:text-gray-400"
+                      )} />
+                      <span>{item.name}</span>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {item.name}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </nav>
       </div>
     </DataProvider>
   );

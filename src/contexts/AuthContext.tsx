@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { Subject } from '../models/types';
 
 // Define types
 export type UserRole = 'teacher' | 'student';
@@ -11,13 +12,14 @@ export interface User {
   email: string;
   role: UserRole;
   class?: string; // Class for students or assigned to teachers
+  subject?: Subject; // Subject for teachers
 }
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole, assignedClass: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role: UserRole, assignedClass: string, subject?: Subject) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -79,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string, role: UserRole, assignedClass: string) => {
+  const register = async (name: string, email: string, password: string, role: UserRole, assignedClass: string, subject?: Subject) => {
     setLoading(true);
     
     try {
@@ -101,7 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name,
         email,
         role,
-        class: assignedClass
+        class: assignedClass,
+        ...(role === 'teacher' && subject ? { subject } : {})
       };
       
       // Add user to users state
