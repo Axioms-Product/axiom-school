@@ -22,11 +22,13 @@ const ParticleField = ({ count = 100 }) => {
     // Animate particles
     const dummy = new THREE.Object3D();
     for (let i = 0; i < count; i++) {
-      mesh.current.getMatrixAt(i, dummy.matrix);
-      dummy.matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
+      const theta = Math.random() * Math.PI * 2;
+      const radius = 3 + Math.random() * 10;
       
-      // Move particles in a wave pattern
+      // Position the dummy object
+      dummy.position.x = Math.sin(theta) * radius;
       dummy.position.y = Math.sin(time * 0.5 + i * 0.1) * 1 + (Math.random() - 0.5) * 0.1;
+      dummy.position.z = Math.cos(theta) * radius;
       
       dummy.updateMatrix();
       mesh.current.setMatrixAt(i, dummy.matrix);
@@ -34,26 +36,11 @@ const ParticleField = ({ count = 100 }) => {
     mesh.current.instanceMatrix.needsUpdate = true;
   });
 
-  // Set initial positions
-  const dummyObj = new THREE.Object3D();
-  const positions = Array.from({ length: count }, (_, i) => {
-    const theta = Math.random() * Math.PI * 2;
-    const radius = 3 + Math.random() * 10;
-    return {
-      position: [
-        Math.sin(theta) * radius,
-        (Math.random() - 0.5) * 5,
-        Math.cos(theta) * radius
-      ],
-      scale: [0.05, 0.05, 0.05]
-    };
-  });
-
   return (
     <>
       <pointLight ref={light} distance={15} intensity={10} color="#8b5cf6" />
       <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-        <sphereGeometry args={[0.05, 24, 24]} />
+        <sphereGeometry args={[0.05, 8, 8]} />
         <meshBasicMaterial color="#8b5cf6" />
       </instancedMesh>
     </>
@@ -88,7 +75,6 @@ const AnimatedBackground = () => {
         <ambientLight intensity={0.4} />
         <FloatingSphere />
         <ParticleField count={200} />
-        {/* We're removing the OrbitControls because it's causing issues */}
       </Canvas>
     </div>
   );
