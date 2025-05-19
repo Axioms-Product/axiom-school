@@ -1,89 +1,82 @@
 
-import { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useMemo } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
-// This component creates individual particles instead of using instancedMesh
-const Particles = ({ count = 100 }) => {
-  const particles = Array.from({ length: count }, (_, i) => {
-    const theta = Math.random() * Math.PI * 2;
-    const radius = 3 + Math.random() * 10;
-    // Explicitly type as [number, number, number] to satisfy TypeScript
-    const position: [number, number, number] = [
-      Math.sin(theta) * radius,
-      (Math.random() - 0.5) * 2,
-      Math.cos(theta) * radius
-    ];
-    return {
-      position,
-      id: i
-    };
-  });
+// A simplified particle component that uses basic meshes
+const Particle = ({ position, size, color }: { position: [number, number, number], size: number, color: string }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
   
   return (
-    <group>
-      {particles.map((particle) => (
-        <ParticlePoint key={particle.id} position={particle.position} index={particle.id} />
-      ))}
-      <pointLight position={[0, 0, 0]} intensity={10} color="#8b5cf6" distance={15} />
-    </group>
-  );
-};
-
-// Type definition for particle point props
-interface ParticlePointProps {
-  position: [number, number, number];
-  index: number;
-}
-
-const ParticlePoint = ({ position, index }: ParticlePointProps) => {
-  const ref = useRef<THREE.Mesh>(null);
-  
-  useFrame(({ clock }) => {
-    const time = clock.getElapsedTime();
-    if (ref.current) {
-      // Add some gentle wavey motion
-      ref.current.position.y = position[1] + Math.sin(time * 0.5 + index * 0.1) * 0.5;
-    }
-  });
-  
-  return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[0.05, 8, 8]} />
-      <meshBasicMaterial color="#8b5cf6" />
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[size, 8, 8]} />
+      <meshBasicMaterial color={color} transparent opacity={0.6} />
     </mesh>
   );
 };
 
-// This component is used inside the Canvas
-const FloatingSphere = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame(({ clock }) => {
-    const time = clock.getElapsedTime();
-    if (meshRef.current) {
-      meshRef.current.position.y = Math.sin(time * 0.5) * 0.5;
-      meshRef.current.rotation.x = time * 0.2;
-      meshRef.current.rotation.z = time * 0.1;
-    }
-  });
+// Main particles field component
+const ParticlesField = ({ count = 100 }) => {
+  // Generate particles data only once with useMemo
+  const particles = useMemo(() => {
+    return Array.from({ length: count }, () => {
+      // Generate random positions in a spherical pattern
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      const radius = 3 + Math.random() * 10;
+      
+      const position: [number, number, number] = [
+        Math.sin(phi) * Math.cos(theta) * radius,
+        Math.sin(phi) * Math.sin(theta) * radius,
+        Math.cos(phi) * radius
+      ];
+      
+      const size = 0.05 + Math.random() * 0.05;
+      
+      return {
+        position,
+        size,
+        color: '#8b5cf6'
+      };
+    });
+  }, [count]);
   
   return (
-    <Sphere ref={meshRef} args={[2, 32, 32]} position={[0, 0, 0]}>
+    <group>
+      {particles.map((particle, index) => (
+        <Particle 
+          key={index} 
+          position={particle.position} 
+          size={particle.size} 
+          color={particle.color} 
+        />
+      ))}
+      <pointLight position={[0, 0, 0]} intensity={2} color="#8b5cf6" distance={20} />
+    </group>
+  );
+};
+
+// A simple central sphere
+const CentralSphere = () => {
+  return (
+    <Sphere args={[1.5, 32, 32]} position={[0, 0, 0]}>
       <meshPhongMaterial color="#3b82f6" opacity={0.2} transparent />
     </Sphere>
   );
 };
 
-// Main component that sets up the 3D scene
+// Main component
 const AnimatedBackground = () => {
   return (
     <div className="fixed inset-0 -z-10">
-      <Canvas camera={{ position: [0, 0, 15], fov: 60 }}>
+      <Canvas
+        camera={{ position: [0, 0, 15], fov: 60 }}
+        gl={{ antialias: true, alpha: true }}
+      >
         <ambientLight intensity={0.4} />
-        <FloatingSphere />
-        <Particles count={100} />
+        <CentralSphere />
+        <ParticlesField count={50} />
       </Canvas>
     </div>
   );
