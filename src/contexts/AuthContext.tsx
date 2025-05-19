@@ -15,6 +15,8 @@ export interface User {
 
 interface AuthContextType {
   currentUser: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role: UserRole, assignedClass: string, subject?: Subject) => Promise<void>;
   logout: () => void;
@@ -38,6 +40,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const isAuthenticated = currentUser !== null;
 
   // Check if there's a logged-in user in localStorage on mount
   useEffect(() => {
@@ -171,6 +174,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     currentUser,
+    isAuthenticated,
+    loading,
     login,
     register,
     logout,
