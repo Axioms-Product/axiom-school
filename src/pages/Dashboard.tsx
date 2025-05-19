@@ -18,6 +18,7 @@ import EventsView from '@/components/dashboard/EventsView';
 import MessagesView from '@/components/dashboard/MessagesView';
 import MarksView from '@/components/dashboard/MarksView';
 import TeachersView from '@/components/dashboard/TeachersView';
+import ProfilePage from '@/pages/ProfilePage';
 
 import { 
   Home, 
@@ -59,27 +60,35 @@ const Dashboard = () => {
     { name: 'Homework', path: 'homework', icon: BookOpen },
     { name: 'Notices', path: 'notices', icon: Bell },
     { name: 'Events', path: 'events', icon: Calendar },
-    { name: 'Messages', path: 'messages', icon: MessageCircle },
+    { name: 'Marks', path: 'marks', icon: Book },
   ];
 
   // Add student-specific navigation
   const studentNavigation = [
     ...commonNavigation,
-    { name: 'Marks', path: 'marks', icon: Book },
+    { name: 'Messages', path: 'messages', icon: MessageCircle },
     { name: 'Teachers', path: 'teachers', icon: School },
+    { name: 'Profile', path: 'profile', icon: User },
   ];
 
   // Add teacher-specific navigation
   const teacherNavigation = [
     ...commonNavigation,
-    { name: 'Marks', path: 'marks', icon: Book },
+    { name: 'Messages', path: 'messages', icon: MessageCircle },
+    { name: 'Profile', path: 'profile', icon: User },
   ];
 
   // Choose the appropriate navigation based on user role
   const navigation = currentUser?.role === 'student' ? studentNavigation : teacherNavigation;
 
-  // Select only 5 items for mobile bottom navigation
-  const mobileNavigation = navigation.slice(0, 5);
+  // Select items for mobile bottom navigation
+  const mobileNavigation = [
+    { name: 'Home', path: 'home', icon: Home },
+    { name: 'Homework', path: 'homework', icon: BookOpen },
+    { name: 'Marks', path: 'marks', icon: Book },
+    { name: 'Messages', path: 'messages', icon: MessageCircle },
+    { name: 'Menu', path: '', icon: Menu, onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen) },
+  ];
 
   return (
     <DataProvider>
@@ -93,9 +102,11 @@ const Dashboard = () => {
               </div>
               <h1 className="text-lg font-bold text-foreground">Axioms School</h1>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Link to="/dashboard/profile">
+              <div className="h-8 w-8 rounded-full bg-cgs-blue/20 flex items-center justify-center">
+                <User className="h-4 w-4 text-cgs-blue" />
+              </div>
+            </Link>
           </div>
           
           {isMobileMenuOpen && (
@@ -210,6 +221,7 @@ const Dashboard = () => {
                 <Route path="/messages" element={<MessagesView />} />
                 <Route path="/marks" element={<MarksView />} />
                 <Route path="/teachers" element={<TeachersView />} />
+                <Route path="/profile" element={<ProfilePage />} />
               </Routes>
             </div>
           </main>
@@ -218,52 +230,44 @@ const Dashboard = () => {
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
           <div className="flex items-center justify-around">
-            {navigation.map((item, index) => (
-              index < 5 && (
-                <TooltipProvider key={item.path}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
+            {mobileNavigation.map((item) => (
+              <TooltipProvider key={item.path || 'menu'}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {item.path ? (
                       <Link
                         to={`/dashboard/${item.path}`}
                         className={cn(
                           "flex flex-1 flex-col items-center justify-center py-2 text-xs",
-                          isActive(item.path)
+                          (item.path && isActive(item.path))
                             ? "text-cgs-blue"
                             : "text-gray-500 dark:text-gray-400"
                         )}
                       >
                         <item.icon className={cn(
                           "h-6 w-6 mb-1",
-                          isActive(item.path)
+                          (item.path && isActive(item.path))
                             ? "text-cgs-blue"
                             : "text-gray-500 dark:text-gray-400"
                         )} />
                         <span>{item.name}</span>
                       </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                      {item.name}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )
+                    ) : (
+                      <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
+                      >
+                        <item.icon className="h-6 w-6 mb-1" />
+                        <span>{item.name}</span>
+                      </button>
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {item.name}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
-                  >
-                    <Menu className="h-6 w-6 mb-1" />
-                    <span>Menu</span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  More Options
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </div>
         </nav>
       </div>

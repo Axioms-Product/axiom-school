@@ -39,11 +39,11 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple animate-pulse-glow flex items-center justify-center">
-              <span className="text-white font-bold text-xl">C</span>
+              <span className="text-white font-bold text-xl">A</span>
             </div>
           </div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
-            CGS Connect
+            Axioms School
           </h1>
           <p className="mt-2 text-muted-foreground">Log in to your account</p>
         </div>
