@@ -4,52 +4,53 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
-// This component is used inside the Canvas
-const ParticleField = ({ count = 100 }) => {
-  const mesh = useRef<THREE.InstancedMesh>(null);
-  const light = useRef<THREE.PointLight>(null);
+// This component creates individual particles instead of using instancedMesh
+const Particles = ({ count = 100 }) => {
+  const particles = Array.from({ length: count }, (_, i) => {
+    const theta = Math.random() * Math.PI * 2;
+    const radius = 3 + Math.random() * 10;
+    return {
+      position: [
+        Math.sin(theta) * radius,
+        (Math.random() - 0.5) * 2,
+        Math.cos(theta) * radius
+      ],
+      id: i
+    };
+  });
+  
+  return (
+    <group>
+      {particles.map((particle) => (
+        <ParticlePoint key={particle.id} position={particle.position} index={particle.id} />
+      ))}
+      <pointLight position={[0, 0, 0]} intensity={10} color="#8b5cf6" distance={15} />
+    </group>
+  );
+};
+
+const ParticlePoint = ({ position, index }) => {
+  const ref = useRef();
   
   useFrame(({ clock }) => {
-    if (!mesh.current || !light.current) return;
-    
     const time = clock.getElapsedTime();
-    
-    // Animate the point light
-    light.current.position.x = Math.sin(time * 0.3) * 10;
-    light.current.position.y = Math.sin(time * 0.5) * 5;
-    light.current.position.z = Math.cos(time * 0.3) * 10;
-    
-    // Animate particles
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const radius = 3 + Math.random() * 10;
-      
-      // Position the dummy object
-      dummy.position.x = Math.sin(theta) * radius;
-      dummy.position.y = Math.sin(time * 0.5 + i * 0.1) * 1 + (Math.random() - 0.5) * 0.1;
-      dummy.position.z = Math.cos(theta) * radius;
-      
-      dummy.updateMatrix();
-      mesh.current.setMatrixAt(i, dummy.matrix);
+    if (ref.current) {
+      // Add some gentle wavey motion
+      ref.current.position.y = position[1] + Math.sin(time * 0.5 + index * 0.1) * 0.5;
     }
-    mesh.current.instanceMatrix.needsUpdate = true;
   });
-
+  
   return (
-    <>
-      <pointLight ref={light} distance={15} intensity={10} color="#8b5cf6" />
-      <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-        <sphereGeometry args={[0.05, 8, 8]} />
-        <meshBasicMaterial color="#8b5cf6" />
-      </instancedMesh>
-    </>
+    <mesh ref={ref} position={position}>
+      <sphereGeometry args={[0.05, 8, 8]} />
+      <meshBasicMaterial color="#8b5cf6" />
+    </mesh>
   );
 };
 
 // This component is used inside the Canvas
 const FloatingSphere = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef();
   
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
@@ -74,7 +75,7 @@ const AnimatedBackground = () => {
       <Canvas camera={{ position: [0, 0, 15], fov: 60 }}>
         <ambientLight intensity={0.4} />
         <FloatingSphere />
-        <ParticleField count={200} />
+        <Particles count={100} />
       </Canvas>
     </div>
   );
