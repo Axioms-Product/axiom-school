@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Homework, Notice, Event, Message, Mark, Subject } from '../models/types';
 import { useAuth, User } from './AuthContext';
@@ -21,6 +20,7 @@ interface DataContextType {
   sendMessage: (content: string, receiverId: string) => void;
   getTeacherForClass: (className: string) => User | undefined;
   getTeachersForClass: (className: string) => User[];
+  getStudentsForClass: (className: string) => User[];
   getFilteredHomeworks: () => Homework[];
   getFilteredNotices: () => Notice[];
   getFilteredEvents: () => Event[];
@@ -100,6 +100,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Function to get all teachers for a class
   const getTeachersForClass = (className: string) => {
     return users.filter(user => user.role === 'teacher' && user.class === className);
+  };
+  
+  // Function to get all students for a class
+  const getStudentsForClass = (className: string) => {
+    return users.filter(user => user.role === 'student' && user.class === className);
   };
 
   // Function to add a new homework
@@ -308,6 +313,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sendMessage,
     getTeacherForClass,
     getTeachersForClass,
+    getStudentsForClass,
     getFilteredHomeworks,
     getFilteredNotices,
     getFilteredEvents,

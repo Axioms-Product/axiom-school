@@ -89,9 +89,9 @@ const Dashboard = () => {
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center space-x-3">
               <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
-                <span className="text-white font-bold text-sm">C</span>
+                <span className="text-white font-bold text-sm">A</span>
               </div>
-              <h1 className="text-lg font-bold text-foreground">CGS Connect</h1>
+              <h1 className="text-lg font-bold text-foreground">Axioms School</h1>
             </div>
             <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               <Menu className="h-5 w-5" />
@@ -147,10 +147,10 @@ const Dashboard = () => {
             <div className="p-6">
               <div className="flex items-center space-x-3">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple animate-pulse-glow flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">C</span>
+                  <span className="text-white font-bold text-lg">A</span>
                 </div>
                 <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
-                  CGS Connect
+                  Axioms School
                 </h1>
               </div>
             </div>
@@ -201,7 +201,7 @@ const Dashboard = () => {
 
           {/* Main content */}
           <main className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-24 md:pb-8">
               <Routes>
                 <Route path="/home" element={<HomeView />} />
                 <Route path="/homework" element={<HomeworkView />} />
@@ -218,34 +218,52 @@ const Dashboard = () => {
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
           <div className="flex items-center justify-around">
-            {mobileNavigation.map((item) => (
-              <TooltipProvider key={item.path}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={`/dashboard/${item.path}`}
-                      className={cn(
-                        "flex flex-1 flex-col items-center justify-center py-2 text-xs",
-                        isActive(item.path)
-                          ? "text-cgs-blue"
-                          : "text-gray-500 dark:text-gray-400"
-                      )}
-                    >
-                      <item.icon className={cn(
-                        "h-6 w-6 mb-1",
-                        isActive(item.path)
-                          ? "text-cgs-blue"
-                          : "text-gray-500 dark:text-gray-400"
-                      )} />
-                      <span>{item.name}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">
-                    {item.name}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            {navigation.map((item, index) => (
+              index < 5 && (
+                <TooltipProvider key={item.path}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={`/dashboard/${item.path}`}
+                        className={cn(
+                          "flex flex-1 flex-col items-center justify-center py-2 text-xs",
+                          isActive(item.path)
+                            ? "text-cgs-blue"
+                            : "text-gray-500 dark:text-gray-400"
+                        )}
+                      >
+                        <item.icon className={cn(
+                          "h-6 w-6 mb-1",
+                          isActive(item.path)
+                            ? "text-cgs-blue"
+                            : "text-gray-500 dark:text-gray-400"
+                        )} />
+                        <span>{item.name}</span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      {item.name}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )
             ))}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
+                  >
+                    <Menu className="h-6 w-6 mb-1" />
+                    <span>Menu</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  More Options
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </nav>
       </div>

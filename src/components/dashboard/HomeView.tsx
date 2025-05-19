@@ -42,9 +42,9 @@ const HomeView = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Welcome, {currentUser?.name}!</h1>
         <p className="text-muted-foreground mt-1">
-          Welcome back, {currentUser?.name}!
+          Dashboard overview
         </p>
       </div>
 
@@ -162,13 +162,13 @@ const HomeView = () => {
 
         <Card>
           <CardHeader className="bg-purple-50 dark:bg-gray-800">
-            <CardTitle>Welcome to CGS Connect</CardTitle>
+            <CardTitle>Welcome to Axioms School</CardTitle>
             <CardDescription>Your school management system</CardDescription>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                CGS Connect is designed to streamline communication and organization 
+                Axioms School is designed to streamline communication and organization 
                 between teachers and students. Navigate through the sidebar to 
                 access different sections of the application.
               </p>

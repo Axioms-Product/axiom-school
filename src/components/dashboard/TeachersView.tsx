@@ -133,7 +133,8 @@ const TeachersView = () => {
                 subject === Subject.SCIENCE ? 'bg-green-50' :
                 subject === Subject.SOCIAL_SCIENCE ? 'bg-yellow-50' :
                 subject === Subject.ENGLISH ? 'bg-purple-50' :
-                'bg-cyan-50'
+                subject === Subject.COMPUTER ? 'bg-cyan-50' :
+                'bg-gray-50'
               }`}>
                 <CardTitle className="text-lg">{subject}</CardTitle>
                 <CardDescription>Class {currentUser?.class}</CardDescription>
@@ -179,7 +180,7 @@ const TeachersView = () => {
                   <br />
                   Phone: (555) 123-4567
                   <br />
-                  Email: office@cgs.edu
+                  Email: office@axioms.edu
                 </p>
               </div>
               <div>

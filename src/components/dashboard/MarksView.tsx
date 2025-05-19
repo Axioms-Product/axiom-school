@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -39,7 +38,7 @@ import { Book, PlusCircle } from 'lucide-react';
 
 const MarksView = () => {
   const { currentUser } = useAuth();
-  const { getFilteredMarks, addMark } = useData();
+  const { getFilteredMarks, addMark, getStudentsForClass } = useData();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [studentId, setStudentId] = useState('');
   const [subject, setSubject] = useState<Subject>(
@@ -58,11 +57,7 @@ const MarksView = () => {
   
   const isTeacher = currentUser?.role === 'teacher';
   const marks = getFilteredMarks();
-
-  // Get students from the class for teacher to select
-  const students = useData().getTeachersForClass(currentUser?.class || '').filter(
-    user => user.role === 'student'
-  );
+  const students = getStudentsForClass(currentUser?.class || '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

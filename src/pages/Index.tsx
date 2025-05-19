@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, UserRound, School } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -17,24 +17,8 @@ const Index = () => {
           <div className="flex items-center">
             <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple animate-pulse-glow"></div>
             <h1 className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
-              CGS Connect
+              Axioms School
             </h1>
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/login')}
-              className="hover:bg-white/20 hover:text-cgs-blue transition-all glass-effect"
-            >
-              Login
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => navigate('/register')}
-              className="bg-cgs-blue hover:bg-cgs-blue/90 transition-all glass-effect"
-            >
-              Register
-            </Button>
           </div>
         </div>
       </header>
@@ -43,7 +27,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl grid md:grid-cols-2 gap-10 items-center py-12">
           <div className="space-y-6 animate-fade-in">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue via-cgs-purple to-cgs-pink">
-              Welcome to CGS Connect
+              Welcome to Axioms School
             </h2>
             <p className="text-lg md:text-xl text-foreground/80">
               A modern school management system designed for teachers and students to
@@ -52,11 +36,11 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
-                onClick={() => navigate('/register')} 
+                onClick={() => navigate('/login')} 
                 className="bg-gradient-to-r from-cgs-blue to-cgs-purple hover:opacity-90 transition-all"
               >
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <UserRound className="mr-2 h-5 w-5" />
+                Login as Student
               </Button>
               <Button 
                 size="lg" 
@@ -64,7 +48,8 @@ const Index = () => {
                 onClick={() => navigate('/login')}
                 className="border-cgs-purple text-cgs-purple hover:bg-cgs-purple/10"
               >
-                Login Now
+                <School className="mr-2 h-5 w-5" />
+                Login as Teacher
               </Button>
             </div>
           </div>
@@ -132,7 +117,7 @@ const Index = () => {
       <footer className="relative z-10 bg-white/5 backdrop-blur-sm border-t border-gray-200 dark:border-gray-800">
         <div className="container mx-auto py-6 px-6 md:px-10">
           <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
-            © 2025 CGS Connect. All rights reserved.
+            © 2025 Axioms School. All rights reserved.
           </p>
         </div>
       </footer>
