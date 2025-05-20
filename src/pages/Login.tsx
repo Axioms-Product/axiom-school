@@ -5,14 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, UserRole } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UserRound, School, Settings } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [role, setRole] = useState<UserRole>('student');
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -54,11 +57,29 @@ const Login = () => {
             <CardDescription>Enter your credentials to access your account</CardDescription>
           </CardHeader>
           <CardContent>
+            <Tabs defaultValue="student" className="mb-6" onValueChange={(value) => setRole(value as UserRole)}>
+              <TabsList className="grid grid-cols-3 w-full">
+                <TabsTrigger value="student" className="flex items-center gap-2">
+                  <UserRound className="h-4 w-4" />
+                  <span className="hidden sm:inline">Student</span>
+                </TabsTrigger>
+                <TabsTrigger value="teacher" className="flex items-center gap-2">
+                  <School className="h-4 w-4" />
+                  <span className="hidden sm:inline">Teacher</span>
+                </TabsTrigger>
+                <TabsTrigger value="admin" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                 {error}
               </div>
             )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -84,12 +105,19 @@ const Login = () => {
                   required
                 />
               </div>
+              
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-cgs-blue to-cgs-purple hover:opacity-90"
+                className={`w-full ${
+                  role === 'student' 
+                    ? 'bg-gradient-to-r from-cgs-blue to-cgs-purple' 
+                    : role === 'teacher' 
+                      ? 'bg-gradient-to-r from-cgs-purple to-cgs-pink'
+                      : 'bg-gradient-to-r from-gray-600 to-gray-800'
+                } hover:opacity-90`}
                 disabled={loading}
               >
-                {loading ? 'Logging in...' : 'Log In'}
+                {loading ? 'Logging in...' : `Log In as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
               </Button>
             </form>
           </CardContent>

@@ -55,6 +55,33 @@ export interface Mark {
   creatorName: string;
 }
 
+export interface FeePayment {
+  id: string;
+  studentId: string;
+  month: string;
+  amount: number;
+  dueDate: string;
+  isPaid: boolean;
+  paidDate?: string;
+  createdBy: string;
+  timestamp: number;
+}
+
+export interface ExamSchedule {
+  id: string;
+  title: string;
+  assignedClass: string;
+  subject: Subject;
+  date: string;
+  startTime: string;
+  endTime: string;
+  roomNumber?: string;
+  description?: string;
+  createdBy: string;
+  creatorName: string;
+  timestamp: number;
+}
+
 export enum Subject {
   MATHEMATICS = "Mathematics",
   SCIENCE = "Science",

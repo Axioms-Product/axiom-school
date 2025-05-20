@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -14,6 +14,17 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
+// Auth route wrapper that redirects authenticated users
+const AuthRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard/home" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -22,9 +33,30 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route 
+              path="/" 
+              element={
+                <AuthRoute>
+                  <Index />
+                </AuthRoute>
+              } 
+            />
+            <Route 
+              path="/login" 
+              element={
+                <AuthRoute>
+                  <Login />
+                </AuthRoute>
+              } 
+            />
+            <Route 
+              path="/register" 
+              element={
+                <AuthRoute>
+                  <Register />
+                </AuthRoute>
+              } 
+            />
             <Route 
               path="/dashboard/*" 
               element={

@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Subject } from '../models/types';
 
-export type UserRole = 'student' | 'teacher';
+export type UserRole = 'student' | 'teacher' | 'admin'; // Added admin role
 
 export interface User {
   id: string;
@@ -10,6 +10,7 @@ export interface User {
   email: string;
   role: UserRole;
   class: string;
+  rollNo?: string; // Added roll number field
   subject?: Subject;
 }
 
@@ -18,7 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole, assignedClass: string, subject?: Subject) => Promise<void>;
+  register: (name: string, email: string, password: string, role: UserRole, assignedClass: string, rollNo?: string, subject?: Subject) => Promise<void>;
   logout: () => void;
   updateUserProfile?: (updates: Partial<User>) => Promise<void>;
 }
@@ -88,6 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string, 
     role: UserRole, 
     assignedClass: string, 
+    rollNo?: string,
     subject?: Subject
   ) => {
     try {
@@ -112,6 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         role,
         class: assignedClass,
+        ...(role === 'student' && rollNo ? { rollNo } : {}),
         ...(role === 'teacher' && subject ? { subject } : {})
       };
       
