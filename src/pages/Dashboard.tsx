@@ -8,6 +8,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger 
+} from "@/components/ui/sheet";
 import { useAuth } from '@/contexts/AuthContext';
 import { DataProvider } from '@/contexts/DataContext';
 import { cn } from '@/lib/utils';
@@ -37,7 +44,7 @@ const Dashboard = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // Ensure user is redirected to the dashboard home when accessing the /dashboard URL directly
   useEffect(() => {
@@ -87,7 +94,6 @@ const Dashboard = () => {
     { name: 'Homework', path: 'homework', icon: BookOpen },
     { name: 'Marks', path: 'marks', icon: Book },
     { name: 'Messages', path: 'messages', icon: MessageCircle },
-    { name: 'Menu', path: '', icon: Menu, onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen) },
   ];
 
   return (
@@ -108,48 +114,6 @@ const Dashboard = () => {
               </div>
             </Link>
           </div>
-          
-          {isMobileMenuOpen && (
-            <div className="border-t border-gray-200 dark:border-gray-800 py-2 px-4 space-y-2 bg-white dark:bg-gray-900">
-              <div className="flex items-center space-x-3 p-2 rounded-md bg-blue-50 dark:bg-gray-800">
-                <div className="h-8 w-8 rounded-full bg-cgs-blue/20 flex items-center justify-center">
-                  <User className="h-4 w-4 text-cgs-blue" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{currentUser?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
-                  </p>
-                </div>
-              </div>
-              
-              <nav className="space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={`/dashboard/${item.path}`}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive(item.path) 
-                        ? "bg-cgs-blue text-white"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span>Logout</span>
-                </button>
-              </nav>
-            </div>
-          )}
         </header>
         
         <div className="flex h-screen pt-0 md:pt-0 overflow-hidden">
@@ -227,40 +191,91 @@ const Dashboard = () => {
           </main>
         </div>
         
+        {/* Sheet/Drawer for Mobile Navigation */}
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetContent side="left" className="w-[80%] max-w-[300px] p-0">
+            <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-800">
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">A</span>
+                </div>
+                <SheetTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
+                  Axioms School
+                </SheetTitle>
+              </div>
+            </SheetHeader>
+            
+            <div className="p-4">
+              <div className="mb-4 p-3 rounded-lg bg-blue-50 dark:bg-gray-800 flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-full bg-cgs-blue/20 flex items-center justify-center">
+                  <User className="h-5 w-5 text-cgs-blue" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm">{currentUser?.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
+                  </p>
+                </div>
+              </div>
+              
+              <nav className="space-y-1">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={`/dashboard/${item.path}`}
+                    className={cn(
+                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      isActive(item.path) 
+                        ? "bg-cgs-blue text-white"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    )}
+                    onClick={() => setOpen(false)}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+                
+                <Button 
+                  variant="destructive" 
+                  onClick={() => {
+                    setOpen(false);
+                    handleLogout();
+                  }} 
+                  className="w-full justify-start text-sm mt-4"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </nav>
+            </div>
+          </SheetContent>
+        </Sheet>
+        
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
           <div className="flex items-center justify-around">
             {mobileNavigation.map((item) => (
-              <TooltipProvider key={item.path || 'menu'}>
+              <TooltipProvider key={item.path}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    {item.path ? (
-                      <Link
-                        to={`/dashboard/${item.path}`}
-                        className={cn(
-                          "flex flex-1 flex-col items-center justify-center py-2 text-xs",
-                          (item.path && isActive(item.path))
-                            ? "text-cgs-blue"
-                            : "text-gray-500 dark:text-gray-400"
-                        )}
-                      >
-                        <item.icon className={cn(
-                          "h-6 w-6 mb-1",
-                          (item.path && isActive(item.path))
-                            ? "text-cgs-blue"
-                            : "text-gray-500 dark:text-gray-400"
-                        )} />
-                        <span>{item.name}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
-                      >
-                        <item.icon className="h-6 w-6 mb-1" />
-                        <span>{item.name}</span>
-                      </button>
-                    )}
+                    <Link
+                      to={`/dashboard/${item.path}`}
+                      className={cn(
+                        "flex flex-1 flex-col items-center justify-center py-2 text-xs",
+                        isActive(item.path)
+                          ? "text-cgs-blue"
+                          : "text-gray-500 dark:text-gray-400"
+                      )}
+                    >
+                      <item.icon className={cn(
+                        "h-6 w-6 mb-1",
+                        isActive(item.path)
+                          ? "text-cgs-blue"
+                          : "text-gray-500 dark:text-gray-400"
+                      )} />
+                      <span>{item.name}</span>
+                    </Link>
                   </TooltipTrigger>
                   <TooltipContent side="top">
                     {item.name}
@@ -268,6 +283,24 @@ const Dashboard = () => {
                 </Tooltip>
               </TooltipProvider>
             ))}
+            
+            {/* Menu Button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
+                  >
+                    <Menu className="h-6 w-6 mb-1" />
+                    <span>Menu</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  Menu
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </nav>
       </div>
