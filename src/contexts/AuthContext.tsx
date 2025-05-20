@@ -1,8 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Subject } from '../models/types';
+import { toast } from 'sonner';
 
-export type UserRole = 'student' | 'teacher' | 'admin'; // Added admin role
+export type UserRole = 'student' | 'teacher' | 'admin';
 
 export interface User {
   id: string;
@@ -10,7 +11,7 @@ export interface User {
   email: string;
   role: UserRole;
   class: string;
-  rollNo?: string; // Added roll number field
+  rollNo?: string;
   subject?: Subject;
 }
 
@@ -49,8 +50,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (storedUser) {
       try {
         setCurrentUser(JSON.parse(storedUser));
+        toast.success("Welcome back!");
       } catch (error) {
         console.error('Failed to parse stored user:', error);
+        localStorage.removeItem('currentUser');
       }
     }
     setLoading(false);
@@ -74,10 +77,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const user = userRecord.user;
       setCurrentUser(user);
       localStorage.setItem('currentUser', JSON.stringify(user));
+      toast.success(`Welcome, ${user.name}!`);
       
       return;
     } catch (error) {
       console.error('Login error:', error);
+      toast.error(error instanceof Error ? error.message : 'Login failed');
       throw error;
     }
   };
@@ -125,10 +130,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       
       localStorage.setItem('users', JSON.stringify(users));
+      toast.success('Registration successful! You can now log in.');
       
       return;
     } catch (error) {
       console.error('Registration error:', error);
+      toast.error(error instanceof Error ? error.message : 'Registration failed');
       throw error;
     }
   };
@@ -137,6 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
+    toast.info('You have been logged out.');
   };
 
   // Mock update user profile function
@@ -169,8 +177,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
       
+      toast.success('Profile updated successfully');
+      
     } catch (error) {
       console.error('Update profile error:', error);
+      toast.error(error instanceof Error ? error.message : 'Update failed');
       throw error;
     }
   };
@@ -187,7 +198,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
