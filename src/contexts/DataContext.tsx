@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Homework, Notice, Event, Message, Mark, Subject, FeePayment, ExamSchedule } from '../models/types';
 import { useAuth, User } from './AuthContext';
@@ -306,15 +305,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredHomeworks = () => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return homeworks;
-    } else if (currentUser.role === 'teacher') {
+    // Teacher can see homeworks for their class
+    if (currentUser.role === 'teacher') {
       // Teacher should only see homeworks for their class and subject
       return homeworks.filter(hw => 
         hw.assignedClass === currentUser.class && 
         (!currentUser.subject || hw.createdBy === currentUser.id)
       );
     } else {
+      // Students see homeworks for their class
       return homeworks.filter(hw => hw.assignedClass === currentUser.class);
     }
   };
@@ -322,9 +321,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredNotices = () => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return notices;
-    } else if (currentUser.role === 'teacher') {
+    // Both teacher and student roles can see notices for their class
+    if (currentUser.role === 'teacher') {
       return notices.filter(n => n.assignedClass === currentUser.class);
     } else {
       return notices.filter(n => n.assignedClass === currentUser.class);
@@ -334,9 +332,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredEvents = () => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return events;
-    } else if (currentUser.role === 'teacher') {
+    // Both teacher and student roles can see events for their class
+    if (currentUser.role === 'teacher') {
       return events.filter(e => e.assignedClass === currentUser.class);
     } else {
       return events.filter(e => e.assignedClass === currentUser.class);
@@ -346,11 +343,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredMessages = () => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return messages;
-    }
     // For teachers: Show messages where they are the receiver
-    else if (currentUser.role === 'teacher') {
+    if (currentUser.role === 'teacher') {
       return messages.filter(m => m.receiverId === currentUser.id || m.senderId === currentUser.id);
     } 
     // For students: Show messages they sent and received
@@ -365,11 +359,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredMarks = (studentId?: string) => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return studentId ? marks.filter(m => m.studentId === studentId) : marks;
-    }
     // For teachers: Show marks for their class and subject
-    else if (currentUser.role === 'teacher') {
+    if (currentUser.role === 'teacher') {
       const studentsInClass = users.filter(
         user => user.role === 'student' && user.class === currentUser.class
       );
@@ -392,9 +383,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredFees = (studentId?: string) => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return studentId ? fees.filter(f => f.studentId === studentId) : fees;
-    } else if (currentUser.role === 'teacher') {
+    if (currentUser.role === 'teacher') {
       const studentsInClass = users.filter(
         user => user.role === 'student' && user.class === currentUser.class
       );
@@ -410,11 +399,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredExamSchedules = () => {
     if (!currentUser) return [];
     
-    if (currentUser.role === 'admin') {
-      return examSchedules;
-    } else {
-      return examSchedules.filter(e => e.assignedClass === currentUser.class);
-    }
+    // Both roles can see exam schedules for their class
+    return examSchedules.filter(e => e.assignedClass === currentUser.class);
   };
 
   const value = {
