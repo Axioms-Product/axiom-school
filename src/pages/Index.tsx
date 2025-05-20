@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { UserRound, School, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -61,15 +60,6 @@ const Index = () => {
                 >
                   <School className="mr-2 h-5 w-5" />
                   Login as Teacher
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="secondary" 
-                  onClick={() => navigate('/login')}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800"
-                >
-                  <Settings className="mr-2 h-5 w-5" />
-                  Login as Admin
                 </Button>
               </div>
             </div>
