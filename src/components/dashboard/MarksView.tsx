@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -64,13 +65,25 @@ const MarksView = () => {
     
     if (!studentId || !testName || !score) return;
     
-    addMark({
-      studentId,
-      subject,
-      score: Number(score),
-      totalScore: Number(totalScore),
-      testName
-    });
+    // Only allow teachers to add marks for their assigned subject
+    if (isTeacher && currentUser?.subject) {
+      // Force the subject to be the teacher's assigned subject
+      addMark({
+        studentId,
+        subject: currentUser.subject,
+        score: Number(score),
+        totalScore: Number(totalScore),
+        testName
+      });
+    } else {
+      addMark({
+        studentId,
+        subject,
+        score: Number(score),
+        totalScore: Number(totalScore),
+        testName
+      });
+    }
     
     // Reset form
     setStudentId('');

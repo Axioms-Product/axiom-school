@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -57,8 +58,8 @@ const HomeView = () => {
       return eventDate > now && eventDate < oneWeekFromNow;
     }).length;
     
-    // Calculate completed tasks (for demo purposes)
-    const completedTasks = Math.floor(Math.random() * 15) + 5;
+    // Set completedTasks to 0 always
+    const completedTasks = 0;
     
     // Calculate subject performance for students
     if (currentUser?.role === 'student' && marks.length > 0) {

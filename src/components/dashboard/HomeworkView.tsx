@@ -36,7 +36,9 @@ const HomeworkView = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [subject, setSubject] = useState<Subject>((currentUser?.subject as Subject) || Subject.MATHEMATICS);
+  const [subject, setSubject] = useState<Subject>(
+    (currentUser?.subject as Subject) || Subject.MATHEMATICS
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('all');
 
@@ -46,6 +48,11 @@ const HomeworkView = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Only allow teachers to add homework for their assigned subject
+    if (isTeacher && currentUser?.subject && currentUser.subject !== subject) {
+      return;
+    }
     
     addHomework({
       title,
