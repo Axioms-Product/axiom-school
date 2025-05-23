@@ -1,10 +1,10 @@
-
 export enum Subject {
   MATHEMATICS = 'Mathematics',
   SCIENCE = 'Science',
   SOCIAL_SCIENCE = 'Social Science',
   ENGLISH = 'English',
-  HINDI = 'Hindi'
+  HINDI = 'Hindi',
+  COMPUTER = 'Computer'
 }
 
 export interface Homework {
@@ -35,6 +35,8 @@ export interface Event {
   title: string;
   description: string;
   date: string;
+  time: string;
+  location: string;
   assignedClass: string;
   timestamp: number;
   createdBy: string;
