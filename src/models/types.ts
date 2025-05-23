@@ -1,19 +1,29 @@
+
+export enum Subject {
+  MATHEMATICS = 'Mathematics',
+  SCIENCE = 'Science',
+  SOCIAL_SCIENCE = 'Social Science',
+  ENGLISH = 'English',
+  HINDI = 'Hindi'
+}
+
 export interface Homework {
   id: string;
   title: string;
   description: string;
-  assignedClass: string;
   subject: Subject;
+  assignedClass: string;
   dueDate: string;
   timestamp: number;
   createdBy: string;
   creatorName: string;
+  completedBy?: string[]; // Array of student IDs who completed this homework
 }
 
 export interface Notice {
   id: string;
   title: string;
-  description: string;
+  content: string;
   assignedClass: string;
   timestamp: number;
   createdBy: string;
@@ -24,10 +34,8 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  assignedClass: string;
-  location: string;
   date: string;
-  time: string;
+  assignedClass: string;
   timestamp: number;
   createdBy: string;
   creatorName: string;
@@ -58,34 +66,23 @@ export interface Mark {
 export interface FeePayment {
   id: string;
   studentId: string;
-  month: string;
   amount: number;
+  purpose: string;
   dueDate: string;
   isPaid: boolean;
   paidDate?: string;
-  createdBy: string;
   timestamp: number;
+  createdBy: string;
 }
 
 export interface ExamSchedule {
   id: string;
-  title: string;
-  assignedClass: string;
   subject: Subject;
   date: string;
-  startTime: string;
-  endTime: string;
-  roomNumber?: string;
-  description?: string;
+  time: string;
+  duration: string;
+  assignedClass: string;
+  timestamp: number;
   createdBy: string;
   creatorName: string;
-  timestamp: number;
-}
-
-export enum Subject {
-  MATHEMATICS = "Mathematics",
-  SCIENCE = "Science",
-  SOCIAL_SCIENCE = "Social Science",
-  ENGLISH = "English",
-  COMPUTER = "Computer"
 }

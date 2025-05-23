@@ -22,42 +22,38 @@ import {
   DialogTrigger,
   DialogClose 
 } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Subject } from '@/models/types';
 import { formatDistanceToNow } from 'date-fns';
-import { Trash2 } from 'lucide-react';
+import { Trash2, CheckCircle, Circle, Users } from 'lucide-react';
 
 const HomeworkView = () => {
   const { currentUser } = useAuth();
-  const { getFilteredHomeworks, addHomework, deleteHomework } = useData();
+  const { getFilteredHomeworks, addHomework, deleteHomework, markHomeworkComplete, getStudentsForClass } = useData();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [subject, setSubject] = useState<Subject>(
-    (currentUser?.subject as Subject) || Subject.MATHEMATICS
-  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('all');
 
   const isTeacher = currentUser?.role === 'teacher';
   const homeworks = getFilteredHomeworks();
-  const subjectList = Object.values(Subject);
+  const students = getStudentsForClass(currentUser?.class || '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Only allow teachers to add homework for their assigned subject
-    if (isTeacher && currentUser?.subject && currentUser.subject !== subject) {
+    if (!currentUser?.subject) {
+      console.error('Teacher subject not found');
       return;
     }
     
     addHomework({
       title,
       description,
-      subject: currentUser?.subject as Subject || subject,
+      subject: currentUser.subject,
       assignedClass: currentUser?.class || '',
       dueDate
     });
@@ -75,9 +71,28 @@ const HomeworkView = () => {
     }
   };
 
+  const handleMarkComplete = (homeworkId: string) => {
+    markHomeworkComplete(homeworkId);
+  };
+
+  const getCompletionStatus = (homework: any) => {
+    if (!currentUser) return { isCompleted: false, completedCount: 0 };
+    
+    const completedBy = homework.completedBy || [];
+    const isCompleted = completedBy.includes(currentUser.id);
+    const completedCount = completedBy.length;
+    
+    return { isCompleted, completedCount };
+  };
+
   const getFilteredHomeworksBySubject = () => {
     if (activeTab === 'all') return homeworks;
     return homeworks.filter(hw => hw.subject === activeTab);
+  };
+
+  const getStudentName = (studentId: string) => {
+    const student = students.find(s => s.id === studentId);
+    return student?.name || 'Unknown Student';
   };
 
   return (
@@ -93,7 +108,7 @@ const HomeworkView = () => {
           </p>
         </div>
         
-        {isTeacher && (
+        {isTeacher && currentUser?.subject && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-cgs-blue hover:bg-cgs-blue/90">
@@ -121,29 +136,11 @@ const HomeworkView = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject</Label>
-                    {currentUser?.subject ? (
-                      <Input 
-                        id="subject" 
-                        value={currentUser.subject} 
-                        disabled 
-                      />
-                    ) : (
-                      <Select
-                        value={subject}
-                        onValueChange={(val) => setSubject(val as Subject)}
-                      >
-                        <SelectTrigger id="subject">
-                          <SelectValue placeholder="Select Subject" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {subjectList.map((subj) => (
-                            <SelectItem key={subj} value={subj}>
-                              {subj}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    <Input 
+                      id="subject" 
+                      value={currentUser.subject} 
+                      disabled 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
@@ -181,19 +178,6 @@ const HomeworkView = () => {
         )}
       </div>
 
-      {homeworks.length > 0 && (
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 sm:grid-cols-6">
-            <TabsTrigger value="all">All</TabsTrigger>
-            {subjectList.map(subj => (
-              <TabsTrigger key={subj} value={subj}>
-                {subj.substring(0, 3)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      )}
-
       {homeworks.length === 0 ? (
         <Card className="bg-gray-50 dark:bg-gray-800 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-10">
@@ -209,7 +193,7 @@ const HomeworkView = () => {
                 : "Your teacher hasn't created any homework assignments yet."
               }
             </p>
-            {isTeacher && (
+            {isTeacher && currentUser?.subject && (
               <Button 
                 className="mt-4 bg-cgs-blue hover:bg-cgs-blue/90"
                 onClick={() => setDialogOpen(true)}
@@ -221,52 +205,92 @@ const HomeworkView = () => {
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {getFilteredHomeworksBySubject().map((homework) => (
-            <Card key={homework.id} className="card-3d overflow-hidden">
-              <CardHeader className={`${
-                homework.subject === Subject.MATHEMATICS ? 'bg-blue-50' :
-                homework.subject === Subject.SCIENCE ? 'bg-green-50' :
-                homework.subject === Subject.SOCIAL_SCIENCE ? 'bg-yellow-50' :
-                homework.subject === Subject.ENGLISH ? 'bg-purple-50' :
-                'bg-cyan-50'
-              } pb-4`}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-black/10">
-                        {homework.subject}
-                      </span>
+          {getFilteredHomeworksBySubject().map((homework) => {
+            const { isCompleted, completedCount } = getCompletionStatus(homework);
+            const completedBy = homework.completedBy || [];
+            
+            return (
+              <Card key={homework.id} className="card-3d overflow-hidden">
+                <CardHeader className={`${
+                  homework.subject === Subject.MATHEMATICS ? 'bg-blue-50' :
+                  homework.subject === Subject.SCIENCE ? 'bg-green-50' :
+                  homework.subject === Subject.SOCIAL_SCIENCE ? 'bg-yellow-50' :
+                  homework.subject === Subject.ENGLISH ? 'bg-purple-50' :
+                  'bg-cyan-50'
+                } pb-4`}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-black/10">
+                          {homework.subject}
+                        </span>
+                        {isTeacher && (
+                          <div className="flex items-center text-xs text-muted-foreground">
+                            <Users className="h-3 w-3 mr-1" />
+                            {completedCount}/{students.length} completed
+                          </div>
+                        )}
+                      </div>
+                      <CardTitle>{homework.title}</CardTitle>
+                      <CardDescription>
+                        Due: {new Date(homework.dueDate).toLocaleDateString()}
+                      </CardDescription>
                     </div>
-                    <CardTitle>{homework.title}</CardTitle>
-                    <CardDescription>
-                      Due: {new Date(homework.dueDate).toLocaleDateString()}
-                    </CardDescription>
+                    <div className="flex items-center gap-2">
+                      {!isTeacher && (
+                        <Button
+                          variant={isCompleted ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleMarkComplete(homework.id)}
+                          className={isCompleted ? "bg-green-600 hover:bg-green-700" : ""}
+                        >
+                          {isCompleted ? <CheckCircle className="h-4 w-4 mr-1" /> : <Circle className="h-4 w-4 mr-1" />}
+                          {isCompleted ? "Completed" : "Mark Complete"}
+                        </Button>
+                      )}
+                      {isTeacher && homework.createdBy === currentUser?.id && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 h-8 w-8"
+                          onClick={() => handleDelete(homework.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  {isTeacher && homework.createdBy === currentUser?.id && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 h-8 w-8"
-                      onClick={() => handleDelete(homework.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <p className="whitespace-pre-wrap">{homework.description}</p>
+                  
+                  {isTeacher && completedBy.length > 0 && (
+                    <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Students who completed:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {completedBy.map((studentId) => (
+                          <span 
+                            key={studentId}
+                            className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full"
+                          >
+                            {getStudentName(studentId)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   )}
-                </div>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <p className="whitespace-pre-wrap">{homework.description}</p>
-              </CardContent>
-              <CardFooter className="border-t bg-gray-50 dark:bg-gray-900 text-xs text-muted-foreground pt-3">
-                <div className="flex justify-between w-full">
-                  <span>Created by: {homework.creatorName}</span>
-                  <span>
-                    {formatDistanceToNow(new Date(homework.timestamp), { addSuffix: true })}
-                  </span>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
+                </CardContent>
+                <CardFooter className="border-t bg-gray-50 dark:bg-gray-900 text-xs text-muted-foreground pt-3">
+                  <div className="flex justify-between w-full">
+                    <span>Created by: {homework.creatorName}</span>
+                    <span>
+                      {formatDistanceToNow(new Date(homework.timestamp), { addSuffix: true })}
+                    </span>
+                  </div>
+                </CardFooter>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

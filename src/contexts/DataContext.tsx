@@ -24,6 +24,7 @@ interface DataContextType {
   deleteFee: (id: string) => void;
   deleteExamSchedule: (id: string) => void;
   updateFeeStatus: (id: string, isPaid: boolean) => void;
+  markHomeworkComplete: (homeworkId: string) => void;
   sendMessage: (content: string, receiverId: string) => void;
   getTeacherForClass: (className: string) => User | undefined;
   getTeachersForClass: (className: string) => User[];
@@ -140,11 +141,38 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: Date.now().toString(),
       timestamp: Date.now(),
       createdBy: currentUser.id,
-      creatorName: currentUser.name
+      creatorName: currentUser.name,
+      completedBy: []
     };
     
     setHomeworks(prev => [...prev, newHomework]);
     toast.success('Homework added successfully');
+  };
+
+  // Function to mark homework as complete
+  const markHomeworkComplete = (homeworkId: string) => {
+    if (!currentUser) return;
+    
+    setHomeworks(prev => 
+      prev.map(hw => {
+        if (hw.id === homeworkId) {
+          const completedBy = hw.completedBy || [];
+          const isAlreadyCompleted = completedBy.includes(currentUser.id);
+          
+          return {
+            ...hw,
+            completedBy: isAlreadyCompleted
+              ? completedBy.filter(id => id !== currentUser.id)
+              : [...completedBy, currentUser.id]
+          };
+        }
+        return hw;
+      })
+    );
+    
+    const homework = homeworks.find(hw => hw.id === homeworkId);
+    const isCompleted = homework?.completedBy?.includes(currentUser.id);
+    toast.success(isCompleted ? 'Homework marked as incomplete' : 'Homework marked as complete');
   };
 
   // Function to add a new notice
@@ -305,12 +333,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredHomeworks = () => {
     if (!currentUser) return [];
     
-    // Teacher can see homeworks for their class
+    // Teacher can see homeworks for their class and subject only
     if (currentUser.role === 'teacher') {
-      // Teacher should only see homeworks for their class and subject
       return homeworks.filter(hw => 
         hw.assignedClass === currentUser.class && 
-        (!currentUser.subject || hw.createdBy === currentUser.id)
+        hw.subject === currentUser.subject
       );
     } else {
       // Students see homeworks for their class
@@ -359,7 +386,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredMarks = (studentId?: string) => {
     if (!currentUser) return [];
     
-    // For teachers: Show marks for their class and subject
+    // For teachers: Show marks for their class and subject only
     if (currentUser.role === 'teacher') {
       const studentsInClass = users.filter(
         user => user.role === 'student' && user.class === currentUser.class
@@ -369,7 +396,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       return marks.filter(m => 
         studentIds.includes(m.studentId) && 
-        (!currentUser.subject || m.subject === currentUser.subject)
+        m.subject === currentUser.subject
       );
     } 
     // For students: Show only their marks
@@ -424,6 +451,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     deleteFee,
     deleteExamSchedule,
     updateFeeStatus,
+    markHomeworkComplete,
     sendMessage,
     getTeacherForClass,
     getTeachersForClass,

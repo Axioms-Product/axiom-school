@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -61,6 +60,7 @@ const Register = () => {
         password, 
         role, 
         assignedClass, 
+        undefined, // rollNo for students only
         role === 'teacher' ? subject as Subject : undefined
       );
       navigate('/login');
