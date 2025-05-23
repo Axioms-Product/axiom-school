@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,14 +68,14 @@ const HomeView = () => {
         if (!subjectGroups[mark.subject]) {
           subjectGroups[mark.subject] = [];
         }
-        subjectGroups[mark.subject].push(mark.value);
+        subjectGroups[mark.subject].push(mark.score);
       });
       
-      const subjectAverages = Object.entries(subjectGroups).map(([subject, values]) => {
-        const sum = values.reduce((acc, val) => acc + val, 0);
+      const subjectAverages = Object.entries(subjectGroups).map(([subject, scores]) => {
+        const sum = scores.reduce((acc, score) => acc + score, 0);
         return {
           subject,
-          average: Math.round((sum / values.length) * 10) / 10
+          average: Math.round((sum / scores.length) * 10) / 10
         };
       });
       
