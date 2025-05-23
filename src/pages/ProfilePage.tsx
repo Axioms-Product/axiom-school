@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { User, Mail, Phone, School, Book, MapPin, Clock } from 'lucide-react';
+import { User, Mail, Phone, School, Book, MapPin, Clock, LogOut } from 'lucide-react';
 
 const ProfilePage = () => {
-  const { currentUser, updateUserProfile } = useAuth();
+  const { currentUser, updateUserProfile, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(currentUser?.name || '');
   const [email, setEmail] = useState(currentUser?.email || '');
@@ -31,6 +31,11 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
   };
 
   return (
@@ -55,14 +60,25 @@ const ProfilePage = () => {
                   </div>
                 )}
                 
-                {!isEditing && (
+                <div className="w-full mt-4 space-y-2">
+                  {!isEditing && (
+                    <Button 
+                      className="w-full"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit Profile
+                    </Button>
+                  )}
+                  
                   <Button 
-                    className="mt-4 w-full"
-                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={handleLogout}
                   >
-                    Edit Profile
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
                   </Button>
-                )}
+                </div>
               </div>
             </CardContent>
           </Card>
