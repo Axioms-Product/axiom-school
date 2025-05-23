@@ -1,310 +1,223 @@
 
-import { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
-  SheetTrigger 
-} from "@/components/ui/sheet";
-import { useAuth } from '@/contexts/AuthContext';
-import { DataProvider } from '@/contexts/DataContext';
-import { cn } from '@/lib/utils';
-import HomeView from '@/components/dashboard/HomeView';
-import HomeworkView from '@/components/dashboard/HomeworkView';
-import NoticesView from '@/components/dashboard/NoticesView';
-import EventsView from '@/components/dashboard/EventsView';
-import MessagesView from '@/components/dashboard/MessagesView';
-import MarksView from '@/components/dashboard/MarksView';
-import TeachersView from '@/components/dashboard/TeachersView';
-import ProfilePage from '@/pages/ProfilePage';
-
-import { 
-  Home, 
-  BookOpen, 
-  Bell, 
-  Calendar, 
-  MessageCircle, 
-  LogOut, 
+import { Separator } from '@/components/ui/separator';
+import { Toaster } from '@/components/ui/sonner';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Home,
+  BookOpen,
+  Bell,
+  Calendar,
+  PenSquare,
+  MessageCircle,
+  Users2,
   User,
   Menu,
-  Book,
-  School
+  LogOut,
+  FileText
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
-  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser, logout } = useAuth();
+  const isMobile = useMobile();
   const [open, setOpen] = useState(false);
-
-  // Ensure user is redirected to the dashboard home when accessing the /dashboard URL directly
-  useEffect(() => {
-    if (location.pathname === '/dashboard') {
-      navigate('/dashboard/home');
-    }
-  }, [location.pathname, navigate]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const isActive = (path: string) => {
-    return location.pathname === `/dashboard/${path}`;
-  };
   
-  const commonNavigation = [
-    { name: 'Home', path: 'home', icon: Home },
-    { name: 'Homework', path: 'homework', icon: BookOpen },
-    { name: 'Notices', path: 'notices', icon: Bell },
-    { name: 'Events', path: 'events', icon: Calendar },
-    { name: 'Marks', path: 'marks', icon: Book },
-  ];
+  useEffect(() => {
+    // Close mobile sidebar when navigation changes
+    setOpen(false);
+  }, [location.pathname]);
 
-  // Add student-specific navigation
-  const studentNavigation = [
-    ...commonNavigation,
-    { name: 'Messages', path: 'messages', icon: MessageCircle },
-    { name: 'Teachers', path: 'teachers', icon: School },
-    { name: 'Profile', path: 'profile', icon: User },
-  ];
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
-  // Add teacher-specific navigation
-  const teacherNavigation = [
-    ...commonNavigation,
-    { name: 'Messages', path: 'messages', icon: MessageCircle },
-    { name: 'Profile', path: 'profile', icon: User },
+  const navigationItems = [
+    { name: 'Home', path: '/dashboard/home', icon: <Home size={20} /> },
+    { name: 'Homework', path: '/dashboard/homework', icon: <BookOpen size={20} /> },
+    { name: 'Notices', path: '/dashboard/notices', icon: <Bell size={20} /> },
+    { name: 'Events', path: '/dashboard/events', icon: <Calendar size={20} /> },
+    { name: 'Marks', path: '/dashboard/marks', icon: <PenSquare size={20} /> },
+    { name: 'Messages', path: '/dashboard/messages', icon: <MessageCircle size={20} /> },
+    { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={20} /> },
   ];
-
-  // Choose the appropriate navigation based on user role
-  const navigation = currentUser?.role === 'student' ? studentNavigation : teacherNavigation;
-
-  // Select items for mobile bottom navigation
-  const mobileNavigation = [
-    { name: 'Home', path: 'home', icon: Home },
-    { name: 'Homework', path: 'homework', icon: BookOpen },
-    { name: 'Marks', path: 'marks', icon: Book },
-    { name: 'Messages', path: 'messages', icon: MessageCircle },
-  ];
+  
+  // Add Teachers only for students
+  if (currentUser?.role === 'student') {
+    navigationItems.push({ name: 'Teachers', path: '/dashboard/teachers', icon: <Users2 size={20} /> });
+  }
 
   return (
-    <DataProvider>
-      <div className="min-h-screen bg-gradient-to-b from-background to-blue-50 dark:from-gray-900 dark:to-gray-950">
-        {/* Mobile Header */}
-        <header className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-20">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
-                <span className="text-white font-bold text-sm">A</span>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 bg-sidebar border-r border-sidebar-border">
+        <div className="p-4">
+          <div className="flex items-center justify-center mb-8">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-lg font-bold text-foreground">Axioms School</h1>
+              <span className="font-bold text-lg text-sidebar-foreground">Axioms School</span>
             </div>
-            <Link to="/dashboard/profile">
-              <div className="h-8 w-8 rounded-full bg-cgs-blue/20 flex items-center justify-center">
-                <User className="h-4 w-4 text-cgs-blue" />
+          </div>
+          
+          <nav className="space-y-1.5">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${
+                  location.pathname === item.path
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    : 'hover:bg-sidebar-accent/50 text-sidebar-foreground'
+                }`}
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+        
+        <div className="mt-auto p-4">
+          <Separator className="mb-4 bg-sidebar-border/50" />
+          <div className="flex items-center justify-between">
+            <Link 
+              to="/dashboard/profile" 
+              className="flex items-center gap-2 group"
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.id}`} />
+                <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
+                  {currentUser?.name?.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium leading-none">{currentUser?.name}</span>
+                <span className="text-xs text-muted-foreground capitalize">{currentUser?.role}</span>
               </div>
             </Link>
+            
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleLogout}
+              className="h-8 w-8 rounded-full hover:bg-sidebar-accent text-sidebar-foreground"
+            >
+              <LogOut size={18} />
+            </Button>
+          </div>
+        </div>
+      </aside>
+      
+      {/* Mobile sidebar using Sheet from shadcn */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-64 p-0">
+          <div className="p-4">
+            <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
+                  <BookOpen className="h-5 w-5 text-white" />
+                </div>
+                <span className="font-bold text-lg">Axioms School</span>
+              </div>
+            </div>
+            
+            <nav className="space-y-1.5">
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors ${
+                    location.pathname === item.path
+                      ? 'bg-primary text-primary-foreground'
+                      : 'hover:bg-accent/50'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+          
+          <div className="mt-auto p-4">
+            <Separator className="mb-4" />
+            <div className="flex items-center justify-between">
+              <Link 
+                to="/dashboard/profile" 
+                className="flex items-center gap-2 group"
+                onClick={() => setOpen(false)}
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.id}`} />
+                  <AvatarFallback>{currentUser?.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium leading-none">{currentUser?.name}</span>
+                  <span className="text-xs text-muted-foreground capitalize">{currentUser?.role}</span>
+                </div>
+              </Link>
+              
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleLogout}
+                className="h-8 w-8 rounded-full"
+              >
+                <LogOut size={18} />
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+      
+      {/* Main content */}
+      <div className="flex flex-col flex-1 h-screen overflow-y-auto">
+        {/* Header */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b py-3 px-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {isMobile && (
+                <SheetTrigger asChild onClick={() => setOpen(true)}>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu />
+                  </Button>
+                </SheetTrigger>
+              )}
+              <h1 className="text-xl font-semibold">
+                {location.pathname.split('/').pop()?.charAt(0).toUpperCase() + location.pathname.split('/').pop()?.slice(1)}
+              </h1>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Link to="/dashboard/profile">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-full"
+                >
+                  <User size={20} />
+                </Button>
+              </Link>
+            </div>
           </div>
         </header>
         
-        <div className="flex h-screen pt-0 md:pt-0 overflow-hidden">
-          {/* Sidebar (desktop) */}
-          <aside className="hidden md:flex md:w-64 lg:w-72 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-            <div className="p-6">
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple animate-pulse-glow flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
-                </div>
-                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
-                  Axioms School
-                </h1>
-              </div>
-            </div>
-            
-            <div className="mx-4 p-3 rounded-lg bg-blue-50 dark:bg-gray-800 flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-full bg-cgs-blue/20 flex items-center justify-center">
-                <User className="h-5 w-5 text-cgs-blue" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">{currentUser?.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
-                </p>
-              </div>
-            </div>
-            
-            <nav className="mt-6 px-4 flex-1">
-              <div className="space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={`/dashboard/${item.path}`}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive(item.path) 
-                        ? "bg-cgs-blue text-white"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-              </div>
-            </nav>
-            
-            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-              <Button 
-                variant="destructive" 
-                onClick={handleLogout} 
-                className="w-full justify-start text-sm"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-          </aside>
-
-          {/* Main content */}
-          <main className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-24 md:pb-8">
-              <Routes>
-                <Route path="/home" element={<HomeView />} />
-                <Route path="/homework" element={<HomeworkView />} />
-                <Route path="/notices" element={<NoticesView />} />
-                <Route path="/events" element={<EventsView />} />
-                <Route path="/messages" element={<MessagesView />} />
-                <Route path="/marks" element={<MarksView />} />
-                <Route path="/teachers" element={<TeachersView />} />
-                <Route path="/profile" element={<ProfilePage />} />
-              </Routes>
-            </div>
-          </main>
-        </div>
-        
-        {/* Sheet/Drawer for Mobile Navigation */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="w-[80%] max-w-[300px] p-0">
-            <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-800">
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
-                </div>
-                <SheetTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
-                  Axioms School
-                </SheetTitle>
-              </div>
-            </SheetHeader>
-            
-            <div className="p-4">
-              <div className="mb-4 p-3 rounded-lg bg-blue-50 dark:bg-gray-800 flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-cgs-blue/20 flex items-center justify-center">
-                  <User className="h-5 w-5 text-cgs-blue" />
-                </div>
-                <div>
-                  <p className="font-medium text-sm">{currentUser?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {currentUser?.role === 'teacher' ? `Teacher - ${currentUser?.subject} - Class ${currentUser?.class}` : `Student - Class ${currentUser?.class}`}
-                  </p>
-                </div>
-              </div>
-              
-              <nav className="space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={`/dashboard/${item.path}`}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive(item.path) 
-                        ? "bg-cgs-blue text-white"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    )}
-                    onClick={() => setOpen(false)}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-                
-                <Button 
-                  variant="destructive" 
-                  onClick={() => {
-                    setOpen(false);
-                    handleLogout();
-                  }} 
-                  className="w-full justify-start text-sm mt-4"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </nav>
-            </div>
-          </SheetContent>
-        </Sheet>
-        
-        {/* Mobile Bottom Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
-          <div className="flex items-center justify-around">
-            {mobileNavigation.map((item) => (
-              <TooltipProvider key={item.path}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={`/dashboard/${item.path}`}
-                      className={cn(
-                        "flex flex-1 flex-col items-center justify-center py-2 text-xs",
-                        isActive(item.path)
-                          ? "text-cgs-blue"
-                          : "text-gray-500 dark:text-gray-400"
-                      )}
-                    >
-                      <item.icon className={cn(
-                        "h-6 w-6 mb-1",
-                        isActive(item.path)
-                          ? "text-cgs-blue"
-                          : "text-gray-500 dark:text-gray-400"
-                      )} />
-                      <span>{item.name}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">
-                    {item.name}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
-            
-            {/* Menu Button */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => setOpen(true)}
-                    className="flex flex-1 flex-col items-center justify-center py-2 text-xs text-gray-500 dark:text-gray-400"
-                  >
-                    <Menu className="h-6 w-6 mb-1" />
-                    <span>Menu</span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  Menu
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </nav>
+        {/* Page content */}
+        <main className="flex-1 p-4 md:p-6">
+          <Outlet />
+        </main>
       </div>
-    </DataProvider>
+      <Toaster />
+    </div>
   );
 };
 

@@ -12,7 +12,8 @@ import {
   MessageCircle,
   BookIcon, 
   CheckCircle, 
-  Clock 
+  Clock, 
+  FileText
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -23,7 +24,8 @@ const HomeView = () => {
     getFilteredNotices, 
     getFilteredEvents, 
     getFilteredMessages,
-    getFilteredMarks
+    getFilteredMarks,
+    getFilteredExamSchedules
   } = useData();
   const [stats, setStats] = useState({
     homeworks: 0,
@@ -31,7 +33,8 @@ const HomeView = () => {
     events: 0,
     unreadMessages: 0,
     completedTasks: 0,
-    upcomingEvents: 0
+    upcomingEvents: 0,
+    exams: 0
   });
   const [subjectPerformance, setSubjectPerformance] = useState<{subject: string, average: number}[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,12 +45,11 @@ const HomeView = () => {
     const events = getFilteredEvents();
     const messages = getFilteredMessages();
     const marks = getFilteredMarks();
+    const exams = getFilteredExamSchedules();
     
     // Calculate unread messages
     const unreadMessages = messages.filter(msg => 
-      currentUser?.role === 'teacher' 
-        ? msg.receiverId === currentUser.id && !msg.read
-        : msg.receiverId === currentUser.id && !msg.read
+      msg.receiverId === currentUser?.id && !msg.read
     ).length;
     
     // Calculate upcoming events (events in the next 7 days)
@@ -58,8 +60,13 @@ const HomeView = () => {
       return eventDate > now && eventDate < oneWeekFromNow;
     }).length;
     
-    // Set completedTasks to 0 always
-    const completedTasks = 0;
+    // Calculate completed tasks (for students only)
+    let completedTasks = 0;
+    if (currentUser?.role === 'student') {
+      completedTasks = homeworks.filter(hw => 
+        hw.completedBy?.includes(currentUser.id)
+      ).length;
+    }
     
     // Calculate subject performance for students
     if (currentUser?.role === 'student' && marks.length > 0) {
@@ -89,11 +96,12 @@ const HomeView = () => {
       events: events.length,
       unreadMessages,
       completedTasks,
-      upcomingEvents
+      upcomingEvents,
+      exams: exams.length
     });
     
     setLoading(false);
-  }, [currentUser, getFilteredHomeworks, getFilteredNotices, getFilteredEvents, getFilteredMessages, getFilteredMarks]);
+  }, [currentUser, getFilteredHomeworks, getFilteredNotices, getFilteredEvents, getFilteredMessages, getFilteredMarks, getFilteredExamSchedules]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -122,8 +130,8 @@ const HomeView = () => {
   return (
     <div className="space-y-6">
       {/* Header section with greeting */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-lg shadow-sm border border-blue-100 dark:border-gray-700">
-        <h1 className="text-3xl font-bold tracking-tight mb-1">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-4 sm:p-6 rounded-lg shadow-sm border border-blue-100 dark:border-gray-700">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1">
           {getGreeting()}, {currentUser?.name}!
         </h1>
         <p className="text-muted-foreground">
@@ -137,7 +145,7 @@ const HomeView = () => {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
         <Card className="card-3d hover:shadow-md transition-all">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Homework</CardTitle>
@@ -180,7 +188,18 @@ const HomeView = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.unreadMessages}</div>
-            <p className="text-xs text-muted-foreground">Unread communications</p>
+            <p className="text-xs text-muted-foreground">Unread messages</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="card-3d hover:shadow-md transition-all">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm font-medium">Exams</CardTitle>
+            <FileText className="h-4 w-4 text-indigo-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.exams}</div>
+            <p className="text-xs text-muted-foreground">Scheduled exams</p>
           </CardContent>
         </Card>
       </div>
@@ -219,7 +238,9 @@ const HomeView = () => {
                     <span className="text-sm font-medium">{stats.completedTasks}</span>
                   </div>
                   <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{ width: `${Math.min(stats.completedTasks * 5, 100)}%` }}></div>
+                    <div className="bg-green-600 h-2 rounded-full" style={{ 
+                      width: `${stats.homeworks > 0 ? Math.min((stats.completedTasks / stats.homeworks) * 100, 100) : 0}%` 
+                    }}></div>
                   </div>
                 </div>
               </div>
@@ -235,6 +256,21 @@ const HomeView = () => {
                   </div>
                   <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div className="bg-amber-600 h-2 rounded-full" style={{ width: `${Math.min(stats.upcomingEvents * 15, 100)}%` }}></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between">
+                    <h3 className="font-medium text-sm">Scheduled Exams</h3>
+                    <span className="text-sm font-medium">{stats.exams}</span>
+                  </div>
+                  <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${Math.min(stats.exams * 15, 100)}%` }}></div>
                   </div>
                 </div>
               </div>
@@ -329,7 +365,7 @@ const HomeView = () => {
                         </li>
                         <li className="flex items-center">
                           <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-                          <span>Respond to student messages</span>
+                          <span>Manage exam schedules</span>
                         </li>
                       </>
                     ) : (
@@ -344,11 +380,11 @@ const HomeView = () => {
                         </li>
                         <li className="flex items-center">
                           <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-                          <span>Check upcoming events for your class</span>
+                          <span>Check upcoming events and exams</span>
                         </li>
                         <li className="flex items-center">
                           <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-                          <span>Send messages to your class teacher</span>
+                          <span>Mark homework tasks as complete</span>
                         </li>
                       </>
                     )}
@@ -367,35 +403,41 @@ const HomeView = () => {
           <CardDescription>Frequently used actions based on your role</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <Link to="/dashboard/homework">
-              <Button variant="outline" className="w-full h-24 flex flex-col space-y-2 items-center justify-center">
-                <BookOpen className="h-6 w-6 text-cgs-blue" />
-                <span>Homework</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+            <Link to="/dashboard/homework" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-cgs-blue" />
+                <span className="text-xs sm:text-sm">Homework</span>
               </Button>
             </Link>
-            <Link to="/dashboard/notices">
-              <Button variant="outline" className="w-full h-24 flex flex-col space-y-2 items-center justify-center">
-                <Bell className="h-6 w-6 text-cgs-purple" />
-                <span>Notices</span>
+            <Link to="/dashboard/notices" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-cgs-purple" />
+                <span className="text-xs sm:text-sm">Notices</span>
               </Button>
             </Link>
-            <Link to="/dashboard/events">
-              <Button variant="outline" className="w-full h-24 flex flex-col space-y-2 items-center justify-center">
-                <Calendar className="h-6 w-6 text-cgs-green" />
-                <span>Events</span>
+            <Link to="/dashboard/events" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-cgs-green" />
+                <span className="text-xs sm:text-sm">Events</span>
               </Button>
             </Link>
-            <Link to="/dashboard/messages">
-              <Button variant="outline" className="w-full h-24 flex flex-col space-y-2 items-center justify-center">
-                <MessageCircle className="h-6 w-6 text-amber-500" />
-                <span>Messages</span>
+            <Link to="/dashboard/messages" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
+                <span className="text-xs sm:text-sm">Messages</span>
               </Button>
             </Link>
-            <Link to="/dashboard/marks">
-              <Button variant="outline" className="w-full h-24 flex flex-col space-y-2 items-center justify-center">
-                <BookIcon className="h-6 w-6 text-red-500" />
-                <span>Marks</span>
+            <Link to="/dashboard/marks" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <BookIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
+                <span className="text-xs sm:text-sm">Marks</span>
+              </Button>
+            </Link>
+            <Link to="/dashboard/exams" className="block w-full">
+              <Button variant="outline" className="w-full h-20 sm:h-24 flex flex-col space-y-2 items-center justify-center">
+                <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-500" />
+                <span className="text-xs sm:text-sm">Exams</span>
               </Button>
             </Link>
           </div>
