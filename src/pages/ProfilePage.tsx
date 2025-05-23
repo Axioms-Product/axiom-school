@@ -249,10 +249,17 @@ const ProfilePage = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div>
-                        <Label className="text-muted-foreground text-sm">Subject Teaching</Label>
-                        <p className="font-medium">{currentUser.subject}</p>
-                      </div>
+                      {currentUser.subject ? (
+                        <div>
+                          <Label className="text-muted-foreground text-sm">Subject Teaching</Label>
+                          <p className="font-medium">{currentUser.subject}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <Label className="text-muted-foreground text-sm">Subject Teaching</Label>
+                          <p className="text-muted-foreground italic">No subject assigned</p>
+                        </div>
+                      )}
                       <div>
                         <Label className="text-muted-foreground text-sm">Class Assignment</Label>
                         <p className="font-medium">Class {currentUser.class}</p>
