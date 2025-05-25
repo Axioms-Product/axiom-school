@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,7 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useData } from '@/contexts/DataContext';
 import { toast } from 'sonner';
+import { useSearchParams } from 'react-router-dom';
 import { 
   User, Mail, Phone, School, Book, MapPin, Clock, LogOut, 
   Edit3, Save, X, Plus, Calendar, Award, Users, BookOpen,
@@ -16,21 +17,55 @@ import {
 
 const ProfilePage = () => {
   const { currentUser, updateUserProfile, logout } = useAuth();
+  const { getStudentsForClass } = useData();
+  const [searchParams] = useSearchParams();
+  const studentId = searchParams.get('studentId');
+  
+  // Get the profile to display (either current user or specific student)
+  const profileUser = studentId 
+    ? getStudentsForClass(currentUser?.class || '').find(s => s.id === studentId) || currentUser
+    : currentUser;
+  
+  const isViewingOtherProfile = studentId && studentId !== currentUser?.id;
+  const canEdit = !isViewingOtherProfile;
+
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [formData, setFormData] = useState({
-    name: currentUser?.name || '',
-    email: currentUser?.email || '',
-    phone: currentUser?.phone || '',
-    address: currentUser?.address || '',
-    bio: currentUser?.bio || '',
-    emergencyContact: currentUser?.emergencyContact || ''
+    name: profileUser?.name || '',
+    email: profileUser?.email || '',
+    phone: profileUser?.phone || '',
+    address: profileUser?.address || '',
+    bio: profileUser?.bio || '',
+    emergencyContact: profileUser?.emergencyContact || ''
   });
   const [newQualification, setNewQualification] = useState('');
   const [newAchievement, setNewAchievement] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Update form data when profileUser changes
+  useEffect(() => {
+    if (profileUser) {
+      setFormData({
+        name: profileUser.name || '',
+        email: profileUser.email || '',
+        phone: profileUser.phone || '',
+        address: profileUser.address || '',
+        bio: profileUser.bio || '',
+        emergencyContact: profileUser.emergencyContact || ''
+      });
+    }
+  }, [profileUser]);
+
+  const calculateYearsInSchool = () => {
+    if (!profileUser?.joiningDate) return 0;
+    return Math.floor((new Date().getTime() - new Date(profileUser.joiningDate).getTime()) / (1000 * 60 * 60 * 24 * 365));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canEdit) return;
+    
     setLoading(true);
     
     try {
@@ -48,7 +83,7 @@ const ProfilePage = () => {
   };
 
   const addQualification = async () => {
-    if (!newQualification.trim() || !updateUserProfile) return;
+    if (!newQualification.trim() || !updateUserProfile || !canEdit) return;
     
     try {
       const updatedQualifications = [...(currentUser?.qualifications || []), newQualification];
@@ -61,7 +96,7 @@ const ProfilePage = () => {
   };
 
   const addAchievement = async () => {
-    if (!newAchievement.trim() || !updateUserProfile) return;
+    if (!newAchievement.trim() || !updateUserProfile || !canEdit) return;
     
     try {
       const updatedAchievements = [...(currentUser?.achievements || []), newAchievement];
@@ -74,7 +109,7 @@ const ProfilePage = () => {
   };
 
   const removeQualification = async (index: number) => {
-    if (!updateUserProfile) return;
+    if (!updateUserProfile || !canEdit) return;
     
     try {
       const updatedQualifications = currentUser?.qualifications?.filter((_, i) => i !== index) || [];
@@ -86,7 +121,7 @@ const ProfilePage = () => {
   };
 
   const removeAchievement = async (index: number) => {
-    if (!updateUserProfile) return;
+    if (!updateUserProfile || !canEdit) return;
     
     try {
       const updatedAchievements = currentUser?.achievements?.filter((_, i) => i !== index) || [];
@@ -111,12 +146,14 @@ const ProfilePage = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Profile Dashboard
+            {isViewingOtherProfile ? `${profileUser?.name}'s Profile` : 'Profile Dashboard'}
           </h1>
-          <p className="text-muted-foreground mt-1">Manage your account and preferences</p>
+          <p className="text-muted-foreground mt-1">
+            {isViewingOtherProfile ? 'View student information' : 'Manage your account and preferences'}
+          </p>
         </div>
         <div className="flex gap-2">
-          {!isEditing && (
+          {!isEditing && canEdit && (
             <Button 
               onClick={() => setIsEditing(true)}
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
@@ -136,38 +173,40 @@ const ProfilePage = () => {
               <div className="flex flex-col items-center text-center">
                 <div className="relative mb-4">
                   <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-3xl">{currentUser?.name?.charAt(0)}</span>
+                    <span className="text-white font-bold text-3xl">{profileUser?.name?.charAt(0)}</span>
                   </div>
                   <div className="absolute -bottom-1 -right-1 h-8 w-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
                     <div className="h-3 w-3 bg-white rounded-full"></div>
                   </div>
                 </div>
                 
-                <h2 className="text-xl font-bold">{currentUser?.name}</h2>
-                <p className="text-sm text-muted-foreground">@{currentUser?.username}</p>
+                <h2 className="text-xl font-bold">{profileUser?.name}</h2>
+                <p className="text-sm text-muted-foreground">@{profileUser?.username}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant={currentUser?.role === 'teacher' ? 'default' : 'secondary'}>
-                    {currentUser?.role === 'teacher' ? 'Teacher' : 'Student'}
+                  <Badge variant={profileUser?.role === 'teacher' ? 'default' : 'secondary'}>
+                    {profileUser?.role === 'teacher' ? 'Teacher' : 'Student'}
                   </Badge>
-                  <Badge variant="outline">Class {currentUser?.class}</Badge>
+                  <Badge variant="outline">Class {profileUser?.class}</Badge>
                 </div>
                 
-                {currentUser?.role === 'teacher' && currentUser?.subject && (
+                {profileUser?.role === 'teacher' && profileUser?.subject && (
                   <div className="mt-2 px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-700 dark:text-purple-300 rounded-full text-sm">
-                    {currentUser.subject}
+                    {profileUser.subject}
                   </div>
                 )}
                 
-                <div className="w-full mt-6 space-y-2">
-                  <Button 
-                    variant="outline"
-                    className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
+                {!isViewingOtherProfile && (
+                  <div className="w-full mt-6 space-y-2">
+                    <Button 
+                      variant="outline"
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -207,7 +246,7 @@ const ProfilePage = () => {
                 <User className="h-5 w-5 text-blue-600" />
                 Personal Information
               </CardTitle>
-              {isEditing && (
+              {isEditing && canEdit && (
                 <div className="flex gap-2">
                   <Button
                     onClick={handleSubmit}
@@ -223,12 +262,12 @@ const ProfilePage = () => {
                     onClick={() => {
                       setIsEditing(false);
                       setFormData({
-                        name: currentUser?.name || '',
-                        email: currentUser?.email || '',
-                        phone: currentUser?.phone || '',
-                        address: currentUser?.address || '',
-                        bio: currentUser?.bio || '',
-                        emergencyContact: currentUser?.emergencyContact || ''
+                        name: profileUser?.name || '',
+                        email: profileUser?.email || '',
+                        phone: profileUser?.phone || '',
+                        address: profileUser?.address || '',
+                        bio: profileUser?.bio || '',
+                        emergencyContact: profileUser?.emergencyContact || ''
                       });
                     }}
                     size="sm"
@@ -240,7 +279,7 @@ const ProfilePage = () => {
               )}
             </CardHeader>
             <CardContent>
-              {isEditing ? (
+              {isEditing && canEdit ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -313,7 +352,7 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Full Name</Label>
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>{currentUser?.name}</p>
+                        <p>{profileUser?.name}</p>
                       </div>
                     </div>
                     
@@ -321,7 +360,7 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Username</Label>
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>@{currentUser?.username}</p>
+                        <p>@{profileUser?.username}</p>
                       </div>
                     </div>
                     
@@ -329,7 +368,7 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Email</Label>
                       <div className="flex items-center">
                         <Mail className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>{currentUser?.email}</p>
+                        <p>{profileUser?.email}</p>
                       </div>
                     </div>
                     
@@ -337,7 +376,7 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Phone</Label>
                       <div className="flex items-center">
                         <Phone className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>{currentUser?.phone || 'Not provided'}</p>
+                        <p>{profileUser?.phone || 'Not provided'}</p>
                       </div>
                     </div>
                     
@@ -345,7 +384,7 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Role</Label>
                       <div className="flex items-center">
                         <School className="h-4 w-4 mr-2 text-blue-500" />
-                        <p className="capitalize">{currentUser?.role}</p>
+                        <p className="capitalize">{profileUser?.role}</p>
                       </div>
                     </div>
                     
@@ -353,16 +392,16 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Class</Label>
                       <div className="flex items-center">
                         <Book className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>Class {currentUser?.class}</p>
+                        <p>Class {profileUser?.class}</p>
                       </div>
                     </div>
 
-                    {currentUser?.joiningDate && (
+                    {profileUser?.joiningDate && (
                       <div className="space-y-1">
                         <Label className="text-muted-foreground text-sm">Joining Date</Label>
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2 text-blue-500" />
-                          <p>{new Date(currentUser.joiningDate).toLocaleDateString()}</p>
+                          <p>{new Date(profileUser.joiningDate).toLocaleDateString()}</p>
                         </div>
                       </div>
                     )}
@@ -371,27 +410,27 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Emergency Contact</Label>
                       <div className="flex items-center">
                         <Phone className="h-4 w-4 mr-2 text-red-500" />
-                        <p>{currentUser?.emergencyContact || 'Not provided'}</p>
+                        <p>{profileUser?.emergencyContact || 'Not provided'}</p>
                       </div>
                     </div>
                   </div>
                   
-                  {currentUser?.address && (
+                  {profileUser?.address && (
                     <div className="space-y-1">
                       <Label className="text-muted-foreground text-sm">Address</Label>
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-                        <p>{currentUser.address}</p>
+                        <p>{profileUser.address}</p>
                       </div>
                     </div>
                   )}
                   
-                  {currentUser?.bio && (
+                  {profileUser?.bio && (
                     <div className="space-y-1">
                       <Label className="text-muted-foreground text-sm">Bio</Label>
                       <div className="flex items-start">
                         <MessageSquare className="h-4 w-4 mr-2 text-blue-500 mt-1" />
-                        <p className="text-sm leading-relaxed">{currentUser.bio}</p>
+                        <p className="text-sm leading-relaxed">{profileUser.bio}</p>
                       </div>
                     </div>
                   )}
@@ -401,7 +440,7 @@ const ProfilePage = () => {
           </Card>
 
           {/* Academic Information for Teachers */}
-          {currentUser?.role === 'teacher' && (
+          {profileUser?.role === 'teacher' && (
             <>
               {/* Qualifications */}
               <Card>
@@ -414,14 +453,16 @@ const ProfilePage = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      {currentUser?.qualifications && currentUser.qualifications.length > 0 ? (
-                        currentUser.qualifications.map((qual, index) => (
+                      {profileUser?.qualifications && profileUser.qualifications.length > 0 ? (
+                        profileUser.qualifications.map((qual, index) => (
                           <Badge key={index} variant="secondary" className="flex items-center gap-1">
                             {qual}
-                            <X 
-                              className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                              onClick={() => removeQualification(index)}
-                            />
+                            {canEdit && (
+                              <X 
+                                className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                                onClick={() => removeQualification(index)}
+                              />
+                            )}
                           </Badge>
                         ))
                       ) : (
@@ -429,17 +470,19 @@ const ProfilePage = () => {
                       )}
                     </div>
                     
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add a qualification (e.g., M.Sc. Mathematics)"
-                        value={newQualification}
-                        onChange={(e) => setNewQualification(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addQualification()}
-                      />
-                      <Button onClick={addQualification} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {canEdit && (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add a qualification (e.g., M.Sc. Mathematics)"
+                          value={newQualification}
+                          onChange={(e) => setNewQualification(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addQualification()}
+                        />
+                        <Button onClick={addQualification} size="sm">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -455,15 +498,17 @@ const ProfilePage = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      {currentUser?.achievements && currentUser.achievements.length > 0 ? (
-                        currentUser.achievements.map((achievement, index) => (
+                      {profileUser?.achievements && profileUser.achievements.length > 0 ? (
+                        profileUser.achievements.map((achievement, index) => (
                           <Badge key={index} variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
                             <Star className="h-3 w-3" />
                             {achievement}
-                            <X 
-                              className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                              onClick={() => removeAchievement(index)}
-                            />
+                            {canEdit && (
+                              <X 
+                                className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                                onClick={() => removeAchievement(index)}
+                              />
+                            )}
                           </Badge>
                         ))
                       ) : (
@@ -471,55 +516,78 @@ const ProfilePage = () => {
                       )}
                     </div>
                     
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add an achievement (e.g., Best Teacher Award 2024)"
-                        value={newAchievement}
-                        onChange={(e) => setNewAchievement(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addAchievement()}
-                      />
-                      <Button onClick={addAchievement} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {canEdit && (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add an achievement (e.g., Best Teacher Award 2025)"
+                          value={newAchievement}
+                          onChange={(e) => setNewAchievement(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addAchievement()}
+                        />
+                        <Button onClick={addAchievement} size="sm">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Teaching Information */}
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
                     <BookOpen className="h-5 w-5 text-green-600" />
                     Teaching Information
                   </CardTitle>
+                  {canEdit && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setIsEditingExperience(!isEditingExperience)}
+                    >
+                      <Edit3 className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
                         <Label className="text-muted-foreground text-sm">Subject Teaching</Label>
-                        <p className="font-medium">{currentUser.subject || 'No subject assigned'}</p>
+                        <p className="font-medium">{profileUser.subject || 'No subject assigned'}</p>
                       </div>
                       <div>
                         <Label className="text-muted-foreground text-sm">Class Assignment</Label>
-                        <p className="font-medium">Class {currentUser.class}</p>
+                        <p className="font-medium">Class {profileUser.class}</p>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
                       <div>
                         <Label className="text-muted-foreground text-sm">Teaching Experience</Label>
-                        <p className="font-medium">
-                          {currentUser.joiningDate 
-                            ? `${Math.floor((new Date().getTime() - new Date(currentUser.joiningDate).getTime()) / (1000 * 60 * 60 * 24 * 365))} years`
-                            : 'Not available'
-                          }
-                        </p>
+                        {isEditingExperience && canEdit ? (
+                          <div className="flex gap-2 mt-1">
+                            <Input
+                              placeholder="Years of experience"
+                              defaultValue={calculateYearsInSchool().toString()}
+                              className="w-24"
+                            />
+                            <span className="self-center text-sm">years</span>
+                          </div>
+                        ) : (
+                          <p className="font-medium">
+                            {profileUser.joiningDate 
+                              ? `${calculateYearsInSchool()} years`
+                              : 'Not available'
+                            }
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Label className="text-muted-foreground text-sm">Specialization</Label>
-                        <p className="font-medium">{currentUser.subject || 'Not specified'}</p>
+                        <p className="font-medium">{profileUser.subject || 'Not specified'}</p>
                       </div>
                     </div>
                   </div>
@@ -529,27 +597,46 @@ const ProfilePage = () => {
           )}
 
           {/* Student Information */}
-          {currentUser?.role === 'student' && (
+          {profileUser?.role === 'student' && (
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5 text-blue-600" />
                   Student Information
                 </CardTitle>
+                {canEdit && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsEditingExperience(!isEditingExperience)}
+                  >
+                    <Edit3 className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
                       <Label className="text-muted-foreground text-sm">Current Class</Label>
-                      <p className="font-medium">Class {currentUser.class}</p>
+                      <p className="font-medium">Class {profileUser.class}</p>
                     </div>
-                    {currentUser.joiningDate && (
+                    {profileUser.joiningDate && (
                       <div>
                         <Label className="text-muted-foreground text-sm">Years in School</Label>
-                        <p className="font-medium">
-                          {Math.floor((new Date().getTime() - new Date(currentUser.joiningDate).getTime()) / (1000 * 60 * 60 * 24 * 365))} years
-                        </p>
+                        {isEditingExperience && canEdit ? (
+                          <div className="flex gap-2 mt-1">
+                            <Input
+                              placeholder="Years in school"
+                              defaultValue={calculateYearsInSchool().toString()}
+                              className="w-24"
+                            />
+                            <span className="self-center text-sm">years</span>
+                          </div>
+                        ) : (
+                          <p className="font-medium">{calculateYearsInSchool()} years</p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -560,7 +647,7 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <Label className="text-muted-foreground text-sm">Academic Year</Label>
-                      <p className="font-medium">2024-2025</p>
+                      <p className="font-medium">2025-2026</p>
                     </div>
                   </div>
                 </div>

@@ -5,14 +5,21 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Users, Mail, Phone, User, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const StudentsView = () => {
   const { currentUser } = useAuth();
   const { getStudentsForClass } = useData();
+  const navigate = useNavigate();
 
   // Only teachers should see this page
   const isTeacher = currentUser?.role === 'teacher';
   const students = getStudentsForClass(currentUser?.class || '');
+
+  const handleViewProfile = (studentId: string) => {
+    // Navigate to profile with student ID as query parameter
+    navigate(`/dashboard/profile?studentId=${studentId}`);
+  };
 
   if (!isTeacher) {
     return (
@@ -102,6 +109,7 @@ const StudentsView = () => {
                     size="sm" 
                     variant="outline" 
                     className="w-full text-blue-600 border-blue-200 hover:bg-blue-50"
+                    onClick={() => handleViewProfile(student.id)}
                   >
                     <User className="h-4 w-4 mr-1" />
                     View Profile

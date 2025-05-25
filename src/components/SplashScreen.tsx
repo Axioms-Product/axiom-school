@@ -55,19 +55,20 @@ const SplashScreen = () => {
           <p className="text-white/70 text-lg">Excellence in Education</p>
         </div>
         
-        {/* Loading with dots */}
-        <div className="mt-8">
+        {/* Loading with dots at the bottom */}
+        <div className="mt-12">
           <p className="text-white text-xl font-light mb-4">
             Loading{dots}
           </p>
           <div className="flex justify-center">
-            <div className="flex space-x-1">
+            <div className="flex space-x-2">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"
+                  className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-bounce"
                   style={{
                     animationDelay: `${i * 0.2}s`,
+                    animationDuration: '1.4s'
                   }}
                 />
               ))}
