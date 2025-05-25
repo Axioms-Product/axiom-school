@@ -17,7 +17,8 @@ import {
   User,
   Menu,
   LogOut,
-  FileText
+  FileText,
+  GraduationCap
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -49,9 +50,11 @@ const Dashboard = () => {
     { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={20} /> },
   ];
   
-  // Add Teachers only for students
+  // Add role-specific navigation items
   if (currentUser?.role === 'student') {
     navigationItems.push({ name: 'Teachers', path: '/dashboard/teachers', icon: <Users2 size={20} /> });
+  } else if (currentUser?.role === 'teacher') {
+    navigationItems.push({ name: 'Students', path: '/dashboard/students', icon: <GraduationCap size={20} /> });
   }
 
   return (

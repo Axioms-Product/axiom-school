@@ -20,6 +20,7 @@ import EventsView from '@/components/dashboard/EventsView';
 import MarksView from '@/components/dashboard/MarksView';
 import MessagesView from '@/components/dashboard/MessagesView';
 import TeachersView from '@/components/dashboard/TeachersView';
+import StudentsView from '@/components/dashboard/StudentsView';
 import ExamScheduleView from '@/components/dashboard/ExamScheduleView';
 
 const AppContent = () => {
@@ -53,6 +54,7 @@ const AppContent = () => {
           <Route path="marks" element={<MarksView />} />
           <Route path="messages" element={<MessagesView />} />
           <Route path="teachers" element={<TeachersView />} />
+          <Route path="students" element={<StudentsView />} />
           <Route path="exams" element={<ExamScheduleView />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>

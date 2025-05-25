@@ -46,11 +46,21 @@ const SplashScreen = () => {
 
       <div className="z-10 text-center animate-scale-in">
         <Logo size="xl" className="justify-center mb-8" />
+        
+        {/* School Name */}
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 mb-2">
+            Axioms School
+          </h1>
+          <p className="text-white/70 text-lg">Excellence in Education</p>
+        </div>
+        
+        {/* Loading with dots */}
         <div className="mt-8">
-          <p className="text-white text-xl font-light">
+          <p className="text-white text-xl font-light mb-4">
             Loading{dots}
           </p>
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center">
             <div className="flex space-x-1">
               {[0, 1, 2].map((i) => (
                 <div
