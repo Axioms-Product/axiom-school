@@ -23,9 +23,9 @@ import TeachersView from '@/components/dashboard/TeachersView';
 import ExamScheduleView from '@/components/dashboard/ExamScheduleView';
 
 const AppContent = () => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { loading, isAuthenticated } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return <SplashScreen />;
   }
 
