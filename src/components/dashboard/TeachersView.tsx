@@ -168,7 +168,7 @@ const TeachersView = () => {
       <Card>
         <CardHeader>
           <CardTitle>Contact Information</CardTitle>
-          <CardDescription>Other ways to reach your teachers</CardDescription>
+          <CardDescription>Other ways to reach your teachers and school</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -178,9 +178,9 @@ const TeachersView = () => {
                 <p className="text-sm text-muted-foreground">
                   For urgent matters, please contact the school office:
                   <br />
-                  Phone: (555) 123-4567
+                  Phone: +91 8092710478
                   <br />
-                  Email: office@axioms.edu
+                  Email: axiomsproduct@gmail.com
                 </p>
               </div>
               <div>
@@ -188,9 +188,9 @@ const TeachersView = () => {
                 <p className="text-sm text-muted-foreground">
                   Teachers are available for in-person meetings:
                   <br />
-                  Monday - Friday: 3:00 PM - 4:00 PM
+                  Monday to Saturday: 7am to 2am (anytime)
                   <br />
-                  Location: Staff Room, Main Building
+                  Location: Staffroom, at 3rd floor
                 </p>
               </div>
             </div>

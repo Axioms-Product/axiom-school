@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { 
   User, Mail, Phone, School, Book, MapPin, Clock, LogOut, 
   Edit3, Save, X, Plus, Calendar, Award, Users, BookOpen,
-  GraduationCap, Star, Target, TrendingUp, MessageSquare
+  GraduationCap, Star, Target, MessageSquare
 } from 'lucide-react';
 
 const ProfilePage = () => {
@@ -171,36 +171,6 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Quick Stats for Teachers */}
-          {currentUser?.role === 'teacher' && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                  Quick Stats
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Students</span>
-                  <span className="font-semibold">45</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Classes Today</span>
-                  <span className="font-semibold">3</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Pending Tasks</span>
-                  <span className="font-semibold text-orange-600">8</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">This Month</span>
-                  <span className="font-semibold text-green-600">92% Attendance</span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
           
           {/* School Information */}
           <Card className="mt-6">
@@ -444,15 +414,19 @@ const ProfilePage = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      {currentUser?.qualifications?.map((qual, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                          {qual}
-                          <X 
-                            className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                            onClick={() => removeQualification(index)}
-                          />
-                        </Badge>
-                      )) || <p className="text-muted-foreground text-sm">No qualifications added</p>}
+                      {currentUser?.qualifications && currentUser.qualifications.length > 0 ? (
+                        currentUser.qualifications.map((qual, index) => (
+                          <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                            {qual}
+                            <X 
+                              className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                              onClick={() => removeQualification(index)}
+                            />
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground text-sm">No qualifications added yet</p>
+                      )}
                     </div>
                     
                     <div className="flex gap-2">
@@ -481,16 +455,20 @@ const ProfilePage = () => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      {currentUser?.achievements?.map((achievement, index) => (
-                        <Badge key={index} variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
-                          <Star className="h-3 w-3" />
-                          {achievement}
-                          <X 
-                            className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                            onClick={() => removeAchievement(index)}
-                          />
-                        </Badge>
-                      )) || <p className="text-muted-foreground text-sm">No achievements added</p>}
+                      {currentUser?.achievements && currentUser.achievements.length > 0 ? (
+                        currentUser.achievements.map((achievement, index) => (
+                          <Badge key={index} variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
+                            <Star className="h-3 w-3" />
+                            {achievement}
+                            <X 
+                              className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                              onClick={() => removeAchievement(index)}
+                            />
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground text-sm">No achievements added yet</p>
+                      )}
                     </div>
                     
                     <div className="flex gap-2">
@@ -532,7 +510,12 @@ const ProfilePage = () => {
                     <div className="space-y-4">
                       <div>
                         <Label className="text-muted-foreground text-sm">Teaching Experience</Label>
-                        <p className="font-medium">Calculate based on joining date</p>
+                        <p className="font-medium">
+                          {currentUser.joiningDate 
+                            ? `${Math.floor((new Date().getTime() - new Date(currentUser.joiningDate).getTime()) / (1000 * 60 * 60 * 24 * 365))} years`
+                            : 'Not available'
+                          }
+                        </p>
                       </div>
                       <div>
                         <Label className="text-muted-foreground text-sm">Specialization</Label>
@@ -545,32 +528,41 @@ const ProfilePage = () => {
             </>
           )}
 
-          {/* Student Progress */}
+          {/* Student Information */}
           {currentUser?.role === 'student' && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5 text-blue-600" />
-                  Academic Progress
+                  Student Information
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">85%</div>
-                    <div className="text-sm text-muted-foreground">Overall Grade</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-muted-foreground text-sm">Current Class</Label>
+                      <p className="font-medium">Class {currentUser.class}</p>
+                    </div>
+                    {currentUser.joiningDate && (
+                      <div>
+                        <Label className="text-muted-foreground text-sm">Years in School</Label>
+                        <p className="font-medium">
+                          {Math.floor((new Date().getTime() - new Date(currentUser.joiningDate).getTime()) / (1000 * 60 * 60 * 24 * 365))} years
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">92%</div>
-                    <div className="text-sm text-muted-foreground">Attendance</div>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-muted-foreground text-sm">Student Status</Label>
+                      <p className="font-medium">Active</p>
+                    </div>
+                    <div>
+                      <Label className="text-muted-foreground text-sm">Academic Year</Label>
+                      <p className="font-medium">2024-2025</p>
+                    </div>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">A+</div>
-                    <div className="text-sm text-muted-foreground">Best Subject</div>
-                  </div>
-                </div>
-                <div className="mt-4 text-center">
-                  <p className="text-muted-foreground">Track your academic progress in the Marks section</p>
                 </div>
               </CardContent>
             </Card>
