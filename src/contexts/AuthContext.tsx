@@ -7,21 +7,41 @@ export type UserRole = 'student' | 'teacher';
 export interface User {
   id: string;
   name: string;
+  username: string;
   email: string;
   role: UserRole;
   class: string;
   rollNo?: string;
   subject?: Subject;
+  avatar?: string;
+  phone?: string;
+  address?: string;
+  joiningDate?: string;
+  bio?: string;
+  qualifications?: string[];
+  achievements?: string[];
+  emergencyContact?: string;
 }
 
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole, assignedClass: string, rollNo?: string, subject?: Subject) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   updateUserProfile?: (updates: Partial<User>) => Promise<void>;
+}
+
+interface RegisterData {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  assignedClass: string;
+  rollNo?: string;
+  subject?: Subject;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,35 +66,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Check if there's a logged-in user in localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
+    const authToken = localStorage.getItem('authToken');
+    
+    if (storedUser && authToken) {
       try {
-        setCurrentUser(JSON.parse(storedUser));
+        const user = JSON.parse(storedUser);
+        setCurrentUser(user);
       } catch (error) {
         console.error('Failed to parse stored user:', error);
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('authToken');
       }
     }
     setLoading(false);
   }, []);
 
-  // Mock login function - in a real app, this would call an API
-  const login = async (email: string, password: string) => {
+  // Login with username instead of email
+  const login = async (username: string, password: string) => {
     try {
       // Simulated API request delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const users = JSON.parse(localStorage.getItem('users') || '{}');
       const userRecord = Object.values(users).find(
-        (u: any) => u.user.email === email && u.password === password
+        (u: any) => u.user.username === username && u.password === password
       ) as { user: User, password: string } | undefined;
       
       if (!userRecord) {
-        throw new Error('Invalid email or password');
+        throw new Error('Invalid username or password');
       }
       
       const user = userRecord.user;
+      const authToken = `token_${user.id}_${Date.now()}`;
+      
       setCurrentUser(user);
       localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authToken', authToken);
       
       return;
     } catch (error) {
@@ -83,16 +110,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock registration function
-  const register = async (
-    name: string, 
-    email: string, 
-    password: string, 
-    role: UserRole, 
-    assignedClass: string, 
-    rollNo?: string,
-    subject?: Subject
-  ) => {
+  // Updated registration function with username
+  const register = async (userData: RegisterData) => {
     try {
       // Simulated API request delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -100,29 +119,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Check if user already exists
       const users = JSON.parse(localStorage.getItem('users') || '{}');
       const userExists = Object.values(users).some(
-        (u: any) => u.user.email === email
+        (u: any) => u.user.email === userData.email || u.user.username === userData.username
       );
       
       if (userExists) {
-        throw new Error('User with this email already exists');
+        throw new Error('User with this email or username already exists');
       }
       
       // Create new user
       const userId = Date.now().toString();
       const newUser: User = {
         id: userId,
-        name,
-        email,
-        role,
-        class: assignedClass,
-        ...(role === 'student' && rollNo ? { rollNo } : {}),
-        ...(role === 'teacher' && subject ? { subject } : {})
+        name: userData.name,
+        username: userData.username,
+        email: userData.email,
+        role: userData.role,
+        class: userData.assignedClass,
+        joiningDate: new Date().toISOString().split('T')[0],
+        ...(userData.role === 'student' && userData.rollNo ? { rollNo: userData.rollNo } : {}),
+        ...(userData.role === 'teacher' && userData.subject ? { subject: userData.subject } : {})
       };
       
       // Store user in localStorage
       users[userId] = {
         user: newUser,
-        password
+        password: userData.password
       };
       
       localStorage.setItem('users', JSON.stringify(users));
@@ -134,13 +155,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Mock logout function
+  // Logout function - clear all auth data
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
   };
 
-  // Mock update user profile function
+  // Enhanced update user profile function
   const updateUserProfile = async (updates: Partial<User>) => {
     if (!currentUser) {
       throw new Error('No authenticated user');

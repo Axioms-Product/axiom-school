@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,15 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { Subject } from '@/models/types';
+import { User, Mail, Lock, Eye, EyeOff, UserPlus, GraduationCap } from 'lucide-react';
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('student');
-  const [assignedClass, setAssignedClass] = useState('');
-  const [subject, setSubject] = useState<Subject | ''>('');
+  const [formData, setFormData] = useState({
+    name: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'student' as UserRole,
+    assignedClass: '',
+    subject: '' as Subject | '',
+    rollNo: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { register } = useAuth();
@@ -27,26 +35,30 @@ const Register = () => {
 
   // Reset subject when role changes
   useEffect(() => {
-    if (role !== 'teacher') {
-      setSubject('');
+    if (formData.role !== 'teacher') {
+      setFormData(prev => ({ ...prev, subject: '' }));
     }
-  }, [role]);
+  }, [formData.role]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
     
-    if (!assignedClass) {
+    if (!formData.assignedClass) {
       setError('Please select a class');
       return;
     }
     
-    if (role === 'teacher' && !subject) {
+    if (formData.role === 'teacher' && !formData.subject) {
       setError('Please select a subject you teach');
       return;
     }
@@ -54,15 +66,16 @@ const Register = () => {
     setLoading(true);
     
     try {
-      await register(
-        name, 
-        email, 
-        password, 
-        role, 
-        assignedClass, 
-        undefined, // rollNo for students only
-        role === 'teacher' ? subject as Subject : undefined
-      );
+      await register({
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        assignedClass: formData.assignedClass,
+        rollNo: formData.rollNo || undefined,
+        subject: formData.role === 'teacher' ? formData.subject as Subject : undefined
+      });
       navigate('/login');
     } catch (err) {
       setError((err as Error).message || 'Failed to register');
@@ -72,78 +85,87 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-8">
+    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <AnimatedBackground />
       
-      <div className="w-full max-w-md z-10 animate-scale-in my-8">
+      {/* Futuristic floating elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-40 h-40 bg-cyan-500/5 rounded-full blur-xl animate-pulse delay-500"></div>
+      </div>
+      
+      <div className="w-full max-w-lg z-10 animate-scale-in my-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-cgs-blue to-cgs-purple animate-pulse-glow flex items-center justify-center">
-              <span className="text-white font-bold text-xl">A</span>
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 animate-pulse-glow flex items-center justify-center shadow-2xl">
+                <span className="text-white font-bold text-2xl">A</span>
+              </div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 blur-md opacity-50 animate-pulse"></div>
             </div>
           </div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cgs-blue to-cgs-purple">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 mb-2">
             Axioms School
           </h1>
-          <p className="mt-2 text-muted-foreground">Create a new account</p>
+          <p className="text-slate-300 text-lg">Initialize New Account</p>
         </div>
         
-        <Card className="w-full glass-effect border-white/20">
-          <CardHeader>
-            <CardTitle>Register</CardTitle>
-            <CardDescription>Enter your details to create an account</CardDescription>
+        <Card className="w-full backdrop-blur-xl bg-white/5 border-white/10 shadow-2xl border">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-2xl text-white">Account Creation</CardTitle>
+            <CardDescription className="text-slate-300">Enter your details to join the system</CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-3 rounded-lg backdrop-blur-sm mb-6">
                 {error}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <Label htmlFor="name" className="text-slate-200 font-medium">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      required
+                    />
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="username" className="text-slate-200 font-medium">Username</Label>
+                  <div className="relative">
+                    <UserPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="username"
+                      placeholder="john_doe"
+                      value={formData.username}
+                      onChange={(e) => handleInputChange('username', e.target.value)}
+                      className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-slate-200 font-medium">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
                     required
                   />
                 </div>
@@ -151,35 +173,93 @@ const Register = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
+                  <Label htmlFor="password" className="text-slate-200 font-medium">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-slate-200 font-medium">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={formData.confirmPassword}
+                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                      className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-slate-200 font-medium">Role</Label>
                   <Select
-                    value={role}
-                    onValueChange={(value) => setRole(value as UserRole)}
+                    value={formData.role}
+                    onValueChange={(value) => handleInputChange('role', value)}
                   >
-                    <SelectTrigger id="role">
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="teacher">Teacher</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/10">
+                      <SelectItem value="student" className="text-white hover:bg-white/10">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Student
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="teacher" className="text-white hover:bg-white/10">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="h-4 w-4" />
+                          Teacher
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="class">
-                    {role === 'teacher' ? 'Assigned Class' : 'Your Class'}
+                  <Label htmlFor="class" className="text-slate-200 font-medium">
+                    {formData.role === 'teacher' ? 'Assigned Class' : 'Your Class'}
                   </Label>
                   <Select
-                    value={assignedClass}
-                    onValueChange={setAssignedClass}
+                    value={formData.assignedClass}
+                    onValueChange={(value) => handleInputChange('assignedClass', value)}
                   >
-                    <SelectTrigger id="class">
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-800 border-white/10">
                       {classes.map((cls) => (
-                        <SelectItem key={cls} value={cls}>
+                        <SelectItem key={cls} value={cls} className="text-white hover:bg-white/10">
                           Class {cls}
                         </SelectItem>
                       ))}
@@ -188,19 +268,19 @@ const Register = () => {
                 </div>
               </div>
               
-              {role === 'teacher' && (
+              {formData.role === 'teacher' && (
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject You Teach</Label>
+                  <Label htmlFor="subject" className="text-slate-200 font-medium">Subject You Teach</Label>
                   <Select
-                    value={subject}
-                    onValueChange={(value) => setSubject(value as Subject)}
+                    value={formData.subject}
+                    onValueChange={(value) => handleInputChange('subject', value)}
                   >
-                    <SelectTrigger id="subject">
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-800 border-white/10">
                       {subjects.map((subj) => (
-                        <SelectItem key={subj} value={subj}>
+                        <SelectItem key={subj} value={subj} className="text-white hover:bg-white/10">
                           {subj}
                         </SelectItem>
                       ))}
@@ -211,30 +291,37 @@ const Register = () => {
               
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-cgs-blue to-cgs-purple hover:opacity-90"
+                className="w-full h-12 text-white font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 disabled={loading}
               >
-                {loading ? 'Registering...' : 'Register'}
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Creating Account...
+                  </div>
+                ) : (
+                  'Initialize Account'
+                )}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-slate-300">
               Already have an account?{' '}
-              <Link to="/login" className="text-cgs-blue hover:underline">
-                Log in
+              <Link to="/login" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
+                Access Portal
               </Link>
             </p>
           </CardFooter>
         </Card>
         
         <div className="text-center mt-8">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-cgs-blue">
-            ← Back to home
+          <Link to="/" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
+            ← Return to Portal
           </Link>
         </div>
         
-        <footer className="text-center mt-8 text-sm text-muted-foreground">
+        <footer className="text-center mt-8 text-sm text-slate-400">
           <p>Developed with ❤️ by Satyam Rojha</p>
         </footer>
       </div>
