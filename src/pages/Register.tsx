@@ -10,6 +10,7 @@ import { useAuth, UserRole } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { Subject } from '@/models/types';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, GraduationCap } from 'lucide-react';
+import Logo from '@/components/ui/logo';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -27,11 +28,18 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { register } = useAuth();
+  const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const classes = ['VI', 'VII', 'VIII', 'IX', 'X'];
   const subjects = Object.values(Subject);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   // Reset subject when role changes
   useEffect(() => {
@@ -85,8 +93,16 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       <AnimatedBackground />
+      
+      {/* Dotted pattern background */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}></div>
+      </div>
       
       {/* Futuristic floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -97,17 +113,7 @@ const Register = () => {
       
       <div className="w-full max-w-lg z-10 animate-scale-in my-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 animate-pulse-glow flex items-center justify-center shadow-2xl">
-                <span className="text-white font-bold text-2xl">A</span>
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 blur-md opacity-50 animate-pulse"></div>
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 mb-2">
-            Axioms School
-          </h1>
+          <Logo size="lg" className="justify-center mb-4" />
           <p className="text-slate-300 text-lg">Initialize New Account</p>
         </div>
         
@@ -314,12 +320,6 @@ const Register = () => {
             </p>
           </CardFooter>
         </Card>
-        
-        <div className="text-center mt-8">
-          <Link to="/" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
-            ← Return to Portal
-          </Link>
-        </div>
         
         <footer className="text-center mt-8 text-sm text-slate-400">
           <p>Developed with ❤️ by Satyam Rojha</p>

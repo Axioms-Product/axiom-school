@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { useAuth, UserRole } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, School, Eye, EyeOff, Lock, User } from 'lucide-react';
+import Logo from '@/components/ui/logo';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -17,8 +18,15 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [role, setRole] = useState<UserRole>('student');
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +44,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       <AnimatedBackground />
+      
+      {/* Dotted pattern background */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}></div>
+      </div>
       
       {/* Futuristic floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -48,17 +64,7 @@ const Login = () => {
       
       <div className="w-full max-w-md z-10 animate-scale-in">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 animate-pulse-glow flex items-center justify-center shadow-2xl">
-                <span className="text-white font-bold text-2xl">A</span>
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 blur-md opacity-50 animate-pulse"></div>
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 mb-2">
-            Axioms School
-          </h1>
+          <Logo size="lg" className="justify-center mb-4" />
           <p className="text-slate-300 text-lg">Neural Learning Interface</p>
         </div>
         
@@ -162,12 +168,6 @@ const Login = () => {
             </p>
           </CardFooter>
         </Card>
-        
-        <div className="text-center mt-8">
-          <Link to="/" className="text-sm text-slate-400 hover:text-slate-200 transition-colors">
-            ← Return to Portal
-          </Link>
-        </div>
       </div>
     </div>
   );
