@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -169,34 +170,34 @@ const HomeView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
-      <div className="space-y-8 p-6">
+      <div className="space-y-6 p-4">
         {/* Enhanced Hero Section with Interactive Elements */}
-        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800"></div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Ccircle cx=\"60\" cy=\"12\" r=\"4\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
           
           {/* Floating Elements */}
           <div className="absolute top-4 right-4 animate-bounce">
-            <Sparkles className="h-8 w-8 text-yellow-300 opacity-70" />
+            <Sparkles className="h-6 w-6 text-yellow-300 opacity-70" />
           </div>
           <div className="absolute bottom-4 left-4 animate-pulse">
-            <Rocket className="h-6 w-6 text-blue-200 opacity-60" />
+            <Rocket className="h-5 w-5 text-blue-200 opacity-60" />
           </div>
           
-          <div className="relative px-8 py-12">
+          <div className="relative px-6 py-8">
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                 <div className="text-white">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="h-20 w-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl border border-white/30">
-                      <span className="text-3xl font-bold">{currentUser?.name?.charAt(0)}</span>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-16 w-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30">
+                      <span className="text-2xl font-bold">{currentUser?.name?.charAt(0)}</span>
                     </div>
                     <div>
-                      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 leading-tight">
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 leading-tight">
                         {getGreeting()}, {currentUser?.name}! {getGreetingEmoji()}
                       </h1>
-                      <p className="text-blue-100 text-xl flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
+                      <p className="text-blue-100 text-sm flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
                         {new Date().toLocaleDateString('en-US', { 
                           weekday: 'long', 
                           month: 'long', 
@@ -207,40 +208,40 @@ const HomeView = () => {
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-3 mb-8">
-                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm hover:bg-white/30 transition-colors">
-                      <GraduationCap className="h-4 w-4 mr-2" />
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1 text-xs hover:bg-white/30 transition-colors">
+                      <GraduationCap className="h-3 w-3 mr-1" />
                       {currentUser?.role === 'teacher' ? 'Teacher' : 'Student'}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm hover:bg-white/30 transition-colors">
+                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1 text-xs hover:bg-white/30 transition-colors">
                       Class {currentUser?.class}
                     </Badge>
                     {currentUser?.role === 'teacher' && currentUser?.subject && (
-                      <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm hover:bg-white/30 transition-colors">
+                      <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1 text-xs hover:bg-white/30 transition-colors">
                         {currentUser.subject}
                       </Badge>
                     )}
                   </div>
                   
-                  <div className="mb-8">
-                    <blockquote className="text-blue-100 italic text-xl max-w-3xl leading-relaxed transition-opacity duration-500">
-                      <span className="text-2xl text-yellow-300">"</span>
+                  <div className="mb-6">
+                    <blockquote className="text-blue-100 italic text-lg max-w-2xl leading-relaxed transition-opacity duration-500">
+                      <span className="text-xl text-yellow-300">"</span>
                       {motivationalQuotes[currentQuoteIndex]}
-                      <span className="text-2xl text-yellow-300">"</span>
+                      <span className="text-xl text-yellow-300">"</span>
                     </blockquote>
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-1 mt-3">
                       {motivationalQuotes.map((_, index) => (
                         <div
                           key={index}
-                          className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                            index === currentQuoteIndex ? 'bg-yellow-300 w-8' : 'bg-white/30'
+                          className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
+                            index === currentQuoteIndex ? 'bg-yellow-300 w-6' : 'bg-white/30'
                           }`}
                         />
                       ))}
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-wrap gap-3">
                     <Link to="/dashboard/homework">
                       <Button className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group">
                         <PlayCircle className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
@@ -257,17 +258,17 @@ const HomeView = () => {
                   </div>
                 </div>
                 
-                <div className="mt-8 lg:mt-0 lg:ml-8">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300 group">
-                      <div className="text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform">{stats.completedTasks}</div>
-                      <div className="text-blue-100 text-sm font-medium">Tasks Completed</div>
-                      <CheckCircle className="h-5 w-5 mx-auto mt-2 text-green-300" />
+                <div className="mt-6 lg:mt-0 lg:ml-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                      <div className="text-2xl font-bold text-white mb-1 group-hover:scale-110 transition-transform">{stats.completedTasks}</div>
+                      <div className="text-blue-100 text-xs font-medium">Tasks Completed</div>
+                      <CheckCircle className="h-4 w-4 mx-auto mt-1 text-green-300" />
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300 group">
-                      <div className="text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform">{stats.upcomingEvents}</div>
-                      <div className="text-blue-100 text-sm font-medium">Events This Week</div>
-                      <Calendar className="h-5 w-5 mx-auto mt-2 text-orange-300" />
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                      <div className="text-2xl font-bold text-white mb-1 group-hover:scale-110 transition-transform">{stats.upcomingEvents}</div>
+                      <div className="text-blue-100 text-xs font-medium">Events This Week</div>
+                      <Calendar className="h-4 w-4 mx-auto mt-1 text-orange-300" />
                     </div>
                   </div>
                 </div>
@@ -277,86 +278,86 @@ const HomeView = () => {
         </div>
 
         {/* Compact Stats Grid with Enhanced Design */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Homework</p>
                   <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{stats.homeworks}</p>
                 </div>
-                <div className="h-8 w-8 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BookOpen className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <BookOpen className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">Notices</p>
                   <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{stats.notices}</p>
                 </div>
-                <div className="h-8 w-8 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Bell className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Bell className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-green-700 dark:text-green-300 mb-1">Events</p>
                   <p className="text-lg font-bold text-green-900 dark:text-green-100">{stats.events}</p>
                 </div>
-                <div className="h-8 w-8 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Calendar className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Messages</p>
                   <p className="text-lg font-bold text-amber-900 dark:text-amber-100">{stats.unreadMessages}</p>
                 </div>
-                <div className="h-8 w-8 bg-amber-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <MessageCircle className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-amber-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MessageCircle className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">Exams</p>
                   <p className="text-lg font-bold text-indigo-900 dark:text-indigo-100">{stats.exams}</p>
                 </div>
-                <div className="h-8 w-8 bg-indigo-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <FileText className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-indigo-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <FileText className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-900/20 dark:to-rose-800/20 cursor-pointer">
-            <CardContent className="p-3">
+            <CardContent className="p-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-rose-700 dark:text-rose-300 mb-1">Tasks</p>
                   <p className="text-lg font-bold text-rose-900 dark:text-rose-100">{stats.completedTasks}</p>
                 </div>
-                <div className="h-8 w-8 bg-rose-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <CheckCircle className="h-4 w-4 text-white" />
+                <div className="h-6 w-6 bg-rose-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <CheckCircle className="h-3 w-3 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -364,44 +365,44 @@ const HomeView = () => {
         </div>
 
         {/* Enhanced Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Progress Overview */}
           <Card className="lg:col-span-2 border-0 shadow-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 hover:shadow-2xl transition-all duration-300">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-2xl">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
-                  <TrendingUp className="h-6 w-6 text-white" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-3 text-xl">
+                <div className="h-8 w-8 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
+                  <TrendingUp className="h-5 w-5 text-white" />
                 </div>
                 Progress Overview
                 <Badge className="ml-auto bg-emerald-100 text-emerald-700">Live</Badge>
               </CardTitle>
-              <CardDescription className="text-base">Track your academic journey and achievements</CardDescription>
+              <CardDescription>Track your academic journey and achievements</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center group">
-                  <div className="h-16 w-16 mx-auto mb-3 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <BookIcon className="h-8 w-8 text-blue-700 dark:text-blue-400" />
+                  <div className="h-12 w-12 mx-auto mb-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                    <BookIcon className="h-6 w-6 text-blue-700 dark:text-blue-400" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Active Homework</h3>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">{stats.homeworks}</div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <h3 className="font-semibold mb-1">Active Homework</h3>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">{stats.homeworks}</div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000" 
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-1.5 rounded-full transition-all duration-1000" 
                       style={{ width: `${Math.min(stats.homeworks * 10, 100)}%` }}
                     ></div>
                   </div>
                 </div>
                 
                 <div className="text-center group">
-                  <div className="h-16 w-16 mx-auto mb-3 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <CheckCircle className="h-8 w-8 text-green-700 dark:text-green-400" />
+                  <div className="h-12 w-12 mx-auto mb-2 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                    <CheckCircle className="h-6 w-6 text-green-700 dark:text-green-400" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Completed Tasks</h3>
-                  <div className="text-3xl font-bold text-green-600 mb-2">{stats.completedTasks}</div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <h3 className="font-semibold mb-1">Completed Tasks</h3>
+                  <div className="text-2xl font-bold text-green-600 mb-1">{stats.completedTasks}</div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-1000" 
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-1.5 rounded-full transition-all duration-1000" 
                       style={{ 
                         width: `${stats.homeworks > 0 ? Math.min((stats.completedTasks / stats.homeworks) * 100, 100) : 0}%` 
                       }}
@@ -410,21 +411,21 @@ const HomeView = () => {
                 </div>
                 
                 <div className="text-center group">
-                  <div className="h-16 w-16 mx-auto mb-3 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <Clock className="h-8 w-8 text-amber-700 dark:text-amber-400" />
+                  <div className="h-12 w-12 mx-auto mb-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                    <Clock className="h-6 w-6 text-amber-700 dark:text-amber-400" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Upcoming Events</h3>
-                  <div className="text-3xl font-bold text-amber-600 mb-2">{stats.upcomingEvents}</div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <h3 className="font-semibold mb-1">Upcoming Events</h3>
+                  <div className="text-2xl font-bold text-amber-600 mb-1">{stats.upcomingEvents}</div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full transition-all duration-1000" 
+                      className="bg-gradient-to-r from-amber-500 to-amber-600 h-1.5 rounded-full transition-all duration-1000" 
                       style={{ width: `${Math.min(stats.upcomingEvents * 15, 100)}%` }}
                     ></div>
                   </div>
                 </div>
               </div>
               
-              <div className="pt-4 border-t">
+              <div className="pt-3 border-t">
                 <Link to="/dashboard/events" className="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center gap-2 group">
                   View detailed progress
                   <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -436,20 +437,20 @@ const HomeView = () => {
           {/* Performance or Role Info */}
           {currentUser?.role === 'student' && subjectPerformance.length > 0 ? (
             <Card className="border-0 shadow-xl bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900/20 dark:to-violet-800/20 hover:shadow-2xl transition-all duration-300">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="h-10 w-10 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg">
-                    <BarChart3 className="h-6 w-6 text-white" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <div className="h-8 w-8 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg">
+                    <BarChart3 className="h-5 w-5 text-white" />
                   </div>
                   Performance
                 </CardTitle>
                 <CardDescription>Your academic progress</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {subjectPerformance.slice(0, 3).map((subject, index) => (
-                  <div key={index} className="flex items-center gap-3 group">
-                    <div className="h-10 w-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <BookOpen className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
+                  <div key={index} className="flex items-center gap-2 group">
+                    <div className="h-8 w-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <BookOpen className="h-4 w-4 text-indigo-700 dark:text-indigo-400" />
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
@@ -459,9 +460,9 @@ const HomeView = () => {
                           <span className="text-sm font-bold">{subject.average}/10</span>
                         </div>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div 
-                          className={`h-2 rounded-full transition-all duration-1000 ${
+                          className={`h-1.5 rounded-full transition-all duration-1000 ${
                             subject.average >= 8 ? 'bg-gradient-to-r from-green-500 to-green-600' : 
                             subject.average >= 6 ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 
                             'bg-gradient-to-r from-red-500 to-red-600'
@@ -473,7 +474,7 @@ const HomeView = () => {
                   </div>
                 ))}
                 
-                <div className="pt-4 border-t">
+                <div className="pt-3 border-t">
                   <Link to="/dashboard/marks" className="text-violet-600 dark:text-violet-400 hover:underline text-sm font-medium flex items-center gap-2 group">
                     View all subjects
                     <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -483,10 +484,10 @@ const HomeView = () => {
             </Card>
           ) : (
             <Card className="border-0 shadow-xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 hover:shadow-2xl transition-all duration-300">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
-                    <Award className="h-6 w-6 text-white" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-lg">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
+                    <Award className="h-5 w-5 text-white" />
                   </div>
                   Your Role
                 </CardTitle>
@@ -497,47 +498,47 @@ const HomeView = () => {
                   }
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl hover:bg-white/70 transition-colors">
-                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-white/50 dark:bg-white/10 rounded-xl hover:bg-white/70 transition-colors">
+                    <div className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
                       {currentUser?.role === 'teacher' ? stats.homeworks : stats.completedTasks}
                     </div>
                     <div className="text-xs text-emerald-600 dark:text-emerald-400">
                       {currentUser?.role === 'teacher' ? 'Assignments' : 'Completed'}
                     </div>
                   </div>
-                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl hover:bg-white/70 transition-colors">
-                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                  <div className="text-center p-3 bg-white/50 dark:bg-white/10 rounded-xl hover:bg-white/70 transition-colors">
+                    <div className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
                       {currentUser?.class}
                     </div>
                     <div className="text-xs text-emerald-600 dark:text-emerald-400">Class</div>
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <h3 className="font-semibold">Key Focus</h3>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-sm">Key Focus</h3>
                   <div className="space-y-2">
                     {currentUser?.role === 'teacher' ? (
                       <>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                          <span className="text-sm">Student progress tracking</span>
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                          <span className="text-xs">Student progress tracking</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                          <span className="text-sm">Assignment management</span>
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                          <span className="text-xs">Assignment management</span>
                         </div>
                       </>
                     ) : (
                       <>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                          <span className="text-sm">Complete assignments</span>
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                          <span className="text-xs">Complete assignments</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                          <span className="text-sm">Improve performance</span>
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                          <span className="text-xs">Improve performance</span>
                         </div>
                       </>
                     )}
@@ -551,55 +552,55 @@ const HomeView = () => {
         {/* Enhanced Quick Actions */}
         <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-2xl">
-              <div className="h-10 w-10 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg">
-                <Zap className="h-6 w-6 text-white" />
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="h-8 w-8 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg">
+                <Zap className="h-5 w-5 text-white" />
               </div>
               Quick Actions
               <Badge className="ml-auto bg-orange-100 text-orange-700">Interactive</Badge>
             </CardTitle>
-            <CardDescription className="text-base">Access your most used features instantly</CardDescription>
+            <CardDescription>Access your most used features instantly</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               <Link to="/dashboard/homework" className="block group">
-                <div className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <BookOpen className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <BookOpen className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Homework</span>
                 </div>
               </Link>
               
               <Link to="/dashboard/notices" className="block group">
-                <div className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <Bell className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <Bell className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Notices</span>
                 </div>
               </Link>
               
               <Link to="/dashboard/events" className="block group">
-                <div className="h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <Calendar className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <Calendar className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Events</span>
                 </div>
               </Link>
               
               <Link to="/dashboard/messages" className="block group">
-                <div className="h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <MessageCircle className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <MessageCircle className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Messages</span>
                 </div>
               </Link>
               
               <Link to="/dashboard/marks" className="block group">
-                <div className="h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <Target className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <Target className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Marks</span>
                 </div>
               </Link>
               
               <Link to="/dashboard/exams" className="block group">
-                <div className="h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
-                  <FileText className="h-6 w-6 mb-1 group-hover:animate-bounce" />
+                <div className="h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex flex-col items-center justify-center text-white hover:scale-105 hover:shadow-xl transition-all duration-300 shadow-lg">
+                  <FileText className="h-5 w-5 mb-1 group-hover:animate-bounce" />
                   <span className="text-xs font-medium">Exams</span>
                 </div>
               </Link>
@@ -609,19 +610,19 @@ const HomeView = () => {
 
         {/* Motivational Footer */}
         <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white hover:shadow-2xl transition-all duration-300">
-          <CardContent className="p-8 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Brain className="h-8 w-8 animate-pulse" />
-              <h3 className="text-2xl font-bold">Keep Learning, Keep Growing!</h3>
-              <Trophy className="h-8 w-8 animate-pulse" />
+          <CardContent className="p-6 text-center">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <Brain className="h-6 w-6 animate-pulse" />
+              <h3 className="text-xl font-bold">Keep Learning, Keep Growing!</h3>
+              <Trophy className="h-6 w-6 animate-pulse" />
             </div>
-            <p className="text-blue-100 max-w-2xl mx-auto mb-4">
+            <p className="text-blue-100 max-w-xl mx-auto mb-3 text-sm">
               Every day is a new opportunity to learn something new and achieve your goals. 
               Stay focused, stay motivated, and remember that success is a journey, not a destination.
             </p>
             <div className="flex items-center justify-center gap-2">
-              <Heart className="h-5 w-5 text-red-300 animate-pulse" />
-              <span className="text-sm">Made with love for your education</span>
+              <Heart className="h-4 w-4 text-red-300 animate-pulse" />
+              <span className="text-xs">Made with love for your education</span>
             </div>
           </CardContent>
         </Card>
