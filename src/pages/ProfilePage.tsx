@@ -125,11 +125,16 @@ const ProfilePage = () => {
     if (!canEdit || !updateUserProfile) return;
     
     try {
+      const years = parseInt(experienceYears) || 0;
+      
+      // For students, update experienceYears (which represents years in school)
+      // For teachers, update experienceYears (which represents teaching experience)
       await updateUserProfile({ 
-        experienceYears: parseInt(experienceYears) || 0 
+        experienceYears: years
       });
+      
       setIsEditingExperience(false);
-      toast.success('Experience updated successfully');
+      toast.success(profileUser?.role === 'student' ? 'Years in school updated successfully' : 'Experience updated successfully');
     } catch (error) {
       toast.error('Failed to update experience');
     }
@@ -783,7 +788,7 @@ const ProfilePage = () => {
                             variant="outline"
                             onClick={() => {
                               setIsEditingExperience(false);
-                              setExperienceYears(calculateYearsInSchool().toString());
+                              setExperienceYears((profileUser?.experienceYears || calculateYearsInSchool()).toString());
                             }}
                             size="sm"
                           >
@@ -824,12 +829,13 @@ const ProfilePage = () => {
                               className="w-24"
                               type="number"
                               min="0"
+                              max="15"
                             />
                             <span className="self-center text-sm">years</span>
                           </div>
                         ) : (
                           <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <p className="font-medium">{experienceYears} years</p>
+                            <p className="font-medium">{profileUser?.experienceYears || calculateYearsInSchool()} years</p>
                           </div>
                         )}
                       </div>
