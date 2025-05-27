@@ -280,84 +280,84 @@ const HomeView = () => {
         {/* Compact Stats Grid with Enhanced Design */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Homework</p>
                   <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{stats.homeworks}</p>
                 </div>
-                <div className="h-6 w-6 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BookOpen className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <BookOpen className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">Notices</p>
                   <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{stats.notices}</p>
                 </div>
-                <div className="h-6 w-6 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Bell className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Bell className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-green-700 dark:text-green-300 mb-1">Events</p>
                   <p className="text-lg font-bold text-green-900 dark:text-green-100">{stats.events}</p>
                 </div>
-                <div className="h-6 w-6 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Calendar className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Messages</p>
                   <p className="text-lg font-bold text-amber-900 dark:text-amber-100">{stats.unreadMessages}</p>
                 </div>
-                <div className="h-6 w-6 bg-amber-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <MessageCircle className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-amber-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MessageCircle className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">Exams</p>
                   <p className="text-lg font-bold text-indigo-900 dark:text-indigo-100">{stats.exams}</p>
                 </div>
-                <div className="h-6 w-6 bg-indigo-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <FileText className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-indigo-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <FileText className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-0 bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-900/20 dark:to-rose-800/20 cursor-pointer">
-            <CardContent className="p-2">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-medium text-rose-700 dark:text-rose-300 mb-1">Tasks</p>
                   <p className="text-lg font-bold text-rose-900 dark:text-rose-100">{stats.completedTasks}</p>
                 </div>
-                <div className="h-6 w-6 bg-rose-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <CheckCircle className="h-3 w-3 text-white" />
+                <div className="h-8 w-8 bg-rose-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <CheckCircle className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardContent>
