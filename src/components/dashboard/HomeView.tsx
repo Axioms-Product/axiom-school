@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,6 @@ import {
   Bell, 
   Calendar, 
   MessageCircle,
-  BookIcon, 
   CheckCircle, 
   Clock, 
   FileText,
@@ -20,9 +18,7 @@ import {
   Target,
   BarChart3,
   Star,
-  Users,
   GraduationCap,
-  Activity,
   Brain,
   Trophy,
   Sparkles,
@@ -382,7 +378,7 @@ const HomeView = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center group">
                   <div className="h-12 w-12 mx-auto mb-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <BookIcon className="h-6 w-6 text-blue-700 dark:text-blue-400" />
+                    <BookOpen className="h-6 w-6 text-blue-700 dark:text-blue-400" />
                   </div>
                   <h3 className="font-semibold mb-1">Active Homework</h3>
                   <div className="text-2xl font-bold text-blue-600 mb-1">{stats.homeworks}</div>
