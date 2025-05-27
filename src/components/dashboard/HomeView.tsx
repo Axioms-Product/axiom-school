@@ -225,9 +225,9 @@ const HomeView = () => {
                   
                   <div className="mb-6">
                     <blockquote className="text-blue-100 italic text-lg max-w-2xl leading-relaxed transition-opacity duration-500">
-                      <span className="text-xl text-yellow-300">"</span>
+                      <span className="text-xl text-yellow-300">&quot;</span>
                       {motivationalQuotes[currentQuoteIndex]}
-                      <span className="text-xl text-yellow-300">"</span>
+                      <span className="text-xl text-yellow-300">&quot;</span>
                     </blockquote>
                     <div className="flex gap-1 mt-3">
                       {motivationalQuotes.map((_, index) => (
