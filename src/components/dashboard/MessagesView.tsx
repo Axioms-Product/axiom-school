@@ -17,11 +17,12 @@ import {
   DialogClose 
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth, User } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { format } from 'date-fns';
-import { MessageCircle, Send, User as UserIcon } from 'lucide-react';
+import { MessageCircle, Bell, Calendar, CheckCircle, Clock, FileText, TrendingUp, Award, Zap, Target, BarChart3, Star, Users, GraduationCap, Activity, Brain, Trophy, Sparkles, Rocket, Heart, ArrowRight, PlayCircle, ChevronRight } from 'lucide-react';
 
 const MessagesView = () => {
   const { currentUser } = useAuth();
@@ -78,234 +79,294 @@ const MessagesView = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
-          <p className="text-muted-foreground mt-1">
-            {isTeacher 
-              ? "Respond to student questions"
-              : `Send messages to your class teacher`
-            }
-          </p>
-        </div>
-        
-        {!isTeacher && teacherInfo && (
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-cgs-green hover:bg-cgs-green/90">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Send New Message
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Send Message to Teacher</DialogTitle>
-                <DialogDescription>
-                  Send a message to your class teacher: {teacherInfo.name}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="py-4">
-                <Textarea 
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your message here..."
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button 
-                  onClick={handleSendMessage}
-                  className="bg-cgs-green hover:bg-cgs-green/90"
-                  disabled={!newMessage.trim()}
-                >
-                  <Send className="mr-2 h-4 w-4" />
-                  Send Message
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
-
-      {messages.length === 0 ? (
-        <Card className="bg-gray-50 dark:bg-gray-800 border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-10">
-            <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-3">
-              <MessageCircle className="h-10 w-10 text-gray-400" />
-            </div>
-            <h3 className="mt-4 text-lg font-medium">No messages yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground text-center max-w-md">
-              {isTeacher 
-                ? "No messages from students yet. Once students send messages, they will appear here."
-                : teacherInfo 
-                  ? "Start a conversation with your teacher by sending a message."
-                  : "No teacher has been assigned to your class yet."
-              }
-            </p>
-            {!isTeacher && teacherInfo && (
-              <Button 
-                className="mt-4 bg-cgs-green hover:bg-cgs-green/90"
-                onClick={() => setDialogOpen(true)}
-              >
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Send New Message
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <Card className="h-full">
-              <CardContent className="p-4">
-                <div className="flex flex-col h-[400px] md:h-[500px]">
-                  <div className="border-b pb-3 mb-3">
-                    <h3 className="font-medium">Message History</h3>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Modern Header */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 rounded-3xl opacity-90"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2260%22%20cy=%2212%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30 rounded-3xl"></div>
+          
+          <div className="relative px-8 py-12">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div className="text-white">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-16 w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-lg">
+                    <MessageCircle className="h-8 w-8 text-white" />
                   </div>
-                  <ScrollArea className="flex-1 pr-4">
-                    <div className="space-y-4">
-                      {messages.map((message) => {
-                        const isSentByCurrentUser = message.senderId === currentUser?.id;
-                        
-                        return (
-                          <div 
-                            key={message.id}
-                            className={cn(
-                              "flex max-w-[80%]",
-                              isSentByCurrentUser ? "ml-auto" : "mr-auto"
-                            )}
-                          >
-                            <div
+                  <div>
+                    <h1 className="text-4xl font-bold mb-2">Messages</h1>
+                    <p className="text-emerald-100 text-lg">
+                      {isTeacher 
+                        ? "Connect with your students"
+                        : "Communicate with your teacher"
+                      }
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-3">
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
+                    <Users className="h-4 w-4 mr-2" />
+                    {isTeacher ? "Teacher Portal" : "Student Portal"}
+                  </Badge>
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
+                    Class {currentUser?.class}
+                  </Badge>
+                </div>
+              </div>
+              
+              {!isTeacher && teacherInfo && (
+                <div className="mt-8 lg:mt-0">
+                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-8 py-6 text-lg rounded-2xl shadow-lg">
+                        <MessageCircle className="mr-3 h-6 w-6 group-hover:scale-110 transition-transform" />
+                        Send New Message
+                        <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px] rounded-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl">Send Message to Teacher</DialogTitle>
+                        <DialogDescription className="text-lg">
+                          Send a message to your class teacher: {teacherInfo.name}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-6">
+                        <Textarea 
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type your message here..."
+                          rows={6}
+                          className="resize-none rounded-xl border-2 focus:border-emerald-400"
+                        />
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline" className="rounded-xl px-6">Cancel</Button>
+                        </DialogClose>
+                        <Button 
+                          onClick={handleSendMessage}
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl px-8"
+                          disabled={!newMessage.trim()}
+                        >
+                          <ArrowRight className="mr-2 h-4 w-4" />
+                          Send Message
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {messages.length === 0 ? (
+          <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden">
+            <CardContent className="p-12">
+              <div className="text-center">
+                <div className="relative mb-8">
+                  <div className="h-32 w-32 mx-auto bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center shadow-lg">
+                    <MessageCircle className="h-16 w-16 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 h-12 w-12 bg-gradient-to-br from-teal-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                    <Sparkles className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                
+                <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  No messages yet
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+                  {isTeacher 
+                    ? "Students haven't sent any messages yet. Once they reach out, their messages will appear here."
+                    : teacherInfo 
+                      ? "Start a meaningful conversation with your teacher. Ask questions, share thoughts, or seek guidance."
+                      : "No teacher has been assigned to your class yet."
+                  }
+                </p>
+                
+                {!isTeacher && teacherInfo && (
+                  <Button 
+                    className="mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl px-8 py-6 text-lg shadow-lg"
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    <MessageCircle className="mr-3 h-6 w-6" />
+                    Send First Message
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Chat Area */}
+            <div className="lg:col-span-3">
+              <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6">
+                    <h3 className="text-xl font-bold text-white flex items-center">
+                      <MessageCircle className="h-6 w-6 mr-3" />
+                      Conversation
+                    </h3>
+                  </div>
+                  
+                  <div className="flex flex-col h-[600px]">
+                    <ScrollArea className="flex-1 p-6">
+                      <div className="space-y-6">
+                        {messages.map((message) => {
+                          const isSentByCurrentUser = message.senderId === currentUser?.id;
+                          
+                          return (
+                            <div 
+                              key={message.id}
                               className={cn(
-                                "rounded-lg p-3 shadow-sm",
-                                isSentByCurrentUser 
-                                  ? "bg-cgs-blue text-white rounded-br-none"
-                                  : "bg-gray-100 dark:bg-gray-800 rounded-bl-none"
+                                "flex max-w-[85%] animate-fade-in",
+                                isSentByCurrentUser ? "ml-auto" : "mr-auto"
                               )}
                             >
-                              <p className="mb-1">{message.content}</p>
-                              <div className="text-xs opacity-70 flex justify-between mt-1">
-                                <span>{message.senderName}</span>
-                                <span>{format(new Date(message.timestamp), 'MMM d, h:mm a')}</span>
+                              <div
+                                className={cn(
+                                  "rounded-2xl p-4 shadow-lg",
+                                  isSentByCurrentUser 
+                                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-br-md"
+                                    : "bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-bl-md"
+                                )}
+                              >
+                                <p className="mb-3 leading-relaxed">{message.content}</p>
+                                <div className={cn(
+                                  "text-xs flex justify-between items-center",
+                                  isSentByCurrentUser ? "text-emerald-100" : "text-gray-500 dark:text-gray-400"
+                                )}>
+                                  <span className="font-medium">{message.senderName}</span>
+                                  <span>{format(new Date(message.timestamp), 'MMM d, h:mm a')}</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </ScrollArea>
-                  
-                  <div className="border-t pt-3 mt-3">
-                    <div className="flex gap-2">
-                      <Textarea 
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your reply here..."
-                        className="resize-none flex-1"
-                      />
-                      <Button 
-                        onClick={handleSendMessage}
-                        className="bg-cgs-blue hover:bg-cgs-blue/90"
-                        disabled={!newMessage.trim()}
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex flex-col items-center py-4">
-                  <div className="h-20 w-20 rounded-full bg-cgs-blue/10 flex items-center justify-center mb-4">
-                    <UserIcon className="h-10 w-10 text-cgs-blue" />
-                  </div>
-                  
-                  {isTeacher ? (
-                    messages.length > 0 && (
-                      <>
-                        <h3 className="font-medium text-lg">Student</h3>
-                        <p className="text-muted-foreground">
-                          {messages[0].senderId === currentUser?.id 
-                            ? messages[0].receiverId 
-                            : messages[0].senderName}
-                        </p>
-                        <p className="text-sm mt-2">Class {currentUser?.class}</p>
-                      </>
-                    )
-                  ) : (
-                    teacherInfo && (
-                      <>
-                        <h3 className="font-medium text-lg">Teacher</h3>
-                        <p className="text-muted-foreground">{teacherInfo.name}</p>
-                        <p className="text-sm mt-2">Class {teacherInfo.class}</p>
-
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                    
+                    <div className="border-t bg-gray-50 dark:bg-gray-800/50 p-6">
+                      <div className="flex gap-3">
+                        <Textarea 
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type your reply here..."
+                          className="resize-none flex-1 rounded-xl border-2 focus:border-emerald-400"
+                          rows={3}
+                        />
                         <Button 
-                          className="mt-6 w-full bg-cgs-green hover:bg-cgs-green/90"
-                          onClick={() => setDialogOpen(true)}
+                          onClick={handleSendMessage}
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl px-6 self-end"
+                          disabled={!newMessage.trim()}
                         >
-                          <MessageCircle className="mr-2 h-4 w-4" />
-                          New Message
+                          <ArrowRight className="h-5 w-5" />
                         </Button>
-                      </>
-                    )
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
             
-            <div className="mt-4">
-              <h3 className="font-medium mb-2">How it works</h3>
-              <Card>
-                <CardContent className="p-4 text-sm">
-                  <ul className="space-y-2">
+            {/* Sidebar */}
+            <div className="space-y-6">
+              <Card className="border-0 shadow-xl rounded-2xl overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <div className="h-20 w-20 mx-auto bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                      {isTeacher ? (
+                        <GraduationCap className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <Users className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                      )}
+                    </div>
+                    
+                    {isTeacher ? (
+                      messages.length > 0 && (
+                        <>
+                          <h3 className="font-bold text-lg mb-1">Student</h3>
+                          <p className="text-muted-foreground mb-3">
+                            {messages[0].senderId === currentUser?.id 
+                              ? messages[0].receiverId 
+                              : messages[0].senderName}
+                          </p>
+                          <Badge variant="secondary" className="rounded-full">
+                            Class {currentUser?.class}
+                          </Badge>
+                        </>
+                      )
+                    ) : (
+                      teacherInfo && (
+                        <>
+                          <h3 className="font-bold text-lg mb-1">Teacher</h3>
+                          <p className="text-muted-foreground mb-3">{teacherInfo.name}</p>
+                          <Badge variant="secondary" className="rounded-full mb-6">
+                            Class {teacherInfo.class}
+                          </Badge>
+
+                          <Button 
+                            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl py-3"
+                            onClick={() => setDialogOpen(true)}
+                          >
+                            <MessageCircle className="mr-2 h-5 w-5" />
+                            New Message
+                          </Button>
+                        </>
+                      )
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-0 shadow-xl rounded-2xl overflow-hidden">
+                <CardContent className="p-6">
+                  <h3 className="font-bold mb-4 flex items-center">
+                    <Target className="h-5 w-5 mr-2 text-emerald-600" />
+                    How it works
+                  </h3>
+                  <div className="space-y-4">
                     {isTeacher ? (
                       <>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">1</div>
-                          <span>Students send you questions or doubts</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">2</div>
-                          <span>You can respond to their messages</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">3</div>
-                          <span>Communication is private between you and each student</span>
-                        </li>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                          <span className="text-sm leading-relaxed">Students send you questions or concerns</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                          <span className="text-sm leading-relaxed">Provide personalized guidance and support</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                          <span className="text-sm leading-relaxed">All conversations remain private and secure</span>
+                        </div>
                       </>
                     ) : (
                       <>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">1</div>
-                          <span>Send messages to your class teacher</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">2</div>
-                          <span>Get personalized responses</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <div className="h-5 w-5 rounded-full bg-cgs-blue text-white flex items-center justify-center text-xs">3</div>
-                          <span>Your communication is private</span>
-                        </li>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                          <span className="text-sm leading-relaxed">Ask questions or share your thoughts</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                          <span className="text-sm leading-relaxed">Get personalized responses from your teacher</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                          <span className="text-sm leading-relaxed">Your conversations are completely private</span>
+                        </div>
                       </>
                     )}
-                  </ul>
+                  </div>
                 </CardContent>
               </Card>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
