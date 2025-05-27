@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Subject } from '../models/types';
 
@@ -21,6 +20,7 @@ export interface User {
   qualifications?: string[];
   achievements?: string[];
   emergencyContact?: string;
+  experienceYears?: number;
 }
 
 interface AuthContextType {
