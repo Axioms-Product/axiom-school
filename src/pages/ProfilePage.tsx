@@ -39,6 +39,7 @@ const ProfilePage = () => {
     bio: profileUser?.bio || '',
     emergencyContact: profileUser?.emergencyContact || ''
   });
+  const [experienceYears, setExperienceYears] = useState('0');
   const [newQualification, setNewQualification] = useState('');
   const [newAchievement, setNewAchievement] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,6 +55,10 @@ const ProfilePage = () => {
         bio: profileUser.bio || '',
         emergencyContact: profileUser.emergencyContact || ''
       });
+      
+      // Set initial experience years
+      const years = calculateYearsInSchool();
+      setExperienceYears(years.toString());
     }
   }, [profileUser]);
 
@@ -79,6 +84,21 @@ const ProfilePage = () => {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExperienceSubmit = async () => {
+    if (!canEdit || !updateUserProfile) return;
+    
+    try {
+      // For now, we'll just save it in the bio or create a custom field
+      await updateUserProfile({ 
+        experienceYears: parseInt(experienceYears) || 0 
+      });
+      setIsEditingExperience(false);
+      toast.success('Experience updated successfully');
+    } catch (error) {
+      toast.error('Failed to update experience');
     }
   };
 
@@ -541,14 +561,40 @@ const ProfilePage = () => {
                     Teaching Information
                   </CardTitle>
                   {canEdit && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setIsEditingExperience(!isEditingExperience)}
-                    >
-                      <Edit3 className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
+                    <div className="flex gap-2">
+                      {isEditingExperience ? (
+                        <>
+                          <Button
+                            onClick={handleExperienceSubmit}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Save className="h-4 w-4 mr-1" />
+                            Save
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setIsEditingExperience(false);
+                              setExperienceYears(calculateYearsInSchool().toString());
+                            }}
+                            size="sm"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsEditingExperience(true)}
+                        >
+                          <Edit3 className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                      )}
+                    </div>
                   )}
                 </CardHeader>
                 <CardContent>
@@ -571,17 +617,17 @@ const ProfilePage = () => {
                           <div className="flex gap-2 mt-1">
                             <Input
                               placeholder="Years of experience"
-                              defaultValue={calculateYearsInSchool().toString()}
+                              value={experienceYears}
+                              onChange={(e) => setExperienceYears(e.target.value)}
                               className="w-24"
+                              type="number"
+                              min="0"
                             />
                             <span className="self-center text-sm">years</span>
                           </div>
                         ) : (
                           <p className="font-medium">
-                            {profileUser.joiningDate 
-                              ? `${calculateYearsInSchool()} years`
-                              : 'Not available'
-                            }
+                            {experienceYears} years
                           </p>
                         )}
                       </div>
@@ -605,14 +651,40 @@ const ProfilePage = () => {
                   Student Information
                 </CardTitle>
                 {canEdit && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsEditingExperience(!isEditingExperience)}
-                  >
-                    <Edit3 className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
+                  <div className="flex gap-2">
+                    {isEditingExperience ? (
+                      <>
+                        <Button
+                          onClick={handleExperienceSubmit}
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <Save className="h-4 w-4 mr-1" />
+                          Save
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setIsEditingExperience(false);
+                            setExperienceYears(calculateYearsInSchool().toString());
+                          }}
+                          size="sm"
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setIsEditingExperience(true)}
+                      >
+                        <Edit3 className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                    )}
+                  </div>
                 )}
               </CardHeader>
               <CardContent>
@@ -622,23 +694,24 @@ const ProfilePage = () => {
                       <Label className="text-muted-foreground text-sm">Current Class</Label>
                       <p className="font-medium">Class {profileUser.class}</p>
                     </div>
-                    {profileUser.joiningDate && (
-                      <div>
-                        <Label className="text-muted-foreground text-sm">Years in School</Label>
-                        {isEditingExperience && canEdit ? (
-                          <div className="flex gap-2 mt-1">
-                            <Input
-                              placeholder="Years in school"
-                              defaultValue={calculateYearsInSchool().toString()}
-                              className="w-24"
-                            />
-                            <span className="self-center text-sm">years</span>
-                          </div>
-                        ) : (
-                          <p className="font-medium">{calculateYearsInSchool()} years</p>
-                        )}
-                      </div>
-                    )}
+                    <div>
+                      <Label className="text-muted-foreground text-sm">Years in School</Label>
+                      {isEditingExperience && canEdit ? (
+                        <div className="flex gap-2 mt-1">
+                          <Input
+                            placeholder="Years in school"
+                            value={experienceYears}
+                            onChange={(e) => setExperienceYears(e.target.value)}
+                            className="w-24"
+                            type="number"
+                            min="0"
+                          />
+                          <span className="self-center text-sm">years</span>
+                        </div>
+                      ) : (
+                        <p className="font-medium">{experienceYears} years</p>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -646,7 +719,7 @@ const ProfilePage = () => {
                       <p className="font-medium">Active</p>
                     </div>
                     <div>
-                      <Label className="text-muted-foreground text-sm">Academic Year</Label>
+                      <Label className="text-muted-foreground text-sm">Academic Session</Label>
                       <p className="font-medium">2025-2026</p>
                     </div>
                   </div>
