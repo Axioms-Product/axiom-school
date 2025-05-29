@@ -37,14 +37,15 @@ import { GraduationCap, Calendar, Clock, FileText, Sparkles, Plus, ArrowRight, B
 
 const ExamScheduleView = () => {
   const { currentUser } = useAuth();
-  const { getFilteredExams, addExam } = useData();
+  const { getFilteredExamSchedules, addExamSchedule } = useData();
   const [subject, setSubject] = useState<Subject | ''>('');
   const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [duration, setDuration] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const isTeacher = currentUser?.role === 'teacher';
-  const exams = getFilteredExams();
+  const exams = getFilteredExamSchedules();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,15 +54,17 @@ const ExamScheduleView = () => {
       // Teachers can only schedule exams for their assigned subject
       const examSubject = (isTeacher && currentUser?.subject) ? currentUser.subject : subject as Subject;
       
-      addExam({
+      addExamSchedule({
         subject: examSubject,
         date,
-        duration: Number(duration),
+        time,
+        duration,
         assignedClass: currentUser?.class || '',
       });
       
       setSubject('');
       setDate('');
+      setTime('');
       setDuration('');
       setDialogOpen(false);
     }
@@ -159,12 +162,23 @@ const ExamScheduleView = () => {
                             )}
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="date" className="text-base font-medium">Exam Date & Time</Label>
+                            <Label htmlFor="date" className="text-base font-medium">Exam Date</Label>
                             <Input 
                               id="date"
-                              type="datetime-local"
+                              type="date"
                               value={date}
                               onChange={(e) => setDate(e.target.value)}
+                              required
+                              className="rounded-xl border-2 focus:border-indigo-400"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="time" className="text-base font-medium">Exam Time</Label>
+                            <Input 
+                              id="time"
+                              type="time"
+                              value={time}
+                              onChange={(e) => setTime(e.target.value)}
                               required
                               className="rounded-xl border-2 focus:border-indigo-400"
                             />
@@ -275,7 +289,7 @@ const ExamScheduleView = () => {
                     <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4 flex-shrink-0" />
-                        <span>{format(new Date(exam.date), 'PPP p')}</span>
+                        <span>{exam.date} at {exam.time}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4 flex-shrink-0" />

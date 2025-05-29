@@ -34,6 +34,7 @@ const EventsView = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -47,6 +48,7 @@ const EventsView = () => {
       title,
       description,
       date,
+      time,
       location,
       assignedClass: currentUser?.class || '',
     });
@@ -54,6 +56,7 @@ const EventsView = () => {
     setTitle('');
     setDescription('');
     setDate('');
+    setTime('');
     setLocation('');
     setDialogOpen(false);
   };
@@ -145,9 +148,20 @@ const EventsView = () => {
                             <Label htmlFor="date" className="text-base font-medium">Event Date</Label>
                             <Input 
                               id="date"
-                              type="datetime-local"
+                              type="date"
                               value={date}
                               onChange={(e) => setDate(e.target.value)}
+                              required
+                              className="rounded-xl border-2 focus:border-emerald-400"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="time" className="text-base font-medium">Event Time</Label>
+                            <Input 
+                              id="time"
+                              type="time"
+                              value={time}
+                              onChange={(e) => setTime(e.target.value)}
                               required
                               className="rounded-xl border-2 focus:border-emerald-400"
                             />
@@ -240,7 +254,7 @@ const EventsView = () => {
                   <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4 flex-shrink-0" />
-                      <span className="truncate">{formatDistanceToNow(new Date(event.date), { addSuffix: true })}</span>
+                      <span className="truncate">{event.date} at {event.time}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4 flex-shrink-0" />
