@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -28,20 +27,21 @@ import {
   Sparkles,
   GraduationCap,
   Users,
-  MessageCircle
+  MessageCircle,
+  CheckCircle
 } from 'lucide-react';
 
 const HomeView = () => {
   const { currentUser } = useAuth();
   const { 
-    getFilteredHomework, 
+    getFilteredHomeworks, 
     getFilteredMarks, 
     getFilteredNotices, 
     getFilteredEvents,
     getFilteredExamSchedules
   } = useData();
 
-  const homework = getFilteredHomework().filter(hw => !hw.completed);
+  const homework = getFilteredHomeworks().filter(hw => !hw.completedBy?.includes(currentUser?.id || ''));
   const recentMarks = getFilteredMarks().slice(-3);
   const recentNotices = getFilteredNotices().slice(0, 3);
   const upcomingEvents = getFilteredEvents().slice(0, 2);
@@ -188,7 +188,7 @@ const HomeView = () => {
         </div>
 
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
-          {/* Recent Performance - Updated for mobile responsiveness */}
+          {/* Recent Performance */}
           <div className="lg:col-span-2">
             <Card className="border-0 shadow-xl rounded-2xl sm:rounded-3xl overflow-hidden">
               <div className="h-2 bg-gradient-to-r from-emerald-400 to-green-500" />

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -37,7 +36,10 @@ const MessagesView = () => {
   
   // Get all messages for the current user's class (class-based messaging)
   const messages = getFilteredMessages().filter(msg => 
-    msg.assignedClass === currentUser?.class
+    // Filter messages based on class - since messages don't have assignedClass,
+    // we need to filter by sender/receiver being in the same class
+    msg.senderId === currentUser?.id || msg.receiverId === currentUser?.id ||
+    msg.receiverId === 'class-group'
   );
 
   useEffect(() => {
