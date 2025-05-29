@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Card, 
@@ -75,9 +74,7 @@ const HomeworkView = () => {
   };
 
   const handleMarkComplete = (id: string) => {
-    if (currentUser?.id) {
-      markHomeworkComplete(id, currentUser.id);
-    }
+    markHomeworkComplete(id);
   };
 
   const isCompleted = (homework: any) => {
