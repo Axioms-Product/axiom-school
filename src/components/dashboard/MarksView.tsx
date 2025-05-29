@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -301,31 +300,31 @@ const MarksView = () => {
         {/* Subject Performance Cards for Students */}
         {!isTeacher && marks.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold mb-6 flex items-center">
-              <BarChart3 className="h-6 w-6 mr-3 text-violet-600" />
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center px-2">
+              <BarChart3 className="h-5 sm:h-6 w-5 sm:w-6 mr-2 sm:mr-3 text-violet-600" />
               Subject Performance Overview
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
               {subjectList.map((subj) => {
                 const average = calculateAverage(subj);
                 const IconComponent = getPerformanceIcon(average);
                 
                 return (
-                  <Card key={subj} className="relative overflow-hidden border-0 shadow-xl rounded-2xl group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <Card key={subj} className="relative overflow-hidden border-0 shadow-xl rounded-xl sm:rounded-2xl group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                     <div className={`absolute inset-0 bg-gradient-to-br ${getPerformanceColor(average)} opacity-10`}></div>
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-base font-bold truncate">{subj}</CardTitle>
-                        <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${getPerformanceColor(average)} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                          <IconComponent className="h-5 w-5 text-white" />
+                        <CardTitle className="text-xs sm:text-base font-bold truncate pr-2">{subj}</CardTitle>
+                        <div className={`h-6 sm:h-10 w-6 sm:w-10 rounded-lg sm:rounded-xl bg-gradient-to-br ${getPerformanceColor(average)} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                          <IconComponent className="h-3 sm:h-5 w-3 sm:w-5 text-white" />
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold mb-2">{average}</div>
-                      <div className="text-sm text-muted-foreground">Overall Average</div>
+                    <CardContent className="p-3 sm:p-6 pt-0">
+                      <div className="text-lg sm:text-3xl font-bold mb-1 sm:mb-2">{average}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Overall Average</div>
                     </CardContent>
-                    <div className={`absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r ${getPerformanceColor(average)}`}></div>
+                    <div className={`absolute bottom-0 left-0 right-0 h-1 sm:h-2 bg-gradient-to-r ${getPerformanceColor(average)}`}></div>
                   </Card>
                 );
               })}
@@ -370,26 +369,47 @@ const MarksView = () => {
           </Card>
         ) : (
           <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-violet-600 to-purple-600 text-white p-6">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold">
+            <CardHeader className="bg-gradient-to-r from-violet-600 to-purple-600 text-white p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <CardTitle className="text-xl sm:text-2xl font-bold">
                   {isTeacher ? "Student Performance Records" : "Your Academic Records"}
                 </CardTitle>
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as Subject | 'all')}>
-                  <TabsList className="bg-white/20 border-white/30">
-                    <TabsTrigger value="all" className="text-white data-[state=active]:bg-white data-[state=active]:text-violet-600">All</TabsTrigger>
-                    {subjectList.map(subj => (
-                      <TabsTrigger 
-                        key={subj} 
-                        value={subj} 
-                        disabled={isTeacher && currentUser?.subject && currentUser.subject !== subj}
-                        className="text-white data-[state=active]:bg-white data-[state=active]:text-violet-600"
-                      >
-                        {subj.substring(0, 4)}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
+                <div className="w-full sm:w-auto">
+                  <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as Subject | 'all')}>
+                    <TabsList className="bg-white/20 border-white/30 grid grid-cols-3 sm:flex w-full sm:w-auto">
+                      <TabsTrigger value="all" className="text-white data-[state=active]:bg-white data-[state=active]:text-violet-600 text-xs sm:text-sm">All</TabsTrigger>
+                      {subjectList.map(subj => (
+                        <TabsTrigger 
+                          key={subj} 
+                          value={subj} 
+                          disabled={isTeacher && currentUser?.subject && currentUser.subject !== subj}
+                          className="text-white data-[state=active]:bg-white data-[state=active]:text-violet-600 text-xs sm:text-sm hidden sm:inline-flex"
+                        >
+                          {subj.substring(0, 4)}
+                        </TabsTrigger>
+                      ))}
+                      {/* Mobile dropdown for subjects */}
+                      <div className="sm:hidden col-span-2">
+                        <Select value={activeTab === 'all' ? 'all' : activeTab} onValueChange={(value) => setActiveTab(value as Subject | 'all')}>
+                          <SelectTrigger className="bg-white/20 border-white/30 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {subjectList.map(subj => (
+                              <SelectItem 
+                                key={subj} 
+                                value={subj}
+                                disabled={isTeacher && currentUser?.subject && currentUser.subject !== subj}
+                              >
+                                {subj}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </TabsList>
+                  </Tabs>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -397,11 +417,11 @@ const MarksView = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50 dark:bg-gray-800/50">
-                      <TableHead className="font-bold">{isTeacher ? "Student" : "Subject"}</TableHead>
-                      <TableHead className="font-bold">{isTeacher ? "Subject" : "Test"}</TableHead>
-                      <TableHead className="font-bold">Score</TableHead>
-                      <TableHead className="font-bold">Performance</TableHead>
-                      <TableHead className="hidden md:table-cell font-bold">Date</TableHead>
+                      <TableHead className="font-bold text-xs sm:text-sm">{isTeacher ? "Student" : "Subject"}</TableHead>
+                      <TableHead className="font-bold text-xs sm:text-sm">{isTeacher ? "Subject" : "Test"}</TableHead>
+                      <TableHead className="font-bold text-xs sm:text-sm">Score</TableHead>
+                      <TableHead className="font-bold text-xs sm:text-sm">Performance</TableHead>
+                      <TableHead className="hidden md:table-cell font-bold text-xs sm:text-sm">Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -416,31 +436,35 @@ const MarksView = () => {
                       
                       return (
                         <TableRow key={mark.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                          <TableCell className="font-medium">
-                            {isTeacher ? studentName : mark.subject}
+                          <TableCell className="font-medium text-xs sm:text-sm">
+                            <div className="truncate max-w-[100px] sm:max-w-none">
+                              {isTeacher ? studentName : mark.subject}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs sm:text-sm">
+                            <div className="truncate max-w-[80px] sm:max-w-none">
+                              {isTeacher ? mark.subject : mark.testName}
+                            </div>
                           </TableCell>
                           <TableCell>
-                            {isTeacher ? mark.subject : mark.testName}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="font-bold">
+                            <Badge variant="outline" className="font-bold text-xs">
                               {mark.score}/{mark.totalScore}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-3">
-                              <span className={
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <span className={`text-xs sm:text-sm font-bold ${
                                 Number(percentage) >= 85
-                                  ? 'text-emerald-600 font-bold'
+                                  ? 'text-emerald-600'
                                   : Number(percentage) >= 70
-                                    ? 'text-blue-600 font-bold'
+                                    ? 'text-blue-600'
                                     : Number(percentage) >= 50
-                                      ? 'text-yellow-600 font-bold'
-                                      : 'text-red-600 font-bold'
-                              }>
+                                      ? 'text-yellow-600'
+                                      : 'text-red-600'
+                              }`}>
                                 {percentage}%
                               </span>
-                              <div className="hidden md:block w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                              <div className="hidden sm:block w-12 sm:w-20 h-2 sm:h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div 
                                   className={`h-full bg-gradient-to-r ${performanceColor} rounded-full transition-all duration-500`} 
                                   style={{ width: `${percentage}%` }}
@@ -448,7 +472,7 @@ const MarksView = () => {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="hidden md:table-cell text-muted-foreground">
+                          <TableCell className="hidden md:table-cell text-muted-foreground text-xs sm:text-sm">
                             {format(new Date(mark.timestamp), 'MMM d, yyyy')}
                           </TableCell>
                         </TableRow>

@@ -50,12 +50,17 @@ const HomeworkView = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (subject) {
+    // Teachers can only add homework for their assigned subject
+    const homeworkSubject = (isTeacher && currentUser?.subject) 
+      ? currentUser.subject 
+      : subject as Subject;
+    
+    if (homeworkSubject) {
       addHomework({
         title,
         description,
         dueDate,
-        subject: subject as Subject,
+        subject: homeworkSubject,
         assignedClass: currentUser?.class || '',
       });
       
@@ -158,16 +163,25 @@ const HomeworkView = () => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="subject" className="text-base font-medium">Subject</Label>
-                            <Select value={subject} onValueChange={(value) => setSubject(value as Subject)}>
-                              <SelectTrigger className="rounded-xl border-2 focus:border-violet-400">
-                                <SelectValue placeholder="Select subject" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.values(Subject).map((sub) => (
-                                  <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            {currentUser?.subject ? (
+                              <Input 
+                                id="subject" 
+                                value={currentUser.subject} 
+                                disabled 
+                                className="rounded-xl border-2 bg-gray-50"
+                              />
+                            ) : (
+                              <Select value={subject} onValueChange={(value) => setSubject(value as Subject)}>
+                                <SelectTrigger className="rounded-xl border-2 focus:border-violet-400">
+                                  <SelectValue placeholder="Select subject" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Object.values(Subject).map((sub) => (
+                                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="description" className="text-base font-medium">Description</Label>
