@@ -47,32 +47,20 @@ const MessagesView = () => {
   const teachers = isStudent ? getTeachersForClass(currentUser?.class || '') : [];
   const students = isTeacher ? getStudentsForClass(currentUser?.class || '') : [];
   
-  // Get all messages and filter based on user role and permissions
-  const allMessages = getFilteredMessages();
-  const messages = allMessages.filter(msg => {
-    const userClass = currentUser?.class;
-    
+  // Get messages relevant to current user
+  const messages = getFilteredMessages().filter(msg => {
     if (isStudent) {
-      // Students see:
-      // 1. Messages they sent
-      // 2. Messages sent to them directly
-      // 3. Messages sent to their class group
-      // 4. Messages from teachers to their class
+      // Students see: messages they sent, messages to them, and class group messages
       return msg.senderId === currentUser?.id || 
              msg.receiverId === currentUser?.id || 
-             msg.receiverId === `class-${userClass}` ||
-             (msg.receiverId === `class-${userClass}` && teachers.some(t => t.id === msg.senderId));
+             (msg.receiverId === `class-${currentUser?.class}` && msg.senderId !== currentUser?.id);
     } else if (isTeacher) {
-      // Teachers see:
-      // 1. Messages they sent
-      // 2. Messages sent to them directly from their class students
-      // 3. Messages sent to the class they teach
+      // Teachers see: messages they sent, messages to them from their class students
       return msg.senderId === currentUser?.id || 
-             (msg.receiverId === currentUser?.id && students.some(s => s.id === msg.senderId)) ||
-             msg.receiverId === `class-${userClass}`;
+             msg.receiverId === currentUser?.id;
     }
     return false;
-  }).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  });
 
   useEffect(() => {
     if (currentUser) {
@@ -108,19 +96,13 @@ const MessagesView = () => {
       return 'You';
     }
     
-    // For class messages, determine sender type
     if (msg.receiverId === `class-${currentUser?.class}`) {
-      const isTeacherSender = teachers.some(t => t.id === msg.senderId);
-      const isStudentSender = students.some(s => s.id === msg.senderId);
-      
-      if (isTeacherSender) return 'Teacher';
-      if (isStudentSender) return 'Classmate';
+      return 'Classmate';
     }
     
-    // For individual messages
+    // For individual messages, show role-based names
     if (isStudent) {
-      const isFromTeacher = teachers.some(t => t.id === msg.senderId);
-      return isFromTeacher ? 'Teacher' : 'Student';
+      return 'Teacher';
     } else {
       return 'Student';
     }
@@ -146,8 +128,8 @@ const MessagesView = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
       <div className="max-w-7xl mx-auto p-3 sm:p-6 space-y-6 sm:space-y-8">
         {/* Enhanced Header */}
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl"></div>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl opacity-90"></div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2260%22%20cy=%2212%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30 rounded-2xl sm:rounded-3xl"></div>
           
           <div className="relative px-4 sm:px-8 py-8 sm:py-12">

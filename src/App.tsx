@@ -1,77 +1,78 @@
 
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { DataProvider } from '@/contexts/DataContext';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
-import Index from '@/pages/Index';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { DataProvider } from '@/contexts/DataContext';
+import { Toaster } from '@/components/ui/sonner';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import SplashScreen from '@/components/SplashScreen';
+
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
-import ProfilePage from '@/pages/ProfilePage';
-import HelpSupportPage from '@/pages/HelpSupportPage';
 import NotFound from '@/pages/NotFound';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import SplashScreen from '@/components/SplashScreen';
-import './App.css';
+import ProfilePage from '@/pages/ProfilePage';
 
-function App() {
-  const [isLoading, setIsLoading] = useState(true);
+import HomeView from '@/components/dashboard/HomeView';
+import HomeworkView from '@/components/dashboard/HomeworkView';
+import NoticesView from '@/components/dashboard/NoticesView';
+import EventsView from '@/components/dashboard/EventsView';
+import MarksView from '@/components/dashboard/MarksView';
+import MessagesView from '@/components/dashboard/MessagesView';
+import TeachersView from '@/components/dashboard/TeachersView';
+import StudentsView from '@/components/dashboard/StudentsView';
+import ExamScheduleView from '@/components/dashboard/ExamScheduleView';
 
-  useEffect(() => {
-    // Simulate app initialization
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // Show splash screen for 3 seconds
+const AppContent = () => {
+  const { loading, isAuthenticated } = useAuth();
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
+  if (loading) {
     return <SplashScreen />;
   }
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <BrowserRouter>
+      <Routes>
+        {/* Redirect root based on authentication */}
+        <Route path="/" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+        } />
+        <Route path="/login" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+        } />
+        <Route path="/register" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
+        } />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+          <Route path="" element={<Navigate to="home" replace />} />
+          <Route path="home" element={<HomeView />} />
+          <Route path="homework" element={<HomeworkView />} />
+          <Route path="notices" element={<NoticesView />} />
+          <Route path="events" element={<EventsView />} />
+          <Route path="marks" element={<MarksView />} />
+          <Route path="messages" element={<MessagesView />} />
+          <Route path="teachers" element={<TeachersView />} />
+          <Route path="students" element={<StudentsView />} />
+          <Route path="exams" element={<ExamScheduleView />} />
+          <Route path="profile" element={<ProfilePage />} />
+        </Route>
+        
+        {/* 404 fallback */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="light">
       <AuthProvider>
         <DataProvider>
-          <Router>
-            <div className="min-h-screen bg-background">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route 
-                  path="/dashboard/*" 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/help-support" 
-                  element={
-                    <ProtectedRoute>
-                      <HelpSupportPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-              <Toaster />
-            </div>
-          </Router>
+          <AppContent />
+          <Toaster position="top-right" />
         </DataProvider>
       </AuthProvider>
     </ThemeProvider>
