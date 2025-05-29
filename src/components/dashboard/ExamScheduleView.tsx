@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Card, 
@@ -50,10 +49,11 @@ const ExamScheduleView = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (subject) {
-      // Teachers can only schedule exams for their assigned subject
-      const examSubject = (isTeacher && currentUser?.subject) ? currentUser.subject : subject as Subject;
-      
+    // For teachers with assigned subject, use their subject; otherwise use selected subject
+    const examSubject = (isTeacher && currentUser?.subject) ? currentUser.subject : subject as Subject;
+    
+    // Validate that we have all required fields
+    if (examSubject && date && time && duration) {
       addExamSchedule({
         subject: examSubject,
         date,
