@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -18,29 +19,48 @@ import {
 } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@/components/ui/visually-hidden';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useAuth, User } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { format } from 'date-fns';
-import { MessageCircle, Send, Users, GraduationCap, Sparkles, ArrowRight, User as UserIcon, Clock, CheckCircle, Shield, Lock } from 'lucide-react';
+import { MessageCircle, Send, Users, GraduationCap, Sparkles, ArrowRight, User as UserIcon, Clock, CheckCircle, Shield, Lock, School } from 'lucide-react';
 
 const MessagesView = () => {
   const { currentUser } = useAuth();
   const { 
     getFilteredMessages, 
     sendMessage, 
-    markMessageAsRead 
+    markMessageAsRead,
+    getTeachersForClass,
+    getStudentsForClass
   } = useData();
   const [newMessage, setNewMessage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedRecipient, setSelectedRecipient] = useState<string>('');
+  const [messageType, setMessageType] = useState<'class' | 'individual'>('class');
   
-  // Get all messages for the current user's class (class-based messaging)
-  const messages = getFilteredMessages().filter(msg => 
-    // Filter messages based on class - since messages don't have assignedClass,
-    // we need to filter by sender/receiver being in the same class
-    msg.senderId === currentUser?.id || msg.receiverId === currentUser?.id ||
-    msg.receiverId === 'class-group'
-  );
+  const isStudent = currentUser?.role === 'student';
+  const isTeacher = currentUser?.role === 'teacher';
+  
+  // Get appropriate users based on role
+  const teachers = isStudent ? getTeachersForClass(currentUser?.class || '') : [];
+  const students = isTeacher ? getStudentsForClass(currentUser?.class || '') : [];
+  
+  // Get messages relevant to current user
+  const messages = getFilteredMessages().filter(msg => {
+    if (isStudent) {
+      // Students see: messages they sent, messages to them, and class group messages
+      return msg.senderId === currentUser?.id || 
+             msg.receiverId === currentUser?.id || 
+             (msg.receiverId === `class-${currentUser?.class}` && msg.senderId !== currentUser?.id);
+    } else if (isTeacher) {
+      // Teachers see: messages they sent, messages to them from their class students
+      return msg.senderId === currentUser?.id || 
+             msg.receiverId === currentUser?.id;
+    }
+    return false;
+  });
 
   useEffect(() => {
     if (currentUser) {
@@ -55,11 +75,53 @@ const MessagesView = () => {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !currentUser) return;
     
-    // Send message to class group (no specific receiver)
-    sendMessage(newMessage, 'class-group');
+    let recipientId = '';
     
+    if (messageType === 'class') {
+      recipientId = `class-${currentUser.class}`;
+    } else {
+      recipientId = selectedRecipient;
+    }
+    
+    if (!recipientId) return;
+    
+    sendMessage(newMessage, recipientId);
     setNewMessage('');
+    setSelectedRecipient('');
     setDialogOpen(false);
+  };
+
+  const getMessageDisplayName = (msg: any) => {
+    if (msg.senderId === currentUser?.id) {
+      return 'You';
+    }
+    
+    if (msg.receiverId === `class-${currentUser?.class}`) {
+      return 'Classmate';
+    }
+    
+    // For individual messages, show role-based names
+    if (isStudent) {
+      return 'Teacher';
+    } else {
+      return 'Student';
+    }
+  };
+
+  const getRecipientOptions = () => {
+    if (messageType === 'class') return [];
+    
+    if (isStudent) {
+      return teachers.map(teacher => ({
+        id: teacher.id,
+        name: `${teacher.name} (${teacher.subject})`
+      }));
+    } else {
+      return students.map(student => ({
+        id: student.id,
+        name: student.name
+      }));
+    }
   };
 
   return (
@@ -78,9 +140,12 @@ const MessagesView = () => {
                     <MessageCircle className="h-6 sm:h-8 w-6 sm:w-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">Class Messages</h1>
+                    <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">Messages</h1>
                     <p className="text-blue-100 text-sm sm:text-lg">
-                      Secure class communication for Class {currentUser?.class}
+                      {isStudent 
+                        ? `Communicate with teachers and Class ${currentUser?.class} students`
+                        : `Communicate with Class ${currentUser?.class} students`
+                      }
                     </p>
                   </div>
                 </div>
@@ -88,7 +153,7 @@ const MessagesView = () => {
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
                     <Shield className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
-                    End-to-End Encrypted
+                    Secure Messaging
                   </Badge>
                   <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
                     Class {currentUser?.class}
@@ -111,22 +176,61 @@ const MessagesView = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[500px] rounded-2xl mx-4">
                     <DialogHeader>
-                      <DialogTitle className="text-xl sm:text-2xl">Send Message to Class</DialogTitle>
+                      <DialogTitle className="text-xl sm:text-2xl">Send Message</DialogTitle>
                       <DialogDescription className="text-sm sm:text-lg">
-                        Send an encrypted message to your Class {currentUser?.class} group
+                        Send a message to {isStudent ? 'teachers or classmates' : 'students in your class'}
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="py-4 sm:py-6">
-                      <Textarea 
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message here..."
-                        rows={4}
-                        className="resize-none rounded-xl border-2 focus:border-blue-400 text-sm sm:text-base"
-                      />
-                      <div className="flex items-center gap-2 mt-3 text-xs sm:text-sm text-muted-foreground">
+                    <div className="py-4 sm:py-6 space-y-4">
+                      {isStudent && (
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Message Type</label>
+                          <Select value={messageType} onValueChange={(value: 'class' | 'individual') => setMessageType(value)}>
+                            <SelectTrigger className="rounded-xl">
+                              <SelectValue placeholder="Select message type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="class">Class Group</SelectItem>
+                              <SelectItem value="individual">Individual Teacher</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      
+                      {messageType === 'individual' && (
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">
+                            {isStudent ? 'Select Teacher' : 'Select Student'}
+                          </label>
+                          <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
+                            <SelectTrigger className="rounded-xl">
+                              <SelectValue placeholder={`Select ${isStudent ? 'teacher' : 'student'}`} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getRecipientOptions().map((option) => (
+                                <SelectItem key={option.id} value={option.id}>
+                                  {option.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Message</label>
+                        <Textarea 
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type your message here..."
+                          rows={4}
+                          className="resize-none rounded-xl border-2 focus:border-blue-400 text-sm sm:text-base"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                         <Lock className="h-3 sm:h-4 w-3 sm:w-4" />
-                        <span>Messages are encrypted and anonymous</span>
+                        <span>Messages are secure and private</span>
                       </div>
                     </div>
                     <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
@@ -136,7 +240,7 @@ const MessagesView = () => {
                       <Button 
                         onClick={handleSendMessage}
                         className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6 sm:px-8 text-sm sm:text-base"
-                        disabled={!newMessage.trim()}
+                        disabled={!newMessage.trim() || (messageType === 'individual' && !selectedRecipient)}
                       >
                         <Send className="mr-2 h-3 sm:h-4 w-3 sm:w-4" />
                         Send Message
@@ -166,7 +270,10 @@ const MessagesView = () => {
                   No messages yet
                 </h3>
                 <p className="text-sm sm:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-                  Start a conversation with your classmates. All messages are encrypted and anonymous for your privacy.
+                  {isStudent 
+                    ? 'Start a conversation with your teachers or classmates. All messages are secure and private.'
+                    : 'Start communicating with your students. All messages are secure and private.'
+                  }
                 </p>
                 
                 <Button 
@@ -188,9 +295,9 @@ const MessagesView = () => {
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6">
                   <h3 className="text-lg sm:text-xl font-bold text-white flex items-center">
                     <MessageCircle className="h-5 sm:h-6 w-5 sm:w-6 mr-2 sm:mr-3" />
-                    Class {currentUser?.class} Discussion
+                    Class {currentUser?.class} Messages
                   </h3>
-                  <p className="text-blue-100 text-xs sm:text-sm mt-1">Anonymous & Encrypted</p>
+                  <p className="text-blue-100 text-xs sm:text-sm mt-1">Secure & Private Communication</p>
                 </div>
                 
                 <div className="flex flex-col h-[400px] sm:h-[600px]">
@@ -198,6 +305,7 @@ const MessagesView = () => {
                     <div className="space-y-3 sm:space-y-6">
                       {messages.map((message) => {
                         const isSentByCurrentUser = message.senderId === currentUser?.id;
+                        const displayName = getMessageDisplayName(message);
                         
                         return (
                           <div 
@@ -210,7 +318,11 @@ const MessagesView = () => {
                             <div className="flex items-start gap-2 sm:gap-3 w-full">
                               {!isSentByCurrentUser && (
                                 <div className="h-8 sm:h-10 w-8 sm:w-10 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <UserIcon className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400" />
+                                  {displayName === 'Teacher' ? (
+                                    <School className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400" />
+                                  ) : (
+                                    <UserIcon className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 dark:text-blue-400" />
+                                  )}
                                 </div>
                               )}
                               <div
@@ -227,7 +339,7 @@ const MessagesView = () => {
                                   isSentByCurrentUser ? "text-blue-100" : "text-gray-500 dark:text-gray-400"
                                 )}>
                                   <span className="font-medium truncate">
-                                    {isSentByCurrentUser ? "You" : "Classmate"}
+                                    {displayName}
                                   </span>
                                   <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                                     <Clock className="h-3 w-3" />
@@ -260,7 +372,12 @@ const MessagesView = () => {
                         rows={2}
                       />
                       <Button 
-                        onClick={handleSendMessage}
+                        onClick={() => {
+                          if (newMessage.trim()) {
+                            sendMessage(newMessage, `class-${currentUser?.class}`);
+                            setNewMessage('');
+                          }
+                        }}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-3 sm:px-6 self-end h-fit"
                         disabled={!newMessage.trim()}
                       >
@@ -283,10 +400,10 @@ const MessagesView = () => {
                     </div>
                     
                     <h3 className="font-bold text-base sm:text-lg mb-1">Class {currentUser?.class}</h3>
-                    <p className="text-muted-foreground mb-3 text-xs sm:text-sm">Anonymous Chat Room</p>
+                    <p className="text-muted-foreground mb-3 text-xs sm:text-sm">Secure Messaging</p>
                     <Badge className="bg-blue-100 text-blue-700 rounded-full mb-4 sm:mb-6 text-xs sm:text-sm">
                       <Shield className="h-3 w-3 mr-1" />
-                      Secure & Private
+                      Private & Secure
                     </Badge>
 
                     <Button 
