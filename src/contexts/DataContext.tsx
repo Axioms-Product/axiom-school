@@ -3,6 +3,15 @@ import { Homework, Notice, Event, Message, Mark, Subject, FeePayment, ExamSchedu
 import { useAuth, User } from './AuthContext';
 import { toast } from 'sonner';
 
+interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  date: string;
+  status: 'present' | 'absent' | 'late';
+  timestamp: number;
+  createdBy: string;
+}
+
 interface DataContextType {
   homeworks: Homework[];
   notices: Notice[];
@@ -11,12 +20,14 @@ interface DataContextType {
   marks: Mark[];
   fees: FeePayment[];
   examSchedules: ExamSchedule[];
+  attendance: AttendanceRecord[];
   addHomework: (homework: Omit<Homework, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addNotice: (notice: Omit<Notice, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addEvent: (event: Omit<Event, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addMark: (mark: Omit<Mark, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addFee: (fee: Omit<FeePayment, 'id' | 'timestamp' | 'createdBy'>) => void;
   addExamSchedule: (exam: Omit<ExamSchedule, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
+  addAttendance: (attendance: Omit<AttendanceRecord, 'id' | 'timestamp' | 'createdBy'>) => void;
   deleteHomework: (id: string) => void;
   deleteNotice: (id: string) => void;
   deleteEvent: (id: string) => void;
@@ -36,6 +47,7 @@ interface DataContextType {
   getFilteredMarks: (studentId?: string) => Mark[];
   getFilteredFees: (studentId?: string) => FeePayment[];
   getFilteredExamSchedules: () => ExamSchedule[];
+  getFilteredAttendance: () => AttendanceRecord[];
   markMessageAsRead: (id: string) => void;
 }
 
@@ -50,6 +62,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [marks, setMarks] = useState<Mark[]>([]);
   const [fees, setFees] = useState<FeePayment[]>([]);
   const [examSchedules, setExamSchedules] = useState<ExamSchedule[]>([]);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
   // Load data from localStorage on mount
@@ -61,6 +74,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedMarks = localStorage.getItem('marks');
     const storedFees = localStorage.getItem('fees');
     const storedExams = localStorage.getItem('examSchedules');
+    const storedAttendance = localStorage.getItem('attendance');
     const storedUsers = localStorage.getItem('users');
     
     if (storedHomeworks) setHomeworks(JSON.parse(storedHomeworks));
@@ -70,6 +84,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedMarks) setMarks(JSON.parse(storedMarks));
     if (storedFees) setFees(JSON.parse(storedFees));
     if (storedExams) setExamSchedules(JSON.parse(storedExams));
+    if (storedAttendance) setAttendance(JSON.parse(storedAttendance));
     
     if (storedUsers) {
       try {
@@ -85,18 +100,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (error) {
         console.error('Error parsing users:', error);
         // Create sample users if none exist
-        const sampleUsers = [
+        const sampleUsers: User[] = [
           {
             id: 'teacher1',
             name: 'Ms. Sarah Johnson',
+            username: 'sarah.johnson',
             email: 'sarah.johnson@axioms.edu',
             role: 'teacher' as const,
             class: '10A',
-            subject: 'Mathematics'
+            subject: Subject.MATHEMATICS
           },
           {
             id: 'student1',
             name: 'Alex Kumar',
+            username: 'alex.kumar',
             email: 'alex.kumar@student.axioms.edu',
             role: 'student' as const,
             class: '10A'
@@ -104,6 +121,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           {
             id: 'student2',
             name: 'Emma Wilson',
+            username: 'emma.wilson',
             email: 'emma.wilson@student.axioms.edu',
             role: 'student' as const,
             class: '10A'
@@ -111,6 +129,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           {
             id: 'student3',
             name: 'David Chen',
+            username: 'david.chen',
             email: 'david.chen@student.axioms.edu',
             role: 'student' as const,
             class: '10A'
@@ -120,18 +139,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } else {
       // Create sample users if none exist
-      const sampleUsers = [
+      const sampleUsers: User[] = [
         {
           id: 'teacher1',
           name: 'Ms. Sarah Johnson',
+          username: 'sarah.johnson',
           email: 'sarah.johnson@axioms.edu',
           role: 'teacher' as const,
           class: '10A',
-          subject: 'Mathematics'
+          subject: Subject.MATHEMATICS
         },
         {
           id: 'student1',
           name: 'Alex Kumar',
+          username: 'alex.kumar',
           email: 'alex.kumar@student.axioms.edu',
           role: 'student' as const,
           class: '10A'
@@ -139,6 +160,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           id: 'student2',
           name: 'Emma Wilson',
+          username: 'emma.wilson',
           email: 'emma.wilson@student.axioms.edu',
           role: 'student' as const,
           class: '10A'
@@ -146,6 +168,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           id: 'student3',
           name: 'David Chen',
+          username: 'david.chen',
           email: 'david.chen@student.axioms.edu',
           role: 'student' as const,
           class: '10A'
@@ -183,6 +206,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('examSchedules', JSON.stringify(examSchedules));
   }, [examSchedules]);
+
+  useEffect(() => {
+    localStorage.setItem('attendance', JSON.stringify(attendance));
+  }, [attendance]);
 
   // Function to get the teacher for a specific class
   const getTeacherForClass = (className: string) => {
@@ -319,6 +346,21 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setExamSchedules(prev => [...prev, newExam]);
     toast.success('Exam schedule added successfully');
+  };
+
+  // Function to add attendance record
+  const addAttendance = (attendanceData: Omit<AttendanceRecord, 'id' | 'timestamp' | 'createdBy'>) => {
+    if (!currentUser) return;
+    
+    const newAttendance: AttendanceRecord = {
+      ...attendanceData,
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      createdBy: currentUser.id
+    };
+    
+    setAttendance(prev => [...prev, newAttendance]);
+    toast.success('Attendance recorded successfully');
   };
 
   // Function to delete a homework
@@ -503,6 +545,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return examSchedules.filter(e => e.assignedClass === currentUser.class);
   };
 
+  // Function to get attendance records filtered by class
+  const getFilteredAttendance = () => {
+    if (!currentUser) return [];
+    
+    if (currentUser.role === 'teacher') {
+      const studentsInClass = users.filter(
+        user => user.role === 'student' && user.class === currentUser.class
+      );
+      
+      const studentIds = studentsInClass.map(s => s.id);
+      return attendance.filter(a => studentIds.includes(a.studentId));
+    } else {
+      return attendance.filter(a => a.studentId === currentUser.id);
+    }
+  };
+
   const value = {
     homeworks,
     notices,
@@ -511,12 +569,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     marks,
     fees,
     examSchedules,
+    attendance,
     addHomework,
     addNotice,
     addEvent,
     addMark,
     addFee,
     addExamSchedule,
+    addAttendance,
     deleteHomework,
     deleteNotice,
     deleteEvent,
@@ -536,6 +596,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getFilteredMarks,
     getFilteredFees,
     getFilteredExamSchedules,
+    getFilteredAttendance,
     markMessageAsRead
   };
 
