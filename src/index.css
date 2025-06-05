@@ -75,35 +75,206 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
 
+  /* 3D Card Effects */
   .card-3d {
     transform-style: preserve-3d;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    perspective: 1000px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    box-shadow: 
+      0 10px 30px rgba(0,0,0,0.1),
+      0 4px 8px rgba(0,0,0,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .card-3d:hover {
-    transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
-    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    transform: translateY(-8px) rotateX(2deg) rotateY(2deg) scale(1.02);
+    box-shadow: 
+      0 25px 50px rgba(0,0,0,0.15),
+      0 10px 20px rgba(0,0,0,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.8);
   }
 
+  .card-3d-interactive {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+    cursor: pointer;
+  }
+
+  .card-3d-interactive:hover {
+    transform: translateY(-12px) rotateX(5deg) rotateY(5deg) scale(1.05);
+  }
+
+  .card-3d-interactive:active {
+    transform: translateY(-8px) rotateX(2deg) rotateY(2deg) scale(1.02);
+  }
+
+  /* Glass Morphism */
   .glass-effect {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Animated Gradients */
   .animated-gradient {
-    background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #f97316);
+    background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
     background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+    animation: gradient-shift 10s ease infinite;
   }
 
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .animated-gradient-slow {
+    background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #f97316, #10b981, #06b6d4);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+  }
+
+  /* Floating Animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+  .float-slow {
+    animation: float 8s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+
+  /* Pulse Glow */
+  .pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .pulse-glow-blue {
+    animation: pulse-glow-blue 3s ease-in-out infinite;
+  }
+
+  /* Neon effects */
+  .neon-text {
+    text-shadow: 
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px currentColor,
+      0 0 20px currentColor;
+  }
+
+  .neon-border {
+    box-shadow: 
+      0 0 5px currentColor,
+      0 0 10px currentColor,
+      0 0 15px currentColor,
+      inset 0 0 5px currentColor;
+  }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-glow-blue {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+  }
+}
+
+@keyframes fade-in {
+  '0%': { opacity: '0', transform: 'translateY(20px)' },
+  '100%': { opacity: '1', transform: 'translateY(0)' }
+}
+
+@keyframes fade-out {
+  '0%': { opacity: '1', transform: 'translateY(0)' },
+  '100%': { opacity: '0', transform: 'translateY(20px)' }
+}
+
+@keyframes scale-in {
+  '0%': { transform: 'scale(0.9)', opacity: '0' },
+  '100%': { transform: 'scale(1)', opacity: '1' }
+}
+
+@keyframes rotate-slow {
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' }
+}
+
+/* Add animation classes */
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s ease-out;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+/* Educational theme colors */
+.bg-education-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-education-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bg-education-accent {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .card-3d:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .card-3d-interactive:hover {
+    transform: translateY(-6px) scale(1.02);
   }
 }

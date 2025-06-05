@@ -1,5 +1,5 @@
 
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, BookOpen, Star } from 'lucide-react';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -9,27 +9,49 @@ interface LogoProps {
 
 const Logo = ({ size = 'md', showText = true, className = '' }: LogoProps) => {
   const sizeClasses = {
-    sm: { icon: 'h-8 w-8', text: 'text-xl', container: 'h-8 w-8' },
-    md: { icon: 'h-12 w-12', text: 'text-2xl', container: 'h-12 w-12' },
-    lg: { icon: 'h-16 w-16', text: 'text-4xl', container: 'h-16 w-16' },
-    xl: { icon: 'h-20 w-20', text: 'text-5xl', container: 'h-20 w-20' }
+    sm: { icon: 'h-6 w-6', text: 'text-lg', container: 'h-10 w-10' },
+    md: { icon: 'h-8 w-8', text: 'text-xl', container: 'h-14 w-14' },
+    lg: { icon: 'h-10 w-10', text: 'text-3xl', container: 'h-18 w-18' },
+    xl: { icon: 'h-12 w-12', text: 'text-4xl', container: 'h-24 w-24' }
   };
 
   const { icon, text, container } = sizeClasses[size];
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center gap-4 ${className}`}>
       <div className="relative">
-        <div className={`${container} rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 animate-pulse-glow flex items-center justify-center shadow-2xl`}>
-          <GraduationCap className={`${icon} text-white`} />
+        {/* Main logo container with 3D effect */}
+        <div className={`${container} rounded-2xl bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-2xl card-3d relative overflow-hidden`}>
+          {/* Animated background pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+          <div className="absolute inset-0 animated-gradient opacity-30"></div>
+          
+          {/* Main icon */}
+          <GraduationCap className={`${icon} text-white relative z-10`} />
+          
+          {/* Floating decorative elements */}
+          <BookOpen className="absolute top-1 right-1 h-3 w-3 text-white/60 animate-pulse" />
+          <Star className="absolute bottom-1 left-1 h-2 w-2 text-yellow-300 animate-bounce" />
         </div>
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 blur-md opacity-50 animate-pulse`}></div>
+        
+        {/* Glow effect */}
+        <div className={`absolute inset-0 rounded-2xl bg-gradient-to-tr from-blue-500 via-purple-500 to-cyan-500 blur-xl opacity-30 animate-pulse`}></div>
+        
+        {/* Orbiting dots */}
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+        <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
       </div>
+      
       {showText && (
-        <div>
-          <h1 className={`${text} font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400`}>
+        <div className="relative">
+          <h1 className={`${text} font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 neon-text`}>
             Axioms School
           </h1>
+          {size === 'xl' && (
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 font-medium">
+              🌟 Learning Excellence Platform
+            </p>
+          )}
         </div>
       )}
     </div>
