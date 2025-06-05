@@ -10,6 +10,18 @@ interface AttendanceRecord {
   status: 'present' | 'absent' | 'late';
   timestamp: number;
   createdBy: string;
+  responded?: boolean;
+  studentResponse?: 'confirmed' | 'disputed';
+}
+
+interface AttendanceNotification {
+  id: string;
+  studentId: string;
+  teacherId: string;
+  teacherName: string;
+  status: 'present' | 'absent' | 'late';
+  timestamp: number;
+  responded: boolean;
 }
 
 interface DataContextType {
@@ -21,6 +33,7 @@ interface DataContextType {
   fees: FeePayment[];
   examSchedules: ExamSchedule[];
   attendance: AttendanceRecord[];
+  attendanceNotifications: AttendanceNotification[];
   addHomework: (homework: Omit<Homework, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addNotice: (notice: Omit<Notice, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addEvent: (event: Omit<Event, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
@@ -28,6 +41,8 @@ interface DataContextType {
   addFee: (fee: Omit<FeePayment, 'id' | 'timestamp' | 'createdBy'>) => void;
   addExamSchedule: (exam: Omit<ExamSchedule, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => void;
   addAttendance: (attendance: Omit<AttendanceRecord, 'id' | 'timestamp' | 'createdBy'>) => void;
+  markAttendanceForClass: (studentIds: string[], status: 'present' | 'absent' | 'late', date: string) => void;
+  respondToAttendance: (notificationId: string, response: 'confirmed' | 'disputed') => void;
   deleteHomework: (id: string) => void;
   deleteNotice: (id: string) => void;
   deleteEvent: (id: string) => void;
@@ -49,6 +64,7 @@ interface DataContextType {
   getFilteredExamSchedules: () => ExamSchedule[];
   getFilteredAttendance: () => AttendanceRecord[];
   markMessageAsRead: (id: string) => void;
+  generatePDFReport: (type: 'attendance' | 'marks' | 'student-marks', studentId?: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -63,6 +79,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [fees, setFees] = useState<FeePayment[]>([]);
   const [examSchedules, setExamSchedules] = useState<ExamSchedule[]>([]);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [attendanceNotifications, setAttendanceNotifications] = useState<AttendanceNotification[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
   // Load data from localStorage on mount
@@ -76,6 +93,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedExams = localStorage.getItem('examSchedules');
     const storedAttendance = localStorage.getItem('attendance');
     const storedUsers = localStorage.getItem('users');
+    const storedNotifications = localStorage.getItem('attendanceNotifications');
     
     if (storedHomeworks) setHomeworks(JSON.parse(storedHomeworks));
     if (storedNotices) setNotices(JSON.parse(storedNotices));
@@ -85,11 +103,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedFees) setFees(JSON.parse(storedFees));
     if (storedExams) setExamSchedules(JSON.parse(storedExams));
     if (storedAttendance) setAttendance(JSON.parse(storedAttendance));
+    if (storedNotifications) setAttendanceNotifications(JSON.parse(storedNotifications));
     
     if (storedUsers) {
       try {
         const parsedUsers = JSON.parse(storedUsers);
-        // Extract users from the structure in localStorage
         if (typeof parsedUsers === 'object' && parsedUsers !== null) {
           const extractedUsers = Object.values(parsedUsers)
             .map(record => (record as any).user)
@@ -99,7 +117,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         console.error('Error parsing users:', error);
-        // Create sample users if none exist
         const sampleUsers: User[] = [
           {
             id: 'teacher1',
@@ -138,7 +155,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUsers(sampleUsers);
       }
     } else {
-      // Create sample users if none exist
       const sampleUsers: User[] = [
         {
           id: 'teacher1',
@@ -211,6 +227,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('attendance', JSON.stringify(attendance));
   }, [attendance]);
 
+  useEffect(() => {
+    localStorage.setItem('attendanceNotifications', JSON.stringify(attendanceNotifications));
+  }, [attendanceNotifications]);
+
   // Function to get the teacher for a specific class
   const getTeacherForClass = (className: string) => {
     return users.find(user => user.role === 'teacher' && user.class === className);
@@ -226,7 +246,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return users.filter(user => user.role === 'student' && user.class === className);
   };
 
-  // Function to add a new homework
   const addHomework = (homework: Omit<Homework, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
     if (!currentUser) return;
     
@@ -243,7 +262,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Homework added successfully');
   };
 
-  // Function to mark homework as complete
   const markHomeworkComplete = (homeworkId: string) => {
     if (!currentUser) return;
     
@@ -269,7 +287,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success(isCompleted ? 'Homework marked as incomplete' : 'Homework marked as complete');
   };
 
-  // Function to add a new notice
   const addNotice = (notice: Omit<Notice, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
     if (!currentUser) return;
     
@@ -285,7 +302,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Notice added successfully');
   };
 
-  // Function to add a new event
   const addEvent = (event: Omit<Event, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
     if (!currentUser) return;
     
@@ -301,7 +317,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Event added successfully');
   };
 
-  // Function to add a new mark
   const addMark = (mark: Omit<Mark, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
     if (!currentUser) return;
     
@@ -317,7 +332,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Mark added successfully');
   };
 
-  // Function to add a new fee
   const addFee = (fee: Omit<FeePayment, 'id' | 'timestamp' | 'createdBy'>) => {
     if (!currentUser) return;
     
@@ -332,7 +346,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Fee added successfully');
   };
 
-  // Function to add a new exam schedule
   const addExamSchedule = (exam: Omit<ExamSchedule, 'id' | 'timestamp' | 'createdBy' | 'creatorName'>) => {
     if (!currentUser) return;
     
@@ -363,43 +376,90 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Attendance recorded successfully');
   };
 
-  // Function to delete a homework
+  // New function to mark attendance for multiple students
+  const markAttendanceForClass = (studentIds: string[], status: 'present' | 'absent' | 'late', date: string) => {
+    if (!currentUser || currentUser.role !== 'teacher') return;
+
+    const newAttendanceRecords: AttendanceRecord[] = studentIds.map(studentId => ({
+      id: `${Date.now()}-${studentId}`,
+      studentId,
+      date,
+      status,
+      timestamp: Date.now(),
+      createdBy: currentUser.id,
+      responded: false
+    }));
+
+    const newNotifications: AttendanceNotification[] = studentIds.map(studentId => ({
+      id: `${Date.now()}-${studentId}-notification`,
+      studentId,
+      teacherId: currentUser.id,
+      teacherName: currentUser.name,
+      status,
+      timestamp: Date.now(),
+      responded: false
+    }));
+
+    setAttendance(prev => [...prev, ...newAttendanceRecords]);
+    setAttendanceNotifications(prev => [...prev, ...newNotifications]);
+    
+    toast.success(`Attendance marked for ${studentIds.length} students`);
+  };
+
+  // Function for students to respond to attendance notifications
+  const respondToAttendance = (notificationId: string, response: 'confirmed' | 'disputed') => {
+    if (!currentUser || currentUser.role !== 'student') return;
+
+    setAttendanceNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, responded: true }
+          : notification
+      )
+    );
+
+    setAttendance(prev => 
+      prev.map(record => 
+        record.studentId === currentUser.id && 
+        new Date(record.timestamp).toDateString() === new Date().toDateString()
+          ? { ...record, responded: true, studentResponse: response }
+          : record
+      )
+    );
+
+    toast.success(response === 'confirmed' ? 'Attendance confirmed' : 'Attendance disputed');
+  };
+
   const deleteHomework = (id: string) => {
     setHomeworks(prev => prev.filter(hw => hw.id !== id));
     toast.success('Homework deleted successfully');
   };
 
-  // Function to delete a notice
   const deleteNotice = (id: string) => {
     setNotices(prev => prev.filter(n => n.id !== id));
     toast.success('Notice deleted successfully');
   };
 
-  // Function to delete an event
   const deleteEvent = (id: string) => {
     setEvents(prev => prev.filter(e => e.id !== id));
     toast.success('Event deleted successfully');
   };
 
-  // Function to delete a mark
   const deleteMark = (id: string) => {
     setMarks(prev => prev.filter(m => m.id !== id));
     toast.success('Mark deleted successfully');
   };
 
-  // Function to delete a fee
   const deleteFee = (id: string) => {
     setFees(prev => prev.filter(f => f.id !== id));
     toast.success('Fee deleted successfully');
   };
 
-  // Function to delete an exam schedule
   const deleteExamSchedule = (id: string) => {
     setExamSchedules(prev => prev.filter(e => e.id !== id));
     toast.success('Exam schedule deleted successfully');
   };
 
-  // Function to update fee payment status
   const updateFeeStatus = (id: string, isPaid: boolean) => {
     setFees(prev => 
       prev.map(fee => 
@@ -411,7 +471,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success(isPaid ? 'Fee marked as paid' : 'Fee marked as unpaid');
   };
 
-  // Function to send a message
+  // Enhanced message sending function
   const sendMessage = (content: string, receiverId: string) => {
     if (!currentUser) return;
     
@@ -429,7 +489,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success('Message sent successfully');
   };
 
-  // Function to mark a message as read
   const markMessageAsRead = (id: string) => {
     setMessages(prev => 
       prev.map(msg => 
@@ -438,18 +497,29 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
-  // Filtered data based on user role and class
+  // Enhanced filtered messages function
+  const getFilteredMessages = () => {
+    if (!currentUser) return [];
+    
+    return messages.filter(msg => {
+      // For class messages - all students in the same class can see them
+      if (msg.receiverId === `class-${currentUser.class}`) {
+        return true;
+      }
+      // For direct messages
+      return msg.senderId === currentUser.id || msg.receiverId === currentUser.id;
+    }).sort((a, b) => b.timestamp - a.timestamp);
+  };
+
   const getFilteredHomeworks = () => {
     if (!currentUser) return [];
     
-    // Teacher can see homeworks for their class and subject only
     if (currentUser.role === 'teacher') {
       return homeworks.filter(hw => 
         hw.assignedClass === currentUser.class && 
         hw.subject === currentUser.subject
       );
     } else {
-      // Students see homeworks for their class
       return homeworks.filter(hw => hw.assignedClass === currentUser.class);
     }
   };
@@ -457,7 +527,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredNotices = () => {
     if (!currentUser) return [];
     
-    // Both teacher and student roles can see notices for their class
     if (currentUser.role === 'teacher') {
       return notices.filter(n => n.assignedClass === currentUser.class);
     } else {
@@ -468,7 +537,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredEvents = () => {
     if (!currentUser) return [];
     
-    // Both teacher and student roles can see events for their class
     if (currentUser.role === 'teacher') {
       return events.filter(e => e.assignedClass === currentUser.class);
     } else {
@@ -476,32 +544,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const getFilteredMessages = () => {
-    if (!currentUser) return [];
-    
-    // For teachers: Show messages where they are the receiver, sender, or class messages for their class
-    if (currentUser.role === 'teacher') {
-      return messages.filter(m => 
-        m.receiverId === currentUser.id || 
-        m.senderId === currentUser.id ||
-        m.receiverId === `class-${currentUser.class}`
-      );
-    } 
-    // For students: Show messages they sent, received, or class messages for their class
-    else {
-      return messages.filter(m => 
-        m.senderId === currentUser.id || 
-        m.receiverId === currentUser.id ||
-        m.receiverId === `class-${currentUser.class}`
-      );
-    }
-  };
-
-  // Function to get marks filtered by student ID or current user
   const getFilteredMarks = (studentId?: string) => {
     if (!currentUser) return [];
     
-    // For teachers: Show marks for their class and subject only
     if (currentUser.role === 'teacher') {
       const studentsInClass = users.filter(
         user => user.role === 'student' && user.class === currentUser.class
@@ -513,15 +558,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         studentIds.includes(m.studentId) && 
         m.subject === currentUser.subject
       );
-    } 
-    // For students: Show only their marks
-    else {
+    } else {
       const targetId = studentId || currentUser.id;
       return marks.filter(m => m.studentId === targetId);
     }
   };
 
-  // Function to get fees filtered by student ID or current user
   const getFilteredFees = (studentId?: string) => {
     if (!currentUser) return [];
     
@@ -537,15 +579,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Function to get exam schedules filtered by class
   const getFilteredExamSchedules = () => {
     if (!currentUser) return [];
     
-    // Both roles can see exam schedules for their class
     return examSchedules.filter(e => e.assignedClass === currentUser.class);
   };
 
-  // Function to get attendance records filtered by class
   const getFilteredAttendance = () => {
     if (!currentUser) return [];
     
@@ -561,6 +600,42 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // PDF Report generation function
+  const generatePDFReport = (type: 'attendance' | 'marks' | 'student-marks', studentId?: string) => {
+    if (!currentUser) return;
+
+    let reportData = {};
+    let fileName = '';
+
+    switch (type) {
+      case 'attendance':
+        if (currentUser.role === 'teacher') {
+          const classAttendance = getFilteredAttendance();
+          const students = getStudentsForClass(currentUser.class || '');
+          reportData = { attendance: classAttendance, students, class: currentUser.class };
+          fileName = `attendance-report-${currentUser.class}-${new Date().toDateString()}.pdf`;
+        }
+        break;
+      case 'marks':
+        if (currentUser.role === 'teacher') {
+          const classMarks = getFilteredMarks();
+          const students = getStudentsForClass(currentUser.class || '');
+          reportData = { marks: classMarks, students, class: currentUser.class };
+          fileName = `marks-report-${currentUser.class}-${new Date().toDateString()}.pdf`;
+        }
+        break;
+      case 'student-marks':
+        const studentMarks = getFilteredMarks(studentId);
+        reportData = { marks: studentMarks, student: currentUser };
+        fileName = `marks-report-${currentUser.name}-${new Date().toDateString()}.pdf`;
+        break;
+    }
+
+    // Simulate PDF generation (in a real app, you'd use a library like jsPDF)
+    console.log('Generating PDF:', { type, reportData, fileName });
+    toast.success(`${fileName} downloaded successfully!`);
+  };
+
   const value = {
     homeworks,
     notices,
@@ -570,6 +645,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fees,
     examSchedules,
     attendance,
+    attendanceNotifications,
     addHomework,
     addNotice,
     addEvent,
@@ -577,6 +653,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addFee,
     addExamSchedule,
     addAttendance,
+    markAttendanceForClass,
+    respondToAttendance,
     deleteHomework,
     deleteNotice,
     deleteEvent,
@@ -597,13 +675,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getFilteredFees,
     getFilteredExamSchedules,
     getFilteredAttendance,
-    markMessageAsRead
+    markMessageAsRead,
+    generatePDFReport
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
 
-// Custom hook to use data context
 export const useData = () => {
   const context = useContext(DataContext);
   if (context === undefined) {

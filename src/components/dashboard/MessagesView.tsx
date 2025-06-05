@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { format } from 'date-fns';
-import { MessageCircle, Send, Users, User as UserIcon, Clock } from 'lucide-react';
+import { MessageCircle, Send, Users, User as UserIcon, Clock, Bell } from 'lucide-react';
 
 const MessagesView = () => {
   const { currentUser } = useAuth();
@@ -18,7 +18,9 @@ const MessagesView = () => {
     sendMessage, 
     markMessageAsRead,
     getTeachersForClass,
-    getStudentsForClass
+    getStudentsForClass,
+    attendanceNotifications,
+    respondToAttendance
   } = useData();
   const [newMessage, setNewMessage] = useState('');
   const [selectedRecipient, setSelectedRecipient] = useState<string>('');
@@ -27,29 +29,15 @@ const MessagesView = () => {
   const isStudent = currentUser?.role === 'student';
   const teachers = isStudent ? getTeachersForClass(currentUser?.class || '') : [];
   const students = !isStudent ? getStudentsForClass(currentUser?.class || '') : [];
+  const classStudents = isStudent ? getStudentsForClass(currentUser?.class || '') : [];
   
-  // Get all messages for current user (including class messages and individual messages)
-  const allMessages = getFilteredMessages().filter(msg => {
-    // For students: show messages sent to them, sent by them, or class messages for their class
-    if (isStudent) {
-      return msg.senderId === currentUser?.id || 
-             msg.receiverId === currentUser?.id || 
-             (msg.receiverId === `class-${currentUser?.class}` && (
-               msg.senderId === currentUser?.id || // Messages they sent to class
-               teachers.some(teacher => teacher.id === msg.senderId) || // Messages from teachers
-               students.some(student => student.id === msg.senderId) // Messages from other students in class
-             ));
-    } else {
-      // For teachers: show messages from their class students, sent by them, or class messages for their class
-      const isFromStudentInClass = students.some(student => student.id === msg.senderId);
-      return msg.senderId === currentUser?.id || 
-             (msg.receiverId === currentUser?.id && isFromStudentInClass) ||
-             (msg.receiverId === `class-${currentUser?.class}` && (
-               msg.senderId === currentUser?.id || // Messages they sent to class
-               isFromStudentInClass // Messages from students in their class
-             ));
-    }
-  }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  // Get attendance notifications for current student
+  const unrespondedNotifications = attendanceNotifications.filter(
+    notification => notification.studentId === currentUser?.id && !notification.responded
+  );
+
+  // Get all messages for current user
+  const allMessages = getFilteredMessages();
 
   useEffect(() => {
     // Mark messages as read when component loads
@@ -82,18 +70,21 @@ const MessagesView = () => {
   const getMessageDisplayName = (msg: any) => {
     if (msg.senderId === currentUser?.id) return 'You';
     
-    if (isStudent) {
-      const teacher = teachers.find(t => t.id === msg.senderId);
-      if (teacher) return `${teacher.name} (Teacher)`;
-      
-      const student = students.find(s => s.id === msg.senderId);
-      if (student) return student.name;
-      
-      return 'Unknown User';
-    } else {
-      const student = students.find(s => s.id === msg.senderId);
-      return student ? `${student.name}` : 'Student';
+    // Check if it's from a teacher
+    const teacher = teachers.find(t => t.id === msg.senderId);
+    if (teacher) return `${teacher.name} (Teacher)`;
+    
+    // Check if it's from a student in the class
+    const student = classStudents.find(s => s.id === msg.senderId);
+    if (student) return student.name;
+    
+    // If it's a teacher viewing, check students in their class
+    if (!isStudent) {
+      const studentInClass = students.find(s => s.id === msg.senderId);
+      if (studentInClass) return studentInClass.name;
     }
+    
+    return msg.senderName || 'Unknown User';
   };
 
   const getRecipientOptions = () => {
@@ -119,9 +110,55 @@ const MessagesView = () => {
     return 'Direct Message';
   };
 
+  const handleAttendanceResponse = (notificationId: string, response: 'confirmed' | 'disputed') => {
+    respondToAttendance(notificationId, response);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Attendance Notifications for Students */}
+        {isStudent && unrespondedNotifications.length > 0 && (
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-xl shadow-lg">
+            <div className="flex items-center mb-3">
+              <Bell className="h-5 w-5 text-amber-600 mr-2" />
+              <h3 className="text-lg font-semibold text-amber-800">Attendance Notifications</h3>
+            </div>
+            <div className="space-y-3">
+              {unrespondedNotifications.map((notification) => (
+                <div key={notification.id} className="bg-white rounded-lg p-4 border border-amber-200">
+                  <p className="text-gray-800 mb-3">
+                    <span className="font-medium">{notification.teacherName}</span> marked you as{' '}
+                    <span className={`font-medium ${
+                      notification.status === 'present' ? 'text-green-600' : 
+                      notification.status === 'absent' ? 'text-red-600' : 'text-yellow-600'
+                    }`}>
+                      {notification.status}
+                    </span>
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleAttendanceResponse(notification.id, 'confirmed')}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      Confirm
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAttendanceResponse(notification.id, 'disputed')}
+                      className="border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      Dispute
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -132,7 +169,7 @@ const MessagesView = () => {
               </h1>
               <p className="text-gray-600">
                 {isStudent 
-                  ? `Communicate with your teachers and classmates in Class ${currentUser?.class}`
+                  ? `Communicate with teachers and classmates in Class ${currentUser?.class}`
                   : `Connect with students in Class ${currentUser?.class}`
                 }
               </p>
@@ -143,6 +180,11 @@ const MessagesView = () => {
                 <Badge className="bg-green-100 text-green-800">
                   {allMessages.length} Messages
                 </Badge>
+                {isStudent && unrespondedNotifications.length > 0 && (
+                  <Badge className="bg-amber-100 text-amber-800 animate-pulse">
+                    {unrespondedNotifications.length} Attendance Alert{unrespondedNotifications.length > 1 ? 's' : ''}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -303,44 +345,52 @@ const MessagesView = () => {
               </CardContent>
             </Card>
             
-            {/* Online Users */}
+            {/* Class Members */}
             <Card className="bg-white shadow-xl border-0 rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg">
-                  {isStudent ? 'Teachers' : 'Students'}
-                </CardTitle>
+                <CardTitle className="text-lg">Class Members</CardTitle>
               </CardHeader>
               <CardContent className="p-6 pt-0">
-                <div className="space-y-2">
-                  {isStudent ? (
-                    teachers.map(teacher => (
-                      <div key={teacher.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-xs font-medium text-blue-600">
-                            {teacher.name.charAt(0)}
-                          </span>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Teachers</h4>
+                    <div className="space-y-2">
+                      {teachers.map(teacher => (
+                        <div key={teacher.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium text-blue-600">
+                              {teacher.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{teacher.name}</p>
+                            <p className="text-xs text-gray-500">{teacher.subject}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{teacher.name}</p>
-                          <p className="text-xs text-gray-500">{teacher.subject}</p>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">
+                      Students ({isStudent ? classStudents.length - 1 : students.length})
+                    </h4>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {(isStudent ? classStudents.filter(s => s.id !== currentUser?.id) : students).map(student => (
+                        <div key={student.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium text-green-600">
+                              {student.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{student.name}</p>
+                            <p className="text-xs text-gray-500">Student</p>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    students.slice(0, 5).map(student => (
-                      <div key={student.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <span className="text-xs font-medium text-green-600">
-                            {student.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{student.name}</p>
-                          <p className="text-xs text-gray-500">Student</p>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

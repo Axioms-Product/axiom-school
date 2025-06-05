@@ -18,26 +18,48 @@ import {
   Menu,
   LogOut,
   FileText,
-  GraduationCap
+  GraduationCap,
+  UserCheck,
+  Download
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, logout } = useAuth();
+  const { markAttendanceForClass, getStudentsForClass, generatePDFReport } = useData();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   
   useEffect(() => {
-    // Close mobile sidebar when navigation changes
     setOpen(false);
   }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
+  };
+
+  const handleMarkAttendance = () => {
+    if (currentUser?.role === 'teacher' && currentUser.class) {
+      const students = getStudentsForClass(currentUser.class);
+      const studentIds = students.map(s => s.id);
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Mark all students as present by default (teachers can modify individual records later)
+      markAttendanceForClass(studentIds, 'present', today);
+    }
+  };
+
+  const handleDownloadReport = () => {
+    if (currentUser?.role === 'teacher') {
+      generatePDFReport('attendance');
+    } else {
+      generatePDFReport('student-marks');
+    }
   };
 
   const navigationItems = [
@@ -48,6 +70,7 @@ const Dashboard = () => {
     { name: 'Marks', path: '/dashboard/marks', icon: <PenSquare size={20} /> },
     { name: 'Messages', path: '/dashboard/messages', icon: <MessageCircle size={20} /> },
     { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={20} /> },
+    { name: 'Attendance', path: '/dashboard/attendance', icon: <UserCheck size={20} /> },
   ];
   
   // Add role-specific navigation items
@@ -87,6 +110,49 @@ const Dashboard = () => {
               </Link>
             ))}
           </nav>
+
+          {/* Quick Actions for Teachers */}
+          {currentUser?.role === 'teacher' && (
+            <div className="mt-6 space-y-2">
+              <Separator className="my-4 bg-sidebar-border/50" />
+              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
+              <Button
+                onClick={handleMarkAttendance}
+                variant="outline"
+                size="sm"
+                className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
+              >
+                <UserCheck className="h-4 w-4 mr-2" />
+                Mark Attendance
+              </Button>
+              <Button
+                onClick={handleDownloadReport}
+                variant="outline"
+                size="sm"
+                className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download Report
+              </Button>
+            </div>
+          )}
+
+          {/* Quick Actions for Students */}
+          {currentUser?.role === 'student' && (
+            <div className="mt-6 space-y-2">
+              <Separator className="my-4 bg-sidebar-border/50" />
+              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
+              <Button
+                onClick={handleDownloadReport}
+                variant="outline"
+                size="sm"
+                className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                My Report
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="mt-auto p-4">
@@ -149,6 +215,32 @@ const Dashboard = () => {
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile Quick Actions */}
+            {currentUser?.role === 'teacher' && (
+              <div className="mt-6 space-y-2">
+                <Separator className="my-4" />
+                <p className="text-xs font-medium text-muted-foreground px-3">Quick Actions</p>
+                <Button
+                  onClick={handleMarkAttendance}
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                >
+                  <UserCheck className="h-4 w-4 mr-2" />
+                  Mark Attendance
+                </Button>
+                <Button
+                  onClick={handleDownloadReport}
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Report
+                </Button>
+              </div>
+            )}
           </div>
           
           <div className="mt-auto p-4">
@@ -214,7 +306,7 @@ const Dashboard = () => {
           </header>
           
           {/* Page content */}
-          <main className="flex-1 p-4 md:p-6">
+          <main className="flex-1 p-4 md:p-6 overflow-y-auto">
             <Outlet />
           </main>
         </div>
