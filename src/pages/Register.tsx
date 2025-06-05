@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
-import AnimatedBackground from '@/components/AnimatedBackground';
 import { Subject } from '@/models/types';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, GraduationCap } from 'lucide-react';
 import Logo from '@/components/ui/logo';
@@ -34,14 +33,12 @@ const Register = () => {
   const classes = ['VI', 'VII', 'VIII', 'IX', 'X'];
   const subjects = Object.values(Subject);
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
-  // Reset subject when role changes
   useEffect(() => {
     if (formData.role !== 'teacher') {
       setFormData(prev => ({ ...prev, subject: '' }));
@@ -93,68 +90,54 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      <AnimatedBackground />
+    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-purple-50 to-pink-100">
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       
-      {/* Dotted pattern background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
-        }}></div>
-      </div>
-      
-      {/* Futuristic floating elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-40 h-40 bg-cyan-500/5 rounded-full blur-xl animate-pulse delay-500"></div>
-      </div>
-      
-      <div className="w-full max-w-lg z-10 animate-scale-in my-8">
+      <div className="w-full max-w-lg z-10 my-8">
         <div className="text-center mb-8">
           <Logo size="lg" className="justify-center mb-4" />
-          <p className="text-slate-300 text-lg">Initialize New Account</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Join Axioms School</h1>
+          <p className="text-gray-600">Create your account to start learning</p>
         </div>
         
-        <Card className="w-full backdrop-blur-xl bg-white/5 border-white/10 shadow-2xl border">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl text-white">Account Creation</CardTitle>
-            <CardDescription className="text-slate-300">Enter your details to join the system</CardDescription>
+        <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center pb-6">
+            <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
+            <CardDescription className="text-purple-100">Fill in your details to get started</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-3 rounded-lg backdrop-blur-sm mb-6">
+              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
                 {error}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-slate-200 font-medium">Full Name</Label>
+                  <Label htmlFor="name" className="text-gray-700 font-medium">Full Name</Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       id="name"
                       placeholder="John Doe"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
                       required
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-slate-200 font-medium">Username</Label>
+                  <Label htmlFor="username" className="text-gray-700 font-medium">Username</Label>
                   <div className="relative">
-                    <UserPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <UserPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       id="username"
                       placeholder="john_doe"
                       value={formData.username}
                       onChange={(e) => handleInputChange('username', e.target.value)}
-                      className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
                       required
                     />
                   </div>
@@ -162,16 +145,16 @@ const Register = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-200 font-medium">Email</Label>
+                <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                    className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
                     required
                   />
                 </div>
@@ -179,22 +162,22 @@ const Register = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-200 font-medium">Password</Label>
+                  <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      className="pl-9 pr-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -202,22 +185,22 @@ const Register = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-slate-200 font-medium">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder-slate-400 focus:border-blue-400/50 focus:ring-blue-400/20"
+                      className="pl-9 pr-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -227,22 +210,22 @@ const Register = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="text-slate-200 font-medium">Role</Label>
+                  <Label htmlFor="role" className="text-gray-700 font-medium">Role</Label>
                   <Select
                     value={formData.role}
                     onValueChange={(value) => handleInputChange('role', value)}
                   >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-white/10">
-                      <SelectItem value="student" className="text-white hover:bg-white/10">
+                    <SelectContent className="bg-white border-gray-200">
+                      <SelectItem value="student" className="text-gray-900">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4" />
                           Student
                         </div>
                       </SelectItem>
-                      <SelectItem value="teacher" className="text-white hover:bg-white/10">
+                      <SelectItem value="teacher" className="text-gray-900">
                         <div className="flex items-center gap-2">
                           <GraduationCap className="h-4 w-4" />
                           Teacher
@@ -253,19 +236,19 @@ const Register = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="class" className="text-slate-200 font-medium">
+                  <Label htmlFor="class" className="text-gray-700 font-medium">
                     {formData.role === 'teacher' ? 'Assigned Class' : 'Your Class'}
                   </Label>
                   <Select
                     value={formData.assignedClass}
                     onValueChange={(value) => handleInputChange('assignedClass', value)}
                   >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-white/10">
+                    <SelectContent className="bg-white border-gray-200">
                       {classes.map((cls) => (
-                        <SelectItem key={cls} value={cls} className="text-white hover:bg-white/10">
+                        <SelectItem key={cls} value={cls} className="text-gray-900">
                           Class {cls}
                         </SelectItem>
                       ))}
@@ -276,17 +259,17 @@ const Register = () => {
               
               {formData.role === 'teacher' && (
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-slate-200 font-medium">Subject You Teach</Label>
+                  <Label htmlFor="subject" className="text-gray-700 font-medium">Subject You Teach</Label>
                   <Select
                     value={formData.subject}
                     onValueChange={(value) => handleInputChange('subject', value)}
                   >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-white/10">
+                    <SelectContent className="bg-white border-gray-200">
                       {subjects.map((subj) => (
-                        <SelectItem key={subj} value={subj} className="text-white hover:bg-white/10">
+                        <SelectItem key={subj} value={subj} className="text-gray-900">
                           {subj}
                         </SelectItem>
                       ))}
@@ -297,7 +280,7 @@ const Register = () => {
               
               <Button 
                 type="submit" 
-                className="w-full h-12 text-white font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full h-12 text-white font-semibold rounded-lg shadow-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
                 {loading ? (
@@ -306,24 +289,20 @@ const Register = () => {
                     Creating Account...
                   </div>
                 ) : (
-                  'Initialize Account'
+                  'Create Account'
                 )}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-slate-300">
+          <CardFooter className="bg-gray-50 text-center py-4">
+            <p className="text-sm text-gray-600 w-full">
               Already have an account?{' '}
-              <Link to="/login" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
-                Access Portal
+              <Link to="/login" className="text-purple-600 hover:text-purple-700 font-medium">
+                Sign In
               </Link>
             </p>
           </CardFooter>
         </Card>
-        
-        <footer className="text-center mt-8 text-sm text-slate-400">
-          <p>Developed with ❤️ by Satyam Rojha</p>
-        </footer>
       </div>
     </div>
   );
