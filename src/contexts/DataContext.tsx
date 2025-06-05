@@ -84,7 +84,74 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         console.error('Error parsing users:', error);
+        // Create sample users if none exist
+        const sampleUsers = [
+          {
+            id: 'teacher1',
+            name: 'Ms. Sarah Johnson',
+            email: 'sarah.johnson@axioms.edu',
+            role: 'teacher' as const,
+            class: '10A',
+            subject: 'Mathematics'
+          },
+          {
+            id: 'student1',
+            name: 'Alex Kumar',
+            email: 'alex.kumar@student.axioms.edu',
+            role: 'student' as const,
+            class: '10A'
+          },
+          {
+            id: 'student2',
+            name: 'Emma Wilson',
+            email: 'emma.wilson@student.axioms.edu',
+            role: 'student' as const,
+            class: '10A'
+          },
+          {
+            id: 'student3',
+            name: 'David Chen',
+            email: 'david.chen@student.axioms.edu',
+            role: 'student' as const,
+            class: '10A'
+          }
+        ];
+        setUsers(sampleUsers);
       }
+    } else {
+      // Create sample users if none exist
+      const sampleUsers = [
+        {
+          id: 'teacher1',
+          name: 'Ms. Sarah Johnson',
+          email: 'sarah.johnson@axioms.edu',
+          role: 'teacher' as const,
+          class: '10A',
+          subject: 'Mathematics'
+        },
+        {
+          id: 'student1',
+          name: 'Alex Kumar',
+          email: 'alex.kumar@student.axioms.edu',
+          role: 'student' as const,
+          class: '10A'
+        },
+        {
+          id: 'student2',
+          name: 'Emma Wilson',
+          email: 'emma.wilson@student.axioms.edu',
+          role: 'student' as const,
+          class: '10A'
+        },
+        {
+          id: 'student3',
+          name: 'David Chen',
+          email: 'david.chen@student.axioms.edu',
+          role: 'student' as const,
+          class: '10A'
+        }
+      ];
+      setUsers(sampleUsers);
     }
   }, []);
 
@@ -370,14 +437,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getFilteredMessages = () => {
     if (!currentUser) return [];
     
-    // For teachers: Show messages where they are the receiver
+    // For teachers: Show messages where they are the receiver, sender, or class messages for their class
     if (currentUser.role === 'teacher') {
-      return messages.filter(m => m.receiverId === currentUser.id || m.senderId === currentUser.id);
+      return messages.filter(m => 
+        m.receiverId === currentUser.id || 
+        m.senderId === currentUser.id ||
+        m.receiverId === `class-${currentUser.class}`
+      );
     } 
-    // For students: Show messages they sent and received
+    // For students: Show messages they sent, received, or class messages for their class
     else {
       return messages.filter(m => 
-        m.senderId === currentUser.id || m.receiverId === currentUser.id
+        m.senderId === currentUser.id || 
+        m.receiverId === currentUser.id ||
+        m.receiverId === `class-${currentUser.class}`
       );
     }
   };

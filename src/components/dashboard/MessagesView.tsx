@@ -30,25 +30,33 @@ const MessagesView = () => {
   
   // Get all messages for current user (including class messages and individual messages)
   const allMessages = getFilteredMessages().filter(msg => {
-    // For students: show messages sent to them, sent by them, or class messages
+    // For students: show messages sent to them, sent by them, or class messages for their class
     if (isStudent) {
       return msg.senderId === currentUser?.id || 
              msg.receiverId === currentUser?.id || 
-             msg.receiverId === `class-${currentUser?.class}`;
+             (msg.receiverId === `class-${currentUser?.class}` && (
+               msg.senderId === currentUser?.id || // Messages they sent to class
+               teachers.some(teacher => teacher.id === msg.senderId) || // Messages from teachers
+               students.some(student => student.id === msg.senderId) // Messages from other students in class
+             ));
     } else {
-      // For teachers: show messages from their class students, sent by them, or class messages
+      // For teachers: show messages from their class students, sent by them, or class messages for their class
       const isFromStudentInClass = students.some(student => student.id === msg.senderId);
       return msg.senderId === currentUser?.id || 
              (msg.receiverId === currentUser?.id && isFromStudentInClass) ||
-             msg.receiverId === `class-${currentUser?.class}` ||
-             (msg.senderId === currentUser?.id && msg.receiverId.startsWith('class-'));
+             (msg.receiverId === `class-${currentUser?.class}` && (
+               msg.senderId === currentUser?.id || // Messages they sent to class
+               isFromStudentInClass // Messages from students in their class
+             ));
     }
   }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   useEffect(() => {
     // Mark messages as read when component loads
     allMessages.forEach(msg => {
-      if ((msg.receiverId === currentUser?.id || msg.receiverId === `class-${currentUser?.class}`) && !msg.read) {
+      if ((msg.receiverId === currentUser?.id || 
+           (msg.receiverId === `class-${currentUser?.class}` && msg.senderId !== currentUser?.id)) && 
+          !msg.read) {
         markMessageAsRead(msg.id);
       }
     });
@@ -76,7 +84,12 @@ const MessagesView = () => {
     
     if (isStudent) {
       const teacher = teachers.find(t => t.id === msg.senderId);
-      return teacher ? `${teacher.name} (Teacher)` : 'Teacher';
+      if (teacher) return `${teacher.name} (Teacher)`;
+      
+      const student = students.find(s => s.id === msg.senderId);
+      if (student) return student.name;
+      
+      return 'Unknown User';
     } else {
       const student = students.find(s => s.id === msg.senderId);
       return student ? `${student.name}` : 'Student';
@@ -99,14 +112,21 @@ const MessagesView = () => {
     }
   };
 
+  const getMessageTypeDisplay = (msg: any) => {
+    if (msg.receiverId.startsWith('class-')) {
+      return 'Class Group';
+    }
+    return 'Direct Message';
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-0">
+        <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 flex items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
                 <MessageCircle className="h-8 w-8 text-blue-600" />
                 Messages
               </h1>
@@ -132,8 +152,8 @@ const MessagesView = () => {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden h-[600px] flex flex-col">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden h-[600px] flex flex-col">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                 <CardTitle className="flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
                   Class {currentUser?.class} Messages
@@ -152,6 +172,7 @@ const MessagesView = () => {
                     allMessages.map((message) => {
                       const isSentByCurrentUser = message.senderId === currentUser?.id;
                       const displayName = getMessageDisplayName(message);
+                      const messageTypeDisplay = getMessageTypeDisplay(message);
                       
                       return (
                         <div 
@@ -165,13 +186,30 @@ const MessagesView = () => {
                                 : 'bg-white border border-gray-200 text-gray-900'
                             }`}
                           >
-                            <p className="mb-2 break-words">{message.content}</p>
-                            <div className="flex justify-between items-center text-xs opacity-75 gap-3">
-                              <span className="font-medium">{displayName}</span>
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                <span>{format(new Date(message.timestamp), 'MMM d, h:mm a')}</span>
+                            <div className="mb-2">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className={`text-xs font-medium ${
+                                  isSentByCurrentUser ? 'text-blue-100' : 'text-gray-500'
+                                }`}>
+                                  {displayName}
+                                </span>
+                                <Badge 
+                                  className={`text-xs ${
+                                    isSentByCurrentUser 
+                                      ? 'bg-white/20 text-white' 
+                                      : message.receiverId.startsWith('class-') 
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-blue-100 text-blue-700'
+                                  }`}
+                                >
+                                  {messageTypeDisplay}
+                                </Badge>
                               </div>
+                              <p className="break-words">{message.content}</p>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs opacity-75">
+                              <Clock className="h-3 w-3" />
+                              <span>{format(new Date(message.timestamp), 'MMM d, h:mm a')}</span>
                             </div>
                           </div>
                         </div>
@@ -239,7 +277,7 @@ const MessagesView = () => {
                     />
                     <Button 
                       onClick={handleSendMessage}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6 self-end"
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl px-6 self-end"
                       disabled={!newMessage.trim() || (messageType === 'individual' && !selectedRecipient)}
                     >
                       <Send className="h-4 w-4" />
@@ -252,7 +290,7 @@ const MessagesView = () => {
           
           {/* Sidebar */}
           <div className="space-y-4">
-            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
+            <Card className="bg-white shadow-xl border-0 rounded-2xl">
               <CardContent className="p-6 text-center">
                 <div className="bg-blue-100 rounded-full p-4 inline-flex mb-4">
                   <Users className="h-8 w-8 text-blue-600" />
@@ -266,7 +304,7 @@ const MessagesView = () => {
             </Card>
             
             {/* Online Users */}
-            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
+            <Card className="bg-white shadow-xl border-0 rounded-2xl">
               <CardHeader>
                 <CardTitle className="text-lg">
                   {isStudent ? 'Teachers' : 'Students'}

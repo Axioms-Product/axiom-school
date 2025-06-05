@@ -17,6 +17,7 @@ import MessagesView from '@/components/dashboard/MessagesView';
 import ExamScheduleView from '@/components/dashboard/ExamScheduleView';
 import TeachersView from '@/components/dashboard/TeachersView';
 import StudentsView from '@/components/dashboard/StudentsView';
+import AttendanceView from '@/components/dashboard/AttendanceView';
 import ProfilePage from '@/pages/ProfilePage';
 import HelpSupportPage from '@/pages/HelpSupportPage';
 import NotFound from '@/pages/NotFound';
@@ -41,6 +42,7 @@ function App() {
               <Route path="exams" element={<ExamScheduleView />} />
               <Route path="teachers" element={<TeachersView />} />
               <Route path="students" element={<StudentsView />} />
+              <Route path="attendance" element={<AttendanceView />} />
               <Route path="profile" element={<ProfilePage />} />
             </Route>
             <Route path="/help" element={<HelpSupportPage />} />
