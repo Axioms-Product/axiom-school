@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
+import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, 
   Trophy, 
@@ -20,11 +21,16 @@ import {
   CheckCircle,
   GraduationCap,
   Brain,
-  Zap
+  Zap,
+  Plus,
+  FileText,
+  BarChart3,
+  UserCheck
 } from 'lucide-react';
 
 const HomeView = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const { 
     getFilteredHomeworks, 
     getFilteredNotices, 
@@ -55,48 +61,92 @@ const HomeView = () => {
     return eventDate >= today;
   }).slice(0, 3);
 
+  // Teacher specific stats
+  const teacherStats = {
+    totalStudents: isStudent ? 0 : 25, // Mock data
+    assignmentsGiven: homework.length,
+    averagePerformance: 85 // Mock data
+  };
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'homework':
+        navigate('/dashboard/homework');
+        break;
+      case 'events':
+        navigate('/dashboard/events');
+        break;
+      case 'messages':
+        navigate('/dashboard/messages');
+        break;
+      case 'marks':
+        navigate('/dashboard/marks');
+        break;
+      case 'notices':
+        navigate('/dashboard/notices');
+        break;
+      case 'students':
+        navigate('/dashboard/students');
+        break;
+      case 'exams':
+        navigate('/dashboard/exams');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Welcome Header */}
-        <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 border border-gray-100">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-white/20">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                  <GraduationCap className="h-6 w-6 text-white" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    {isStudent ? (
+                      <GraduationCap className="h-8 w-8 text-white" />
+                    ) : (
+                      <UserCheck className="h-8 w-8 text-white" />
+                    )}
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Welcome back, {currentUser?.name}! 👋
                   </h1>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-lg">
                     {isStudent 
-                      ? `Ready to continue learning in Class ${currentUser?.class}?`
-                      : `Ready to teach Class ${currentUser?.class} today?`
+                      ? `Ready to explore new lessons in Class ${currentUser?.class}?`
+                      : `Ready to inspire Class ${currentUser?.class} today?`
                     }
                   </p>
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2">
-                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1">
+              <div className="flex flex-wrap gap-3">
+                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 text-sm">
                   Class {currentUser?.class}
                 </Badge>
-                <Badge className="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 capitalize">
+                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 px-4 py-2 text-sm capitalize">
                   {currentUser?.role}
                 </Badge>
                 {currentUser?.subject && (
-                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 px-3 py-1">
+                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 text-sm">
                     {currentUser.subject}
                   </Badge>
                 )}
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white text-center min-w-[200px]">
-              <div className="text-sm opacity-90 mb-1">Today's Date</div>
-              <div className="text-2xl font-bold mb-1">
+            <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-6 text-white text-center min-w-[220px] shadow-xl">
+              <div className="text-sm opacity-90 mb-2">Today's Date</div>
+              <div className="text-3xl font-bold mb-2">
                 {new Date().toLocaleDateString('en-US', { 
                   weekday: 'short', 
                   month: 'short', 
@@ -112,103 +162,190 @@ const HomeView = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Homework</p>
-                  <p className="text-3xl font-bold text-gray-900">{pendingHomework}</p>
-                  <p className="text-xs text-gray-500">Pending</p>
-                </div>
-                <div className="bg-blue-100 rounded-xl p-3">
-                  <BookOpen className="h-7 w-7 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {isStudent ? (
+            <>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Homework</p>
+                      <p className="text-3xl font-bold text-gray-900">{pendingHomework}</p>
+                      <p className="text-xs text-gray-500">Pending</p>
+                    </div>
+                    <div className="bg-blue-100 rounded-xl p-3">
+                      <BookOpen className="h-7 w-7 text-blue-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Notices</p>
-                  <p className="text-3xl font-bold text-gray-900">{notices.length}</p>
-                  <p className="text-xs text-gray-500">Active</p>
-                </div>
-                <div className="bg-yellow-100 rounded-xl p-3">
-                  <Bell className="h-7 w-7 text-yellow-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Notices</p>
+                      <p className="text-3xl font-bold text-gray-900">{notices.length}</p>
+                      <p className="text-xs text-gray-500">Active</p>
+                    </div>
+                    <div className="bg-yellow-100 rounded-xl p-3">
+                      <Bell className="h-7 w-7 text-yellow-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Events</p>
-                  <p className="text-3xl font-bold text-gray-900">{upcomingEvents.length}</p>
-                  <p className="text-xs text-gray-500">Upcoming</p>
-                </div>
-                <div className="bg-green-100 rounded-xl p-3">
-                  <Calendar className="h-7 w-7 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Events</p>
+                      <p className="text-3xl font-bold text-gray-900">{upcomingEvents.length}</p>
+                      <p className="text-xs text-gray-500">Upcoming</p>
+                    </div>
+                    <div className="bg-green-100 rounded-xl p-3">
+                      <Calendar className="h-7 w-7 text-green-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Messages</p>
-                  <p className="text-3xl font-bold text-gray-900">{unreadMessages}</p>
-                  <p className="text-xs text-gray-500">Unread</p>
-                </div>
-                <div className="bg-purple-100 rounded-xl p-3">
-                  <MessageSquare className="h-7 w-7 text-purple-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Messages</p>
+                      <p className="text-3xl font-bold text-gray-900">{unreadMessages}</p>
+                      <p className="text-xs text-gray-500">Unread</p>
+                    </div>
+                    <div className="bg-purple-100 rounded-xl p-3">
+                      <MessageSquare className="h-7 w-7 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Students</p>
+                      <p className="text-3xl font-bold text-gray-900">{teacherStats.totalStudents}</p>
+                      <p className="text-xs text-gray-500">In your class</p>
+                    </div>
+                    <div className="bg-blue-100 rounded-xl p-3">
+                      <Users className="h-7 w-7 text-blue-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Assignments</p>
+                      <p className="text-3xl font-bold text-gray-900">{teacherStats.assignmentsGiven}</p>
+                      <p className="text-xs text-gray-500">Given</p>
+                    </div>
+                    <div className="bg-green-100 rounded-xl p-3">
+                      <FileText className="h-7 w-7 text-green-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Performance</p>
+                      <p className="text-3xl font-bold text-gray-900">{teacherStats.averagePerformance}%</p>
+                      <p className="text-xs text-gray-500">Class Average</p>
+                    </div>
+                    <div className="bg-yellow-100 rounded-xl p-3">
+                      <BarChart3 className="h-7 w-7 text-yellow-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Messages</p>
+                      <p className="text-3xl font-bold text-gray-900">{unreadMessages}</p>
+                      <p className="text-xs text-gray-500">Unread</p>
+                    </div>
+                    <div className="bg-purple-100 rounded-xl p-3">
+                      <MessageSquare className="h-7 w-7 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Progress Overview */}
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-2xl">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-2xl">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Target className="h-5 w-5" />
-                Learning Progress
+                {isStudent ? 'Learning Progress' : 'Class Overview'}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700">Homework Completion</span>
-                    <span className="text-sm font-bold text-gray-900">{Math.round(homeworkProgress)}%</span>
+              {isStudent ? (
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">Homework Completion</span>
+                      <span className="text-sm font-bold text-gray-900">{Math.round(homeworkProgress)}%</span>
+                    </div>
+                    <Progress value={homeworkProgress} className="h-3 bg-gray-100" />
                   </div>
-                  <Progress value={homeworkProgress} className="h-3 bg-gray-100" />
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-green-50 rounded-xl">
+                      <div className="text-2xl font-bold text-green-600 mb-1">{completedHomework}</div>
+                      <div className="text-sm text-gray-600">Completed</div>
+                    </div>
+                    <div className="text-center p-4 bg-orange-50 rounded-xl">
+                      <div className="text-2xl font-bold text-orange-600 mb-1">{pendingHomework}</div>
+                      <div className="text-sm text-gray-600">Pending</div>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-green-50 rounded-xl">
-                    <div className="text-2xl font-bold text-green-600 mb-1">{completedHomework}</div>
-                    <div className="text-sm text-gray-600">Completed</div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-xl">
+                      <div className="text-2xl font-bold text-blue-600 mb-1">{homework.length}</div>
+                      <div className="text-sm text-gray-600">Assignments</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-xl">
+                      <div className="text-2xl font-bold text-green-600 mb-1">{notices.length}</div>
+                      <div className="text-sm text-gray-600">Notices</div>
+                    </div>
                   </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-xl">
-                    <div className="text-2xl font-bold text-orange-600 mb-1">{pendingHomework}</div>
-                    <div className="text-sm text-gray-600">Pending</div>
+                  <div className="p-4 bg-purple-50 rounded-xl">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600 mb-1">{events.length}</div>
+                      <div className="text-sm text-gray-600">Events Planned</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Recent Activity */}
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-2xl">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-t-2xl">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Clock className="h-5 w-5" />
                 Recent Activity
@@ -257,7 +394,7 @@ const HomeView = () => {
         </div>
 
         {/* Quick Actions */}
-        <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden">
+        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-gray-900">
               <Zap className="h-5 w-5 text-yellow-500" />
@@ -266,29 +403,76 @@ const HomeView = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <BookOpen className="h-6 w-6" />
-                <span className="text-sm font-medium">Homework</span>
-              </Button>
-              <Button className="h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <Calendar className="h-6 w-6" />
-                <span className="text-sm font-medium">Events</span>
-              </Button>
-              <Button className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <MessageSquare className="h-6 w-6" />
-                <span className="text-sm font-medium">Messages</span>
-              </Button>
-              <Button className="h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <Award className="h-6 w-6" />
-                <span className="text-sm font-medium">Marks</span>
-              </Button>
+              {isStudent ? (
+                <>
+                  <Button 
+                    onClick={() => handleQuickAction('homework')}
+                    className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <BookOpen className="h-6 w-6" />
+                    <span className="text-sm font-medium">Homework</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('events')}
+                    className="h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Calendar className="h-6 w-6" />
+                    <span className="text-sm font-medium">Events</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('messages')}
+                    className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <MessageSquare className="h-6 w-6" />
+                    <span className="text-sm font-medium">Messages</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('marks')}
+                    className="h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Award className="h-6 w-6" />
+                    <span className="text-sm font-medium">Marks</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    onClick={() => handleQuickAction('students')}
+                    className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Users className="h-6 w-6" />
+                    <span className="text-sm font-medium">Students</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('homework')}
+                    className="h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Plus className="h-6 w-6" />
+                    <span className="text-sm font-medium">Assignment</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('notices')}
+                    className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <Bell className="h-6 w-6" />
+                    <span className="text-sm font-medium">Notices</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('exams')}
+                    className="h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <FileText className="h-6 w-6" />
+                    <span className="text-sm font-medium">Exams</span>
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {/* Upcoming Events Preview */}
         {upcomingEvents.length > 0 && (
-          <Card className="bg-white shadow-md border-0 rounded-2xl overflow-hidden">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-900">
                 <Calendar className="h-5 w-5 text-green-500" />
@@ -298,7 +482,7 @@ const HomeView = () => {
             <CardContent>
               <div className="space-y-3">
                 {upcomingEvents.map((event) => (
-                  <div key={event.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+                  <div key={event.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                     <div className="bg-green-100 rounded-full p-2">
                       <Calendar className="h-4 w-4 text-green-600" />
                     </div>

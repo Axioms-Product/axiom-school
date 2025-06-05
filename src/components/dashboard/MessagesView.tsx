@@ -4,13 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { format } from 'date-fns';
-import { MessageCircle, Send, Users, User as UserIcon, Plus, Clock } from 'lucide-react';
+import { MessageCircle, Send, Users, User as UserIcon, Clock } from 'lucide-react';
 
 const MessagesView = () => {
   const { currentUser } = useAuth();
@@ -22,7 +21,6 @@ const MessagesView = () => {
     getStudentsForClass
   } = useData();
   const [newMessage, setNewMessage] = useState('');
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRecipient, setSelectedRecipient] = useState<string>('');
   const [messageType, setMessageType] = useState<'class' | 'individual'>('class');
   
@@ -30,27 +28,31 @@ const MessagesView = () => {
   const teachers = isStudent ? getTeachersForClass(currentUser?.class || '') : [];
   const students = !isStudent ? getStudentsForClass(currentUser?.class || '') : [];
   
-  // Get messages for current user
-  const messages = getFilteredMessages().filter(msg => {
+  // Get all messages for current user (including class messages and individual messages)
+  const allMessages = getFilteredMessages().filter(msg => {
+    // For students: show messages sent to them, sent by them, or class messages
     if (isStudent) {
       return msg.senderId === currentUser?.id || 
              msg.receiverId === currentUser?.id || 
              msg.receiverId === `class-${currentUser?.class}`;
     } else {
+      // For teachers: show messages from their class students, sent by them, or class messages
       const isFromStudentInClass = students.some(student => student.id === msg.senderId);
       return msg.senderId === currentUser?.id || 
              (msg.receiverId === currentUser?.id && isFromStudentInClass) ||
-             msg.receiverId === `class-${currentUser?.class}`;
+             msg.receiverId === `class-${currentUser?.class}` ||
+             (msg.senderId === currentUser?.id && msg.receiverId.startsWith('class-'));
     }
   }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   useEffect(() => {
-    messages.forEach(msg => {
-      if (msg.receiverId === currentUser?.id && !msg.read) {
+    // Mark messages as read when component loads
+    allMessages.forEach(msg => {
+      if ((msg.receiverId === currentUser?.id || msg.receiverId === `class-${currentUser?.class}`) && !msg.read) {
         markMessageAsRead(msg.id);
       }
     });
-  }, [messages, currentUser, markMessageAsRead]);
+  }, [allMessages, currentUser, markMessageAsRead]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !currentUser) return;
@@ -67,7 +69,6 @@ const MessagesView = () => {
     sendMessage(newMessage, recipientId);
     setNewMessage('');
     setSelectedRecipient('');
-    setDialogOpen(false);
   };
 
   const getMessageDisplayName = (msg: any) => {
@@ -99,17 +100,17 @@ const MessagesView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 flex items-center gap-3">
                 <MessageCircle className="h-8 w-8 text-blue-600" />
                 Messages
               </h1>
-              <p className="text-gray-600 mb-4 sm:mb-0">
+              <p className="text-gray-600">
                 {isStudent 
                   ? `Communicate with your teachers and classmates in Class ${currentUser?.class}`
                   : `Connect with students in Class ${currentUser?.class}`
@@ -120,134 +121,35 @@ const MessagesView = () => {
                   Class {currentUser?.class}
                 </Badge>
                 <Badge className="bg-green-100 text-green-800">
-                  {messages.length} Messages
+                  {allMessages.length} Messages
                 </Badge>
               </div>
             </div>
-            
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 py-3 shadow-lg">
-                  <Plus className="mr-2 h-5 w-5" />
-                  New Message
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-white rounded-2xl border-0 shadow-xl sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-gray-900">Send Message</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  {isStudent && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Message Type</label>
-                      <Select value={messageType} onValueChange={(value: 'class' | 'individual') => setMessageType(value)}>
-                        <SelectTrigger className="bg-gray-50 border-gray-200 h-11">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="class">
-                            <div className="flex items-center gap-2">
-                              <Users className="h-4 w-4" />
-                              Class Group
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="individual">
-                            <div className="flex items-center gap-2">
-                              <UserIcon className="h-4 w-4" />
-                              Individual Teacher
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  
-                  {messageType === 'individual' && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">
-                        Select {isStudent ? 'Teacher' : 'Student'}
-                      </label>
-                      <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
-                        <SelectTrigger className="bg-gray-50 border-gray-200 h-11">
-                          <SelectValue placeholder={`Choose ${isStudent ? 'teacher' : 'student'}`} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          {getRecipientOptions().map((option) => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Message</label>
-                    <Textarea 
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type your message here..."
-                      rows={4}
-                      className="bg-gray-50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
-                    />
-                  </div>
-                  
-                  <div className="flex gap-3 pt-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setDialogOpen(false)}
-                      className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50"
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={handleSendMessage}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                      disabled={!newMessage.trim() || (messageType === 'individual' && !selectedRecipient)}
-                    >
-                      <Send className="mr-2 h-4 w-4" />
-                      Send
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
 
-        {/* Messages */}
-        {messages.length === 0 ? (
-          <Card className="bg-white shadow-lg border-0 rounded-2xl">
-            <CardContent className="p-12 text-center">
-              <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No messages yet</h3>
-              <p className="text-gray-600 mb-6">
-                Start a conversation with your {isStudent ? 'teachers or classmates' : 'students'}
-              </p>
-              <Button 
-                onClick={() => setDialogOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 py-3"
-              >
-                Send First Message
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Chat Area */}
-            <div className="lg:col-span-2">
-              <Card className="bg-white shadow-lg border-0 rounded-2xl overflow-hidden h-[600px] flex flex-col">
-                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageCircle className="h-5 w-5" />
-                    Class {currentUser?.class} Messages
-                  </CardTitle>
-                </CardHeader>
-                
-                <ScrollArea className="flex-1 p-4">
-                  <div className="space-y-4">
-                    {messages.map((message) => {
+        {/* Messages Interface */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Chat Area */}
+          <div className="lg:col-span-2">
+            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl overflow-hidden h-[600px] flex flex-col">
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Class {currentUser?.class} Messages
+                </CardTitle>
+              </CardHeader>
+              
+              <ScrollArea className="flex-1 p-4">
+                <div className="space-y-4">
+                  {allMessages.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <MessageCircle className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium mb-2">No messages yet</p>
+                      <p>Start a conversation below!</p>
+                    </div>
+                  ) : (
+                    allMessages.map((message) => {
                       const isSentByCurrentUser = message.senderId === currentUser?.id;
                       const displayName = getMessageDisplayName(message);
                       
@@ -259,8 +161,8 @@ const MessagesView = () => {
                           <div 
                             className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
                               isSentByCurrentUser 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-gray-100 text-gray-900'
+                                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
+                                : 'bg-white border border-gray-200 text-gray-900'
                             }`}
                           >
                             <p className="mb-2 break-words">{message.content}</p>
@@ -274,11 +176,53 @@ const MessagesView = () => {
                           </div>
                         </div>
                       );
-                    })}
+                    })
+                  )}
+                </div>
+              </ScrollArea>
+              
+              {/* Message Input */}
+              <div className="border-t bg-gray-50 p-4">
+                <div className="space-y-3">
+                  {/* Message Type Selection */}
+                  <div className="flex gap-2">
+                    <Select value={messageType} onValueChange={(value: 'class' | 'individual') => setMessageType(value)}>
+                      <SelectTrigger className="w-40 bg-white border-gray-200 h-10">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="class">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Class Group
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="individual">
+                          <div className="flex items-center gap-2">
+                            <UserIcon className="h-4 w-4" />
+                            Individual
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {messageType === 'individual' && (
+                      <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
+                        <SelectTrigger className="flex-1 bg-white border-gray-200 h-10">
+                          <SelectValue placeholder={`Select ${isStudent ? 'teacher' : 'student'}`} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          {getRecipientOptions().map((option) => (
+                            <SelectItem key={option.id} value={option.id}>
+                              {option.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
-                </ScrollArea>
-                
-                <div className="border-t bg-gray-50 p-4">
+                  
+                  {/* Message Input */}
                   <div className="flex gap-3">
                     <Textarea 
                       value={newMessage}
@@ -286,41 +230,84 @@ const MessagesView = () => {
                       placeholder="Type your message here..."
                       className="flex-1 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none min-h-[60px]"
                       rows={2}
-                    />
-                    <Button 
-                      onClick={() => {
-                        if (newMessage.trim()) {
-                          sendMessage(newMessage, `class-${currentUser?.class}`);
-                          setNewMessage('');
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
                         }
                       }}
-                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 self-end"
-                      disabled={!newMessage.trim()}
+                    />
+                    <Button 
+                      onClick={handleSendMessage}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-6 self-end"
+                      disabled={!newMessage.trim() || (messageType === 'individual' && !selectedRecipient)}
                     >
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
-              </Card>
-            </div>
-            
-            {/* Sidebar */}
-            <div className="space-y-4">
-              <Card className="bg-white shadow-lg border-0 rounded-2xl">
-                <CardContent className="p-6 text-center">
-                  <div className="bg-blue-100 rounded-full p-4 inline-flex mb-4">
-                    <Users className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Class {currentUser?.class}</h3>
-                  <p className="text-gray-600 text-sm mb-4">Secure Messaging</p>
-                  <Badge className="bg-green-100 text-green-800">
-                    🔒 Private & Secure
-                  </Badge>
-                </CardContent>
-              </Card>
-            </div>
+              </div>
+            </Card>
           </div>
-        )}
+          
+          {/* Sidebar */}
+          <div className="space-y-4">
+            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
+              <CardContent className="p-6 text-center">
+                <div className="bg-blue-100 rounded-full p-4 inline-flex mb-4">
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-1">Class {currentUser?.class}</h3>
+                <p className="text-gray-600 text-sm mb-4">Secure Messaging</p>
+                <Badge className="bg-green-100 text-green-800">
+                  🔒 Private & Secure
+                </Badge>
+              </CardContent>
+            </Card>
+            
+            {/* Online Users */}
+            <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {isStudent ? 'Teachers' : 'Students'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-0">
+                <div className="space-y-2">
+                  {isStudent ? (
+                    teachers.map(teacher => (
+                      <div key={teacher.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-xs font-medium text-blue-600">
+                            {teacher.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{teacher.name}</p>
+                          <p className="text-xs text-gray-500">{teacher.subject}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    students.slice(0, 5).map(student => (
+                      <div key={student.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <span className="text-xs font-medium text-green-600">
+                            {student.name.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{student.name}</p>
+                          <p className="text-xs text-gray-500">Student</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
