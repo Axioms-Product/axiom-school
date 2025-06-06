@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Homework, Notice, Event, Message, Mark, Subject, FeePayment, ExamSchedule } from '../models/types';
 import { useAuth, User } from './AuthContext';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf';
 
 interface AttendanceRecord {
   id: string;
@@ -605,98 +606,185 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!currentUser) return;
 
     try {
-      let reportContent = '';
-      let fileName = '';
-
+      const doc = new jsPDF();
+      
+      // Set up document styling
+      doc.setFontSize(20);
+      doc.setTextColor(40, 116, 240);
+      doc.text('AXIOMS SCHOOL', 105, 20, { align: 'center' });
+      
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Excellence in Digital Education', 105, 30, { align: 'center' });
+      doc.text('www.axiomsschool.edu | contact@axiomsschool.edu', 105, 40, { align: 'center' });
+      
+      // Add a line separator
+      doc.setDrawColor(40, 116, 240);
+      doc.line(20, 45, 190, 45);
+      
+      let yPosition = 60;
+      
       switch (type) {
         case 'attendance':
           if (currentUser.role === 'teacher') {
+            doc.setFontSize(16);
+            doc.text('ATTENDANCE REPORT', 105, yPosition, { align: 'center' });
+            yPosition += 20;
+            
+            doc.setFontSize(12);
+            doc.text(`Class: ${currentUser.class}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Teacher: ${currentUser.name}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, yPosition);
+            yPosition += 20;
+            
             const classAttendance = getFilteredAttendance();
             const students = getStudentsForClass(currentUser.class || '');
             
-            reportContent = `AXIOMS SCHOOL - ATTENDANCE REPORT
-Class: ${currentUser.class}
-Teacher: ${currentUser.name}
-Generated: ${new Date().toLocaleDateString()}
-
-ATTENDANCE SUMMARY:
-${students.map(student => {
-  const studentRecords = classAttendance.filter(r => r.studentId === student.id);
-  const present = studentRecords.filter(r => r.status === 'present').length;
-  const total = studentRecords.length;
-  const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
-  
-  return `${student.name}: ${present}/${total} days (${percentage}%)`;
-}).join('\n')}`;
+            doc.text('ATTENDANCE SUMMARY:', 20, yPosition);
+            yPosition += 15;
             
-            fileName = `Axioms_School_Attendance_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.txt`;
+            students.forEach(student => {
+              const studentRecords = classAttendance.filter(r => r.studentId === student.id);
+              const present = studentRecords.filter(r => r.status === 'present').length;
+              const total = studentRecords.length;
+              const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+              
+              doc.text(`${student.name}: ${present}/${total} days (${percentage}%)`, 20, yPosition);
+              yPosition += 8;
+              
+              if (yPosition > 280) {
+                doc.addPage();
+                yPosition = 20;
+              }
+            });
           }
           break;
           
         case 'marks':
           if (currentUser.role === 'teacher') {
+            doc.setFontSize(16);
+            doc.text('MARKS REPORT', 105, yPosition, { align: 'center' });
+            yPosition += 20;
+            
+            doc.setFontSize(12);
+            doc.text(`Class: ${currentUser.class}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Teacher: ${currentUser.name}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Subject: ${currentUser.subject}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, yPosition);
+            yPosition += 20;
+            
             const classMarks = getFilteredMarks();
             const students = getStudentsForClass(currentUser.class || '');
             
-            reportContent = `AXIOMS SCHOOL - MARKS REPORT
-Class: ${currentUser.class}
-Teacher: ${currentUser.name}
-Subject: ${currentUser.subject}
-Generated: ${new Date().toLocaleDateString()}
-
-MARKS SUMMARY:
-${students.map(student => {
-  const studentMarks = classMarks.filter(m => m.studentId === student.id);
-  const average = studentMarks.length > 0 ? 
-    Math.round(studentMarks.reduce((sum, m) => sum + m.marks, 0) / studentMarks.length) : 0;
-  
-  return `${student.name}: Average ${average}%`;
-}).join('\n')}`;
+            doc.text('MARKS SUMMARY:', 20, yPosition);
+            yPosition += 15;
             
-            fileName = `Axioms_School_Marks_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.txt`;
+            students.forEach(student => {
+              const studentMarks = classMarks.filter(m => m.studentId === student.id);
+              const average = studentMarks.length > 0 ? 
+                Math.round(studentMarks.reduce((sum, m) => sum + (m.score / m.totalScore * 100), 0) / studentMarks.length) : 0;
+              
+              doc.text(`${student.name}: Average ${average}%`, 20, yPosition);
+              yPosition += 8;
+              
+              if (yPosition > 280) {
+                doc.addPage();
+                yPosition = 20;
+              }
+            });
           }
           break;
           
         case 'student-marks':
+          doc.setFontSize(16);
+          doc.text('STUDENT REPORT', 105, yPosition, { align: 'center' });
+          yPosition += 20;
+          
+          doc.setFontSize(12);
+          doc.text(`Student: ${currentUser.name}`, 20, yPosition);
+          yPosition += 10;
+          doc.text(`Class: ${currentUser.class}`, 20, yPosition);
+          yPosition += 10;
+          doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, yPosition);
+          yPosition += 20;
+          
           const studentMarks = getFilteredMarks(studentId);
           const studentAttendance = getFilteredAttendance().filter(a => a.studentId === (studentId || currentUser.id));
           
-          reportContent = `AXIOMS SCHOOL - STUDENT REPORT
-Student: ${currentUser.name}
-Class: ${currentUser.class}
-Generated: ${new Date().toLocaleDateString()}
-
-ACADEMIC PERFORMANCE:
-${studentMarks.map(m => `${m.subject}: ${m.marks}% (${new Date(m.date || m.timestamp).toLocaleDateString()})`).join('\n')}
-
-Average: ${studentMarks.length > 0 ? Math.round(studentMarks.reduce((sum, m) => sum + m.marks, 0) / studentMarks.length) : 0}%
-
-ATTENDANCE RECORD:
-Total Days: ${studentAttendance.length}
-Present: ${studentAttendance.filter(r => r.status === 'present').length}
-Absent: ${studentAttendance.filter(r => r.status === 'absent').length}
-Percentage: ${studentAttendance.length > 0 ? Math.round((studentAttendance.filter(r => r.status === 'present').length / studentAttendance.length) * 100) : 0}%`;
+          doc.text('ACADEMIC PERFORMANCE:', 20, yPosition);
+          yPosition += 15;
           
-          fileName = `Axioms_School_Student_Report_${currentUser.name}_${new Date().toISOString().split('T')[0]}.txt`;
+          studentMarks.forEach(m => {
+            const percentage = Math.round((m.score / m.totalScore) * 100);
+            doc.text(`${m.subject}: ${percentage}% (${new Date(m.timestamp).toLocaleDateString()})`, 20, yPosition);
+            yPosition += 8;
+            
+            if (yPosition > 280) {
+              doc.addPage();
+              yPosition = 20;
+            }
+          });
+          
+          const overallAverage = studentMarks.length > 0 ? 
+            Math.round(studentMarks.reduce((sum, m) => sum + (m.score / m.totalScore * 100), 0) / studentMarks.length) : 0;
+          
+          yPosition += 10;
+          doc.text(`Overall Average: ${overallAverage}%`, 20, yPosition);
+          yPosition += 20;
+          
+          doc.text('ATTENDANCE RECORD:', 20, yPosition);
+          yPosition += 15;
+          
+          const totalDays = studentAttendance.length;
+          const presentDays = studentAttendance.filter(r => r.status === 'present').length;
+          const absentDays = studentAttendance.filter(r => r.status === 'absent').length;
+          const attendancePercentage = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+          
+          doc.text(`Total Days: ${totalDays}`, 20, yPosition);
+          yPosition += 8;
+          doc.text(`Present: ${presentDays}`, 20, yPosition);
+          yPosition += 8;
+          doc.text(`Absent: ${absentDays}`, 20, yPosition);
+          yPosition += 8;
+          doc.text(`Attendance Percentage: ${attendancePercentage}%`, 20, yPosition);
+          
           break;
       }
-
-      if (reportContent) {
-        const blob = new Blob([reportContent], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        
-        toast.success('Report downloaded successfully!');
+      
+      // Add footer
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128, 128, 128);
+        doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
+        doc.text('Generated by Axioms School Management System', 105, 295, { align: 'center' });
       }
+
+      // Generate filename and save
+      let fileName = '';
+      switch (type) {
+        case 'attendance':
+          fileName = `Axioms_School_Attendance_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+        case 'marks':
+          fileName = `Axioms_School_Marks_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+        case 'student-marks':
+          fileName = `Axioms_School_Student_Report_${currentUser.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+          break;
+      }
+      
+      doc.save(fileName);
+      toast.success('PDF Report generated successfully!');
     } catch (error) {
-      toast.error('Failed to generate report');
-      console.error('Report generation error:', error);
+      toast.error('Failed to generate PDF report');
+      console.error('PDF generation error:', error);
     }
   };
 
