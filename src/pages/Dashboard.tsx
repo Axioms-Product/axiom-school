@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/sonner';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useTheme } from 'next-themes';
 import {
   Home,
   BookOpen,
@@ -20,7 +21,9 @@ import {
   FileText,
   GraduationCap,
   UserCheck,
-  Download
+  Download,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
@@ -31,6 +34,7 @@ const Dashboard = () => {
   const location = useLocation();
   const { currentUser, logout } = useAuth();
   const { markAttendanceForClass, getStudentsForClass, generatePDFReport } = useData();
+  const { theme, setTheme } = useTheme();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   
@@ -62,22 +66,26 @@ const Dashboard = () => {
     }
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   const navigationItems = [
-    { name: 'Home', path: '/dashboard/home', icon: <Home size={20} /> },
-    { name: 'Homework', path: '/dashboard/homework', icon: <BookOpen size={20} /> },
-    { name: 'Notices', path: '/dashboard/notices', icon: <Bell size={20} /> },
-    { name: 'Events', path: '/dashboard/events', icon: <Calendar size={20} /> },
-    { name: 'Marks', path: '/dashboard/marks', icon: <PenSquare size={20} /> },
-    { name: 'Messages', path: '/dashboard/messages', icon: <MessageCircle size={20} /> },
-    { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={20} /> },
-    { name: 'Attendance', path: '/dashboard/attendance', icon: <UserCheck size={20} /> },
+    { name: 'Home 🏠', path: '/dashboard/home', icon: <Home size={20} /> },
+    { name: 'Homework 📚', path: '/dashboard/homework', icon: <BookOpen size={20} /> },
+    { name: 'Notices 📢', path: '/dashboard/notices', icon: <Bell size={20} /> },
+    { name: 'Events 📅', path: '/dashboard/events', icon: <Calendar size={20} /> },
+    { name: 'Marks 📝', path: '/dashboard/marks', icon: <PenSquare size={20} /> },
+    { name: 'Messages 💬', path: '/dashboard/messages', icon: <MessageCircle size={20} /> },
+    { name: 'Exams 📋', path: '/dashboard/exams', icon: <FileText size={20} /> },
+    { name: 'Attendance ✅', path: '/dashboard/attendance', icon: <UserCheck size={20} /> },
   ];
   
   // Add role-specific navigation items
   if (currentUser?.role === 'student') {
-    navigationItems.push({ name: 'Teachers', path: '/dashboard/teachers', icon: <Users2 size={20} /> });
+    navigationItems.push({ name: 'Teachers 👨‍🏫', path: '/dashboard/teachers', icon: <Users2 size={20} /> });
   } else if (currentUser?.role === 'teacher') {
-    navigationItems.push({ name: 'Students', path: '/dashboard/students', icon: <GraduationCap size={20} /> });
+    navigationItems.push({ name: 'Students 🎓', path: '/dashboard/students', icon: <GraduationCap size={20} /> });
   }
 
   return (
@@ -90,7 +98,7 @@ const Dashboard = () => {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
-              <span className="font-bold text-lg text-sidebar-foreground">Axioms School</span>
+              <span className="font-bold text-lg text-sidebar-foreground">Axioms School 🏫</span>
             </div>
           </div>
           
@@ -115,7 +123,7 @@ const Dashboard = () => {
           {currentUser?.role === 'teacher' && (
             <div className="mt-6 space-y-2">
               <Separator className="my-4 bg-sidebar-border/50" />
-              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
+              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions 🚀</p>
               <Button
                 onClick={handleMarkAttendance}
                 variant="outline"
@@ -123,7 +131,7 @@ const Dashboard = () => {
                 className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
               >
                 <UserCheck className="h-4 w-4 mr-2" />
-                Mark Attendance
+                Mark Attendance 📝
               </Button>
               <Button
                 onClick={handleDownloadReport}
@@ -132,7 +140,7 @@ const Dashboard = () => {
                 className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Download Report
+                Download Report 📊
               </Button>
             </div>
           )}
@@ -141,7 +149,7 @@ const Dashboard = () => {
           {currentUser?.role === 'student' && (
             <div className="mt-6 space-y-2">
               <Separator className="my-4 bg-sidebar-border/50" />
-              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
+              <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions 🚀</p>
               <Button
                 onClick={handleDownloadReport}
                 variant="outline"
@@ -149,7 +157,7 @@ const Dashboard = () => {
                 className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
               >
                 <Download className="h-4 w-4 mr-2" />
-                My Report
+                My Report 📋
               </Button>
             </div>
           )}
@@ -174,14 +182,24 @@ const Dashboard = () => {
               </div>
             </Link>
             
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={handleLogout}
-              className="h-8 w-8 rounded-full hover:bg-sidebar-accent text-sidebar-foreground"
-            >
-              <LogOut size={18} />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={toggleTheme}
+                className="h-8 w-8 rounded-full hover:bg-sidebar-accent text-sidebar-foreground"
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleLogout}
+                className="h-8 w-8 rounded-full hover:bg-sidebar-accent text-sidebar-foreground"
+              >
+                <LogOut size={16} />
+              </Button>
+            </div>
           </div>
         </div>
       </aside>
@@ -195,7 +213,7 @@ const Dashboard = () => {
                 <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-cgs-blue to-cgs-purple flex items-center justify-center">
                   <BookOpen className="h-5 w-5 text-white" />
                 </div>
-                <span className="font-bold text-lg">Axioms School</span>
+                <span className="font-bold text-lg">Axioms School 🏫</span>
               </div>
             </div>
             
@@ -220,7 +238,7 @@ const Dashboard = () => {
             {currentUser?.role === 'teacher' && (
               <div className="mt-6 space-y-2">
                 <Separator className="my-4" />
-                <p className="text-xs font-medium text-muted-foreground px-3">Quick Actions</p>
+                <p className="text-xs font-medium text-muted-foreground px-3">Quick Actions 🚀</p>
                 <Button
                   onClick={handleMarkAttendance}
                   variant="outline"
@@ -228,7 +246,7 @@ const Dashboard = () => {
                   className="w-full justify-start"
                 >
                   <UserCheck className="h-4 w-4 mr-2" />
-                  Mark Attendance
+                  Mark Attendance 📝
                 </Button>
                 <Button
                   onClick={handleDownloadReport}
@@ -237,7 +255,7 @@ const Dashboard = () => {
                   className="w-full justify-start"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Report
+                  Download Report 📊
                 </Button>
               </div>
             )}
@@ -261,14 +279,24 @@ const Dashboard = () => {
                 </div>
               </Link>
               
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleLogout}
-                className="h-8 w-8 rounded-full"
-              >
-                <LogOut size={18} />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="h-8 w-8 rounded-full"
+                >
+                  {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleLogout}
+                  className="h-8 w-8 rounded-full"
+                >
+                  <LogOut size={16} />
+                </Button>
+              </div>
             </div>
           </div>
         </SheetContent>
@@ -292,6 +320,14 @@ const Dashboard = () => {
               </div>
               
               <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="rounded-full"
+                >
+                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                </Button>
                 <Link to="/dashboard/profile">
                   <Button 
                     variant="ghost" 
