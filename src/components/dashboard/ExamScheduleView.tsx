@@ -82,16 +82,16 @@ const ExamScheduleView = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl opacity-90"></div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2260%22%20cy=%2212%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30 rounded-3xl"></div>
           
-          <div className="relative px-6 sm:px-8 py-12">
+          <div className="relative px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="text-white">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="h-16 w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-lg">
-                    <GraduationCap className="h-8 w-8 text-white" />
+                  <div className="h-12 w-12 sm:h-16 sm:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-lg">
+                    <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold mb-2">Exam Schedule</h1>
-                    <p className="text-indigo-100 text-base sm:text-lg">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Exam Schedule</h1>
+                    <p className="text-indigo-100 text-sm sm:text-base lg:text-lg">
                       {isTeacher 
                         ? `Schedule exams for ${currentUser?.subject || 'your subject'}`
                         : "Stay prepared with upcoming examinations"
@@ -100,57 +100,57 @@ const ExamScheduleView = () => {
                   </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-2 text-sm">
-                    <BookOpen className="h-4 w-4 mr-2" />
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+                    <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {isTeacher ? "Exam Scheduler" : "Student Portal"}
                   </Badge>
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-2 text-sm">
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
                     Class {currentUser?.class}
                   </Badge>
                   {currentUser?.role === 'teacher' && currentUser?.subject && (
-                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-2 text-sm">
+                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
                       {currentUser.subject}
                     </Badge>
                   )}
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 sm:px-4 py-2 text-sm">
-                    <Target className="h-4 w-4 mr-2" />
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+                    <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {exams.length} Exam{exams.length !== 1 ? 's' : ''}
                   </Badge>
                 </div>
               </div>
               
               {isTeacher && (
-                <div className="mt-8 lg:mt-0">
+                <div className="mt-6 lg:mt-0">
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="w-full sm:w-auto bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-2xl shadow-lg">
-                        <Plus className="mr-3 h-5 sm:h-6 w-5 sm:w-6 group-hover:scale-110 transition-transform" />
+                      <Button className="w-full sm:w-auto bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base rounded-xl sm:rounded-2xl shadow-lg">
+                        <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
                         Schedule Exam
-                        <ArrowRight className="ml-3 h-4 sm:h-5 w-4 sm:w-5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] rounded-2xl mx-4">
+                    <DialogContent className="w-[95vw] max-w-md sm:max-w-lg rounded-2xl mx-auto">
                       <DialogHeader>
-                        <DialogTitle className="text-xl sm:text-2xl">Schedule New Exam</DialogTitle>
-                        <DialogDescription className="text-base sm:text-lg">
+                        <DialogTitle className="text-lg sm:text-xl">Schedule New Exam</DialogTitle>
+                        <DialogDescription className="text-sm sm:text-base">
                           Schedule an examination for your assigned subject
                         </DialogDescription>
                       </DialogHeader>
                       <form onSubmit={handleSubmit}>
-                        <div className="space-y-4 sm:space-y-6 py-4 sm:py-6">
+                        <div className="space-y-4 py-4">
                           <div className="space-y-2">
-                            <Label htmlFor="subject" className="text-base font-medium">Subject</Label>
+                            <Label htmlFor="subject" className="text-sm font-medium">Subject</Label>
                             {currentUser?.subject ? (
                               <Input 
                                 id="subject" 
                                 value={currentUser.subject} 
                                 disabled 
-                                className="rounded-xl border-2 bg-gray-50"
+                                className="rounded-lg border-2 bg-gray-50 text-sm"
                               />
                             ) : (
                               <Select value={subject} onValueChange={(value) => setSubject(value as Subject)}>
-                                <SelectTrigger className="rounded-xl border-2 focus:border-indigo-400">
+                                <SelectTrigger className="rounded-lg border-2 focus:border-indigo-400 text-sm">
                                   <SelectValue placeholder="Select subject" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -162,29 +162,29 @@ const ExamScheduleView = () => {
                             )}
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="date" className="text-base font-medium">Exam Date</Label>
+                            <Label htmlFor="date" className="text-sm font-medium">Exam Date</Label>
                             <Input 
                               id="date"
                               type="date"
                               value={date}
                               onChange={(e) => setDate(e.target.value)}
                               required
-                              className="rounded-xl border-2 focus:border-indigo-400"
+                              className="rounded-lg border-2 focus:border-indigo-400 text-sm"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="time" className="text-base font-medium">Exam Time</Label>
+                            <Label htmlFor="time" className="text-sm font-medium">Exam Time</Label>
                             <Input 
                               id="time"
                               type="time"
                               value={time}
                               onChange={(e) => setTime(e.target.value)}
                               required
-                              className="rounded-xl border-2 focus:border-indigo-400"
+                              className="rounded-lg border-2 focus:border-indigo-400 text-sm"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="duration" className="text-base font-medium">Duration (minutes)</Label>
+                            <Label htmlFor="duration" className="text-sm font-medium">Duration (minutes)</Label>
                             <Input 
                               id="duration"
                               type="number"
@@ -194,17 +194,17 @@ const ExamScheduleView = () => {
                               onChange={(e) => setDuration(e.target.value)}
                               placeholder="e.g., 90"
                               required
-                              className="rounded-xl border-2 focus:border-indigo-400"
+                              className="rounded-lg border-2 focus:border-indigo-400 text-sm"
                             />
                           </div>
                         </div>
-                        <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+                        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4">
                           <DialogClose asChild>
-                            <Button type="button" variant="outline" className="w-full sm:w-auto rounded-xl px-6">Cancel</Button>
+                            <Button type="button" variant="outline" className="w-full sm:w-auto rounded-lg px-4 text-sm">Cancel</Button>
                           </DialogClose>
                           <Button 
                             type="submit" 
-                            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-8"
+                            className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg px-6 text-sm"
                           >
                             <Plus className="mr-2 h-4 w-4" />
                             Schedule Exam
@@ -221,21 +221,21 @@ const ExamScheduleView = () => {
 
         {exams.length === 0 ? (
           <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden">
-            <CardContent className="p-8 sm:p-12">
+            <CardContent className="p-6 sm:p-8 lg:p-12">
               <div className="text-center">
                 <div className="relative mb-8">
-                  <div className="h-24 sm:h-32 w-24 sm:w-32 mx-auto bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center shadow-lg">
-                    <GraduationCap className="h-12 sm:h-16 w-12 sm:w-16 text-indigo-600 dark:text-indigo-400" />
+                  <div className="h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 mx-auto bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center shadow-lg">
+                    <GraduationCap className="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <div className="absolute -top-2 -right-2 h-8 sm:h-12 w-8 sm:w-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                    <Sparkles className="h-4 sm:h-6 w-4 sm:w-6 text-white" />
+                  <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 h-6 w-6 sm:h-8 sm:w-8 lg:h-12 lg:w-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                    <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 lg:h-6 lg:w-6 text-white" />
                   </div>
                 </div>
                 
-                <h3 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   No exams scheduled yet
                 </h3>
-                <p className="text-base sm:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
                   {isTeacher 
                     ? "Schedule examinations to assess student progress and knowledge."
                     : "No examinations have been scheduled yet. Check back for updates!"
@@ -244,10 +244,10 @@ const ExamScheduleView = () => {
                 
                 {isTeacher && (
                   <Button 
-                    className="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-lg"
+                    className="mt-6 sm:mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl sm:rounded-2xl px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 text-sm sm:text-base lg:text-lg shadow-lg"
                     onClick={() => setDialogOpen(true)}
                   >
-                    <Plus className="mr-3 h-5 sm:h-6 w-5 sm:w-6" />
+                    <Plus className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                     Schedule First Exam
                   </Button>
                 )}
@@ -255,7 +255,7 @@ const ExamScheduleView = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {exams.map((exam) => {
               const upcoming = isUpcoming(exam.date);
               
