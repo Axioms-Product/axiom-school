@@ -59,7 +59,7 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
           </h1>
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-3 inline-block border border-white/30">
             <p className="text-white/90 text-lg font-medium">
-              🎓 Excellence in Digital Education
+              Excellence in Digital Education
             </p>
           </div>
         </div>

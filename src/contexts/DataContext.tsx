@@ -604,36 +604,100 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const generatePDFReport = (type: 'attendance' | 'marks' | 'student-marks', studentId?: string) => {
     if (!currentUser) return;
 
-    let reportData = {};
-    let fileName = '';
+    try {
+      let reportContent = '';
+      let fileName = '';
 
-    switch (type) {
-      case 'attendance':
-        if (currentUser.role === 'teacher') {
-          const classAttendance = getFilteredAttendance();
-          const students = getStudentsForClass(currentUser.class || '');
-          reportData = { attendance: classAttendance, students, class: currentUser.class };
-          fileName = `attendance-report-${currentUser.class}-${new Date().toDateString()}.pdf`;
-        }
-        break;
-      case 'marks':
-        if (currentUser.role === 'teacher') {
-          const classMarks = getFilteredMarks();
-          const students = getStudentsForClass(currentUser.class || '');
-          reportData = { marks: classMarks, students, class: currentUser.class };
-          fileName = `marks-report-${currentUser.class}-${new Date().toDateString()}.pdf`;
-        }
-        break;
-      case 'student-marks':
-        const studentMarks = getFilteredMarks(studentId);
-        reportData = { marks: studentMarks, student: currentUser };
-        fileName = `marks-report-${currentUser.name}-${new Date().toDateString()}.pdf`;
-        break;
+      switch (type) {
+        case 'attendance':
+          if (currentUser.role === 'teacher') {
+            const classAttendance = getFilteredAttendance();
+            const students = getStudentsForClass(currentUser.class || '');
+            
+            reportContent = `AXIOMS SCHOOL - ATTENDANCE REPORT
+Class: ${currentUser.class}
+Teacher: ${currentUser.name}
+Generated: ${new Date().toLocaleDateString()}
+
+ATTENDANCE SUMMARY:
+${students.map(student => {
+  const studentRecords = classAttendance.filter(r => r.studentId === student.id);
+  const present = studentRecords.filter(r => r.status === 'present').length;
+  const total = studentRecords.length;
+  const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+  
+  return `${student.name}: ${present}/${total} days (${percentage}%)`;
+}).join('\n')}`;
+            
+            fileName = `Axioms_School_Attendance_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.txt`;
+          }
+          break;
+          
+        case 'marks':
+          if (currentUser.role === 'teacher') {
+            const classMarks = getFilteredMarks();
+            const students = getStudentsForClass(currentUser.class || '');
+            
+            reportContent = `AXIOMS SCHOOL - MARKS REPORT
+Class: ${currentUser.class}
+Teacher: ${currentUser.name}
+Subject: ${currentUser.subject}
+Generated: ${new Date().toLocaleDateString()}
+
+MARKS SUMMARY:
+${students.map(student => {
+  const studentMarks = classMarks.filter(m => m.studentId === student.id);
+  const average = studentMarks.length > 0 ? 
+    Math.round(studentMarks.reduce((sum, m) => sum + m.marks, 0) / studentMarks.length) : 0;
+  
+  return `${student.name}: Average ${average}%`;
+}).join('\n')}`;
+            
+            fileName = `Axioms_School_Marks_Report_Class_${currentUser.class}_${new Date().toISOString().split('T')[0]}.txt`;
+          }
+          break;
+          
+        case 'student-marks':
+          const studentMarks = getFilteredMarks(studentId);
+          const studentAttendance = getFilteredAttendance().filter(a => a.studentId === (studentId || currentUser.id));
+          
+          reportContent = `AXIOMS SCHOOL - STUDENT REPORT
+Student: ${currentUser.name}
+Class: ${currentUser.class}
+Generated: ${new Date().toLocaleDateString()}
+
+ACADEMIC PERFORMANCE:
+${studentMarks.map(m => `${m.subject}: ${m.marks}% (${new Date(m.date || m.timestamp).toLocaleDateString()})`).join('\n')}
+
+Average: ${studentMarks.length > 0 ? Math.round(studentMarks.reduce((sum, m) => sum + m.marks, 0) / studentMarks.length) : 0}%
+
+ATTENDANCE RECORD:
+Total Days: ${studentAttendance.length}
+Present: ${studentAttendance.filter(r => r.status === 'present').length}
+Absent: ${studentAttendance.filter(r => r.status === 'absent').length}
+Percentage: ${studentAttendance.length > 0 ? Math.round((studentAttendance.filter(r => r.status === 'present').length / studentAttendance.length) * 100) : 0}%`;
+          
+          fileName = `Axioms_School_Student_Report_${currentUser.name}_${new Date().toISOString().split('T')[0]}.txt`;
+          break;
+      }
+
+      if (reportContent) {
+        const blob = new Blob([reportContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        toast.success('Report downloaded successfully!');
+      }
+    } catch (error) {
+      toast.error('Failed to generate report');
+      console.error('Report generation error:', error);
     }
-
-    // Simulate PDF generation (in a real app, you'd use a library like jsPDF)
-    console.log('Generating PDF:', { type, reportData, fileName });
-    toast.success(`${fileName} downloaded successfully!`);
   };
 
   const value = {

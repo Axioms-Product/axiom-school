@@ -95,7 +95,7 @@ const AttendanceView = () => {
     setTodayAttendance(prev => ({ ...prev, [studentId]: isPresent }));
     
     // Show notification
-    toast.success(`${studentName} marked as ${isPresent ? 'Present ✅' : 'Absent ❌'}`);
+    toast.success(`${studentName} marked as ${isPresent ? 'Present' : 'Absent'}`);
   };
 
   // Calculate attendance statistics
@@ -115,8 +115,43 @@ const AttendanceView = () => {
   const stats = calculateStats();
 
   const handleDownloadReport = () => {
-    generatePDFReport('attendance');
-    toast.success('Attendance report downloaded! 📊');
+    try {
+      const reportContent = `AXIOMS SCHOOL - ATTENDANCE REPORT
+Class: ${currentUser?.class}
+Teacher: ${currentUser?.name}
+Generated: ${new Date().toLocaleDateString()}
+
+ATTENDANCE SUMMARY:
+Total Students: ${stats.totalStudents}
+Present Today: ${stats.presentToday}
+Absent Today: ${stats.absentToday}
+Attendance Rate: ${stats.attendancePercentage}%
+
+DETAILED ATTENDANCE:
+${studentsInClass.map(student => {
+  const studentRecords = attendanceRecords.filter(r => r.studentId === student.id);
+  const present = studentRecords.filter(r => r.isPresent).length;
+  const total = studentRecords.length;
+  const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+  
+  return `${student.name}: ${present}/${total} days (${percentage}%)`;
+}).join('\n')}`;
+
+      const blob = new Blob([reportContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Axioms_School_Attendance_Report_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Attendance report downloaded successfully!');
+    } catch (error) {
+      toast.error('Failed to download report');
+      console.error('Download error:', error);
+    }
   };
 
   if (isStudent) {
@@ -133,15 +168,15 @@ const AttendanceView = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6 border border-blue-100 animate-fade-in">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 md:gap-3">
               <ClipboardList className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
-              My Attendance 📋
+              My Attendance
             </h1>
             <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Track your attendance record for Class {currentUser?.class}</p>
             <div className="flex flex-wrap gap-2 mt-3">
               <Badge className="bg-blue-100 text-blue-800 text-xs md:text-sm">
-                📚 Class {currentUser?.class}
+                Class {currentUser?.class}
               </Badge>
               <Badge className="bg-green-100 text-green-800 text-xs md:text-sm">
-                ✅ {Math.round(attendanceRate)}% Attendance
+                {Math.round(attendanceRate)}% Attendance
               </Badge>
             </div>
           </div>
@@ -154,7 +189,7 @@ const AttendanceView = () => {
                   <UserCheck className="h-6 w-6 md:h-8 md:w-8 text-green-600" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">{presentDays}</h3>
-                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Days Present ✅</p>
+                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Days Present</p>
               </CardContent>
             </Card>
 
@@ -164,7 +199,7 @@ const AttendanceView = () => {
                   <UserX className="h-6 w-6 md:h-8 md:w-8 text-red-600" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">{totalDays - presentDays}</h3>
-                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Days Absent ❌</p>
+                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Days Absent</p>
               </CardContent>
             </Card>
 
@@ -174,7 +209,7 @@ const AttendanceView = () => {
                   <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">{Math.round(attendanceRate)}%</h3>
-                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Attendance Rate 📊</p>
+                <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">Attendance Rate</p>
               </CardContent>
             </Card>
           </div>
@@ -185,7 +220,7 @@ const AttendanceView = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <CalendarIcon className="h-5 w-5" />
-                  Attendance History 📅
+                  Attendance History
                 </CardTitle>
                 <Button
                   onClick={() => generatePDFReport('student-marks')}
@@ -193,7 +228,7 @@ const AttendanceView = () => {
                   className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Report 📊
+                  Download Report
                 </Button>
               </div>
             </CardHeader>
@@ -202,7 +237,7 @@ const AttendanceView = () => {
                 {studentAttendance.length === 0 ? (
                   <div className="text-center py-8 md:py-12 text-gray-500">
                     <ClipboardList className="h-12 w-12 md:h-16 md:w-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-sm md:text-base">No attendance records yet 📝</p>
+                    <p className="text-sm md:text-base">No attendance records yet</p>
                   </div>
                 ) : (
                   studentAttendance.slice().reverse().map((record) => (
@@ -233,7 +268,7 @@ const AttendanceView = () => {
                             : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                         }`}
                       >
-                        {record.isPresent ? '✅ Present' : '❌ Absent'}
+                        {record.isPresent ? 'Present' : 'Absent'}
                       </Badge>
                     </div>
                   ))
@@ -256,17 +291,17 @@ const AttendanceView = () => {
             <div>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2 md:gap-3">
                 <ClipboardList className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
-                Attendance Management 📋
+                Attendance Management
               </h1>
               <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
-                Mark and track attendance for Class {currentUser?.class} 🎓
+                Mark and track attendance for Class {currentUser?.class}
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <Badge className="bg-blue-100 text-blue-800 text-xs md:text-sm">
-                  📚 Class {currentUser?.class}
+                  Class {currentUser?.class}
                 </Badge>
                 <Badge className="bg-green-100 text-green-800 text-xs md:text-sm">
-                  ✅ {stats.presentToday}/{stats.totalStudents} Present Today
+                  {stats.presentToday}/{stats.totalStudents} Present Today
                 </Badge>
               </div>
             </div>
@@ -275,7 +310,7 @@ const AttendanceView = () => {
                 <PopoverTrigger asChild>
                   <Button className="bg-blue-600 text-white hover:bg-blue-700 w-full sm:w-auto text-sm md:text-base">
                     <CalendarIcon className="h-4 w-4 mr-2" />
-                    {format(selectedDate, 'MMM d, yyyy')} 📅
+                    {format(selectedDate, 'MMM d, yyyy')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800">
@@ -293,7 +328,7 @@ const AttendanceView = () => {
                 className="w-full sm:w-auto text-sm md:text-base"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Download Report 📊
+                Download Report
               </Button>
             </div>
           </div>
@@ -363,7 +398,7 @@ const AttendanceView = () => {
           <CardHeader className="p-4 md:p-6">
             <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
               <ClipboardList className="h-5 w-5" />
-              Mark Attendance - {format(new Date(), 'MMMM d, yyyy')} 📝
+              Mark Attendance - {format(new Date(), 'MMMM d, yyyy')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 md:p-6">
@@ -371,7 +406,7 @@ const AttendanceView = () => {
               {studentsInClass.length === 0 ? (
                 <div className="text-center py-8 md:py-12 text-gray-500">
                   <Users className="h-12 w-12 md:h-16 md:w-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-sm md:text-base">No students found in this class 🎓</p>
+                  <p className="text-sm md:text-base">No students found in this class</p>
                 </div>
               ) : (
                 studentsInClass.map((student) => (
@@ -390,7 +425,7 @@ const AttendanceView = () => {
                     <div className="flex items-center gap-3 md:gap-4">
                       <div className="flex items-center gap-2">
                         <label className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {todayAttendance[student.id] ? '✅ Present' : '❌ Absent'}
+                          {todayAttendance[student.id] ? 'Present' : 'Absent'}
                         </label>
                         <Switch
                           checked={todayAttendance[student.id] || false}
@@ -406,7 +441,7 @@ const AttendanceView = () => {
                             : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                         }`}
                       >
-                        {todayAttendance[student.id] ? '✅ Present' : '❌ Absent'}
+                        {todayAttendance[student.id] ? 'Present' : 'Absent'}
                       </Badge>
                     </div>
                   </div>
