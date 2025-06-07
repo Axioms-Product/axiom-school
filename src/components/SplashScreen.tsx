@@ -1,48 +1,8 @@
 
 import { useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Box, Sphere } from '@react-three/drei';
-import * as THREE from 'three';
 
 interface SplashScreenProps {
   progress: number;
-}
-
-function AnimatedLogo() {
-  const [rotation, setRotation] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRotation((prev) => prev + 0.02);
-    }, 16);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <group rotation={[0, rotation, 0]}>
-      {/* Main logo using geometric shapes */}
-      <Box args={[2, 0.3, 0.3]} position={[0, 0.5, 0]}>
-        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
-      </Box>
-      <Box args={[0.3, 1.5, 0.3]} position={[-0.8, 0, 0]}>
-        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
-      </Box>
-      <Box args={[1, 0.3, 0.3]} position={[-0.3, -0.3, 0]}>
-        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
-      </Box>
-      
-      {/* Decorative spheres */}
-      <Sphere args={[0.1]} position={[1.2, 0.5, 0]}>
-        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
-      </Sphere>
-      <Sphere args={[0.15]} position={[0.8, -0.8, 0]}>
-        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
-      </Sphere>
-      <Sphere args={[0.12]} position={[-1.2, -0.5, 0]}>
-        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
-      </Sphere>
-    </group>
-  );
 }
 
 const SplashScreen = ({ progress }: SplashScreenProps) => {
@@ -63,32 +23,50 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
-      {/* 3D Canvas Background */}
+      {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} />
-          <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
-          <AnimatedLogo />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-20 w-16 h-16 bg-blue-500/20 rounded-lg animate-pulse transform rotate-45"></div>
+        <div className="absolute top-40 right-32 w-8 h-8 bg-purple-500/30 rounded-full animate-bounce"></div>
+        <div className="absolute bottom-32 left-40 w-12 h-12 bg-indigo-400/25 rounded-lg animate-spin"></div>
+        <div className="absolute bottom-20 right-20 w-6 h-6 bg-blue-400/40 rounded-full animate-ping"></div>
+        
+        {/* Animated lines */}
+        <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent animate-pulse"></div>
+        <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-pulse delay-1000"></div>
       </div>
 
-      {/* Overlay Content */}
+      {/* Main Content */}
       <div className="relative z-10 text-center max-w-lg mx-auto px-4 sm:px-6">
-        {/* Logo Text */}
-        <div className="mb-8">
-          <h1 className="text-4xl sm:text-6xl font-bold text-white mb-2 tracking-wider">
-            AXIOMS
-          </h1>
-          <h2 className="text-xl sm:text-2xl font-light text-blue-200 tracking-widest">
-            SCHOOL
-          </h2>
+        {/* Animated Logo */}
+        <div className="mb-8 relative">
+          {/* Logo Background Glow */}
+          <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+          
+          {/* Logo Text with Animation */}
+          <div className="relative">
+            <h1 className="text-5xl sm:text-7xl font-bold text-white mb-4 tracking-wider transform transition-all duration-1000 animate-fade-in">
+              <span className="inline-block animate-bounce delay-100">A</span>
+              <span className="inline-block animate-bounce delay-200">X</span>
+              <span className="inline-block animate-bounce delay-300">I</span>
+              <span className="inline-block animate-bounce delay-400">O</span>
+              <span className="inline-block animate-bounce delay-500">M</span>
+              <span className="inline-block animate-bounce delay-600">S</span>
+            </h1>
+            <h2 className="text-xl sm:text-2xl font-light text-blue-200 tracking-widest animate-fade-in delay-1000">
+              SCHOOL
+            </h2>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute -top-4 -left-4 w-3 h-3 bg-blue-400 rounded-full animate-ping"></div>
+          <div className="absolute -top-2 -right-6 w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+          <div className="absolute -bottom-2 left-8 w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
         </div>
 
         {/* Loading Section */}
         <div className="space-y-6">
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-white/20 shadow-lg">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-white/20 shadow-lg transform transition-all duration-500 hover:scale-105">
             <p className="text-white text-lg sm:text-xl font-light mb-6">
               Initializing Learning Environment{dots}
             </p>
@@ -99,6 +77,7 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
                 className="h-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full transition-all duration-500 ease-out shadow-lg"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               >
+                <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
               </div>
             </div>
             
@@ -116,7 +95,7 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
           
           {/* Bottom tagline */}
           <div className="mt-8 text-center">
-            <p className="text-blue-200/80 text-sm sm:text-base font-light">
+            <p className="text-blue-200/80 text-sm sm:text-base font-light animate-fade-in delay-2000">
               Empowering minds • Shaping futures • Building tomorrow
             </p>
           </div>
@@ -125,19 +104,33 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
 
       {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 15 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full animate-pulse"
+            className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-white/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
+              animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
               animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${2 + Math.random() * 2}s`,
             }}
           />
         ))}
       </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+          50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };
