@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Users2,
   FileText,
+  UserCheck,
   GraduationCap,
 } from 'lucide-react';
 
@@ -26,6 +27,7 @@ export const NavigationItems = ({ location, currentUser }: NavigationItemsProps)
     { name: 'Marks', path: '/dashboard/marks', icon: <PenSquare size={20} /> },
     { name: 'Messages', path: '/dashboard/messages', icon: <MessageCircle size={20} /> },
     { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={20} /> },
+    { name: 'Attendance', path: '/dashboard/attendance', icon: <UserCheck size={20} /> },
   ];
   
   if (currentUser?.role === 'student') {
