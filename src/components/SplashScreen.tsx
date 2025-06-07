@@ -107,28 +107,31 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
         {Array.from({ length: 15 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-white/20 rounded-full"
+            className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-white/20 rounded-full particle-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
               animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
             }}
           />
         ))}
       </div>
 
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-          50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+      <style>{`
+        @keyframes particle-float {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg); 
+            opacity: 0.3; 
+          }
+          50% { 
+            transform: translateY(-20px) rotate(180deg); 
+            opacity: 0.8; 
+          }
         }
-        @keyframes fade-in {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
+        
+        .particle-float {
+          animation: particle-float ease-in-out infinite;
         }
       `}</style>
     </div>
