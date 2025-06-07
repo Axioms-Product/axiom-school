@@ -4,7 +4,6 @@ import { Separator } from '@/components/ui/separator';
 import { UserCheck, Download } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { toast } from 'sonner';
-import jsPDF from 'jspdf';
 
 interface QuickActionsProps {
   currentUser: any;
@@ -31,89 +30,101 @@ export const QuickActions = ({ currentUser }: QuickActionsProps) => {
     }
   };
 
-  const generatePDFReport = (title: string, content: string) => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const maxWidth = pageWidth - (margin * 2);
-    let yPosition = 20;
+  const generatePDFReport = async (title: string, content: string) => {
+    try {
+      // Dynamic import for better mobile compatibility
+      const { default: jsPDF } = await import('jspdf');
+      
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+      const maxWidth = pageWidth - (margin * 2);
+      let yPosition = 20;
 
-    // Header with school branding
-    doc.setFillColor(59, 130, 246); // Blue background
-    doc.rect(0, 0, pageWidth, 40, 'F');
-    
-    // School name
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont("helvetica", "bold");
-    doc.text('AXIOMS SCHOOL', pageWidth / 2, 20, { align: 'center' });
-    
-    // School tagline
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text('Excellence in Digital Education', pageWidth / 2, 30, { align: 'center' });
-    
-    yPosition = 60;
-    
-    // Contact information
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text('Email: axiomsproduct@gmail.com', margin, yPosition);
-    doc.text('Website: www.axiomschool.netlify.app', pageWidth - margin, yPosition, { align: 'right' });
-    
-    yPosition += 20;
-    
-    // Separator line
-    doc.setDrawColor(59, 130, 246);
-    doc.setLineWidth(0.5);
-    doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    
-    yPosition += 20;
-    
-    // Report title
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(59, 130, 246);
-    doc.text(title, pageWidth / 2, yPosition, { align: 'center' });
-    
-    yPosition += 20;
-    
-    // Report content
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(0, 0, 0);
-    
-    const lines = content.split('\n');
-    lines.forEach((line) => {
-      if (yPosition > doc.internal.pageSize.getHeight() - 30) {
-        doc.addPage();
-        yPosition = 20;
-      }
+      // Header with school branding
+      doc.setFillColor(59, 130, 246);
+      doc.rect(0, 0, pageWidth, 35, 'F');
       
-      if (line.includes(':') && !line.includes('Generated:')) {
-        doc.setFont("helvetica", "bold");
-      } else {
-        doc.setFont("helvetica", "normal");
-      }
+      // School name
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text('AXIOMS SCHOOL', pageWidth / 2, 18, { align: 'center' });
       
-      const splitLines = doc.splitTextToSize(line, maxWidth);
-      doc.text(splitLines, margin, yPosition);
-      yPosition += splitLines.length * 5;
-    });
-    
-    // Footer
-    const footerY = doc.internal.pageSize.getHeight() - 20;
-    doc.setDrawColor(59, 130, 246);
-    doc.setLineWidth(0.5);
-    doc.line(margin, footerY - 10, pageWidth - margin, footerY - 10);
-    
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "italic");
-    doc.setTextColor(100, 100, 100);
-    doc.text('This is a computer generated report from Axioms School Management System', pageWidth / 2, footerY, { align: 'center' });
-    
-    return doc;
+      // School tagline
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text('Excellence in Digital Education', pageWidth / 2, 26, { align: 'center' });
+      
+      yPosition = 50;
+      
+      // Contact information
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      doc.text('Email: axiomsproduct@gmail.com', margin, yPosition);
+      doc.text('Website: www.axiomschool.netlify.app', pageWidth - margin, yPosition, { align: 'right' });
+      
+      yPosition += 15;
+      
+      // Separator line
+      doc.setDrawColor(59, 130, 246);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      
+      yPosition += 15;
+      
+      // Report title
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(59, 130, 246);
+      doc.text(title, pageWidth / 2, yPosition, { align: 'center' });
+      
+      yPosition += 15;
+      
+      // Report content
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0);
+      
+      const lines = content.split('\n');
+      lines.forEach((line) => {
+        if (yPosition > doc.internal.pageSize.getHeight() - 25) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        
+        if (line.includes(':') && !line.includes('Generated:')) {
+          doc.setFont("helvetica", "bold");
+        } else {
+          doc.setFont("helvetica", "normal");
+        }
+        
+        const splitLines = doc.splitTextToSize(line, maxWidth);
+        doc.text(splitLines, margin, yPosition);
+        yPosition += splitLines.length * 4;
+      });
+      
+      // Footer
+      const footerY = doc.internal.pageSize.getHeight() - 15;
+      doc.setDrawColor(59, 130, 246);
+      doc.setLineWidth(0.5);
+      doc.line(margin, footerY - 8, pageWidth - margin, footerY - 8);
+      
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(100, 100, 100);
+      doc.text('This is a computer generated report from Axioms School Management System', pageWidth / 2, footerY, { align: 'center' });
+      
+      return doc;
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      throw error;
+    }
   };
 
   const handleDownloadReport = async () => {
@@ -166,7 +177,7 @@ Attendance History:
   Attendance Percentage: ${attendance.length > 0 ? Math.round((attendance.filter((r: any) => r.isPresent).length / attendance.length) * 100) : 0}%`;
 }).join('\n')}`;
         
-        const doc = generatePDFReport(`Class ${currentUser.class} Report`, reportContent);
+        const doc = await generatePDFReport(`Class ${currentUser.class} Report`, reportContent);
         doc.save(`Axioms_School_Class_${currentUser.class}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         
         toast.success('PDF Report downloaded successfully');
@@ -210,7 +221,7 @@ ${marks.length > 0 && attendance.length > 0 ?
   'Evaluation in progress. Please check back for detailed analysis.'
 }`;
         
-        const doc = generatePDFReport(`Student Report - ${currentUser?.name}`, reportContent);
+        const doc = await generatePDFReport(`Student Report - ${currentUser?.name}`, reportContent);
         doc.save(`Axioms_School_${currentUser?.name}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         
         toast.success('PDF Report downloaded successfully');

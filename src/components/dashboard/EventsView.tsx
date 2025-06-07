@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Card, 
@@ -106,85 +105,87 @@ const EventsView = () => {
                 <div className="mt-8 lg:mt-0">
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button className="w-full sm:w-auto bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-2xl shadow-lg">
-                        <Plus className="mr-3 h-5 sm:h-6 w-5 sm:w-6 group-hover:scale-110 transition-transform" />
+                      <Button className="w-full sm:w-auto bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-4 py-2 text-sm rounded-xl shadow-lg">
+                        <Plus className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                         Create Event
-                        <ArrowRight className="ml-3 h-4 sm:h-5 w-4 sm:w-5 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] rounded-2xl mx-4">
+                    <DialogContent className="max-w-md w-[95vw] sm:max-w-lg rounded-xl mx-4">
                       <DialogHeader>
-                        <DialogTitle className="text-xl sm:text-2xl">Create New Event</DialogTitle>
-                        <DialogDescription className="text-base sm:text-lg">
-                          Add a new event for your class to participate in
+                        <DialogTitle className="text-lg">Create New Event</DialogTitle>
+                        <DialogDescription className="text-sm">
+                          Add a new event for your class
                         </DialogDescription>
                       </DialogHeader>
                       <form onSubmit={handleSubmit}>
-                        <div className="space-y-4 sm:space-y-6 py-4 sm:py-6">
+                        <div className="space-y-4 py-4">
                           <div className="space-y-2">
-                            <Label htmlFor="title" className="text-base font-medium">Event Title</Label>
+                            <Label htmlFor="title" className="text-sm">Event Title</Label>
                             <Input 
                               id="title"
                               value={title}
                               onChange={(e) => setTitle(e.target.value)}
                               placeholder="e.g., Science Fair 2024"
                               required
-                              className="rounded-xl border-2 focus:border-emerald-400"
+                              className="text-sm"
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="description" className="text-base font-medium">Description</Label>
+                            <Label htmlFor="description" className="text-sm">Description</Label>
                             <Textarea 
                               id="description"
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
-                              placeholder="Detailed description of the event"
-                              rows={4}
+                              placeholder="Event description"
+                              rows={3}
                               required
-                              className="resize-none rounded-xl border-2 focus:border-emerald-400"
+                              className="resize-none text-sm"
                             />
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="date" className="text-base font-medium">Event Date</Label>
-                            <Input 
-                              id="date"
-                              type="date"
-                              value={date}
-                              onChange={(e) => setDate(e.target.value)}
-                              required
-                              className="rounded-xl border-2 focus:border-emerald-400"
-                            />
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="date" className="text-sm">Date</Label>
+                              <Input 
+                                id="date"
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                required
+                                className="text-sm"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="time" className="text-sm">Time</Label>
+                              <Input 
+                                id="time"
+                                type="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                required
+                                className="text-sm"
+                              />
+                            </div>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="time" className="text-base font-medium">Event Time</Label>
-                            <Input 
-                              id="time"
-                              type="time"
-                              value={time}
-                              onChange={(e) => setTime(e.target.value)}
-                              required
-                              className="rounded-xl border-2 focus:border-emerald-400"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="location" className="text-base font-medium">Location</Label>
+                            <Label htmlFor="location" className="text-sm">Location</Label>
                             <Input 
                               id="location"
                               value={location}
                               onChange={(e) => setLocation(e.target.value)}
                               placeholder="e.g., School Auditorium"
                               required
-                              className="rounded-xl border-2 focus:border-emerald-400"
+                              className="text-sm"
                             />
                           </div>
                         </div>
                         <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
                           <DialogClose asChild>
-                            <Button type="button" variant="outline" className="w-full sm:w-auto rounded-xl px-6">Cancel</Button>
+                            <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto">Cancel</Button>
                           </DialogClose>
                           <Button 
                             type="submit" 
-                            className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl px-8"
+                            size="sm"
+                            className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
                           >
                             <Plus className="mr-2 h-4 w-4" />
                             Create Event
@@ -224,10 +225,10 @@ const EventsView = () => {
                 
                 {isTeacher && (
                   <Button 
-                    className="mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-lg"
+                    className="mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl px-6 py-4 text-base shadow-lg"
                     onClick={() => setDialogOpen(true)}
                   >
-                    <Plus className="mr-3 h-5 sm:h-6 w-5 sm:w-6" />
+                    <Plus className="mr-3 h-5 w-5" />
                     Create First Event
                   </Button>
                 )}

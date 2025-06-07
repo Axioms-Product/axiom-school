@@ -7,7 +7,13 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 const Dashboard = () => {
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
+  // Close sidebar when route changes on mobile
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
