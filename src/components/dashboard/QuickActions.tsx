@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { UserCheck, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { toast } from 'sonner';
 
@@ -10,25 +10,7 @@ interface QuickActionsProps {
 }
 
 export const QuickActions = ({ currentUser }: QuickActionsProps) => {
-  const { markAttendanceForClass, getStudentsForClass } = useData();
-
-  const handleMarkAttendance = () => {
-    if (currentUser?.role === 'teacher' && currentUser.class) {
-      try {
-        const students = getStudentsForClass(currentUser.class);
-        const studentIds = students.map(s => s.id);
-        const today = new Date().toISOString().split('T')[0];
-        
-        markAttendanceForClass(studentIds, 'present', today);
-        toast.success(`Attendance marked for ${students.length} students`);
-      } catch (error) {
-        toast.error('Failed to mark attendance');
-        console.error('Attendance error:', error);
-      }
-    } else {
-      toast.error('Unable to mark attendance');
-    }
-  };
+  const { getStudentsForClass } = useData();
 
   const generatePDFReport = async (title: string, content: string) => {
     try {
@@ -132,22 +114,11 @@ export const QuickActions = ({ currentUser }: QuickActionsProps) => {
       if (currentUser?.role === 'teacher') {
         const students = getStudentsForClass(currentUser.class || '');
         
-        const reportContent = `ATTENDANCE & MARKS REPORT
+        const reportContent = `MARKS SUMMARY REPORT
 Class: ${currentUser.class}
 Teacher: ${currentUser.name}
 Generated: ${new Date().toLocaleDateString()}
 Report Date: ${new Date().toISOString().split('T')[0]}
-
-STUDENT ATTENDANCE SUMMARY:
-${students.map(student => {
-  const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]')
-    .filter((r: any) => r.studentId === student.id);
-  const present = attendance.filter((r: any) => r.isPresent).length;
-  const total = attendance.length;
-  const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
-  
-  return `${student.name}: ${present}/${total} days (${percentage}%)`;
-}).join('\n')}
 
 MARKS SUMMARY:
 ${students.map(student => {
@@ -163,29 +134,19 @@ DETAILED STUDENT RECORDS:
 ${students.map(student => {
   const marks = JSON.parse(localStorage.getItem('studentMarks') || '[]')
     .filter((m: any) => m.studentId === student.id);
-  const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]')
-    .filter((r: any) => r.studentId === student.id);
   
   return `\n--- ${student.name.toUpperCase()} ---
 Subject-wise Marks:
-${marks.map((m: any) => `  ${m.subject}: ${m.score}% (${new Date(m.timestamp).toLocaleDateString()})`).join('\n') || '  No marks recorded'}
-
-Attendance History:
-  Total Days: ${attendance.length}
-  Present: ${attendance.filter((r: any) => r.isPresent).length}
-  Absent: ${attendance.filter((r: any) => !r.isPresent).length}
-  Attendance Percentage: ${attendance.length > 0 ? Math.round((attendance.filter((r: any) => r.isPresent).length / attendance.length) * 100) : 0}%`;
+${marks.map((m: any) => `  ${m.subject}: ${m.score}% (${new Date(m.timestamp).toLocaleDateString()})`).join('\n') || '  No marks recorded'}`;
 }).join('\n')}`;
         
-        const doc = await generatePDFReport(`Class ${currentUser.class} Report`, reportContent);
-        doc.save(`Axioms_School_Class_${currentUser.class}_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+        const doc = await generatePDFReport(`Class ${currentUser.class} Marks Report`, reportContent);
+        doc.save(`Axioms_School_Class_${currentUser.class}_Marks_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         
         toast.success('PDF Report downloaded successfully');
       } else {
         const marks = JSON.parse(localStorage.getItem('studentMarks') || '[]')
           .filter((m: any) => m.studentId === currentUser?.id);
-        const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]')
-          .filter((r: any) => r.studentId === currentUser?.id);
         
         const reportContent = `STUDENT PROGRESS REPORT
 Student: ${currentUser?.name}
@@ -200,12 +161,6 @@ ${marks.map((m: any) => `${m.subject}: ${m.score}% (${new Date(m.timestamp).toLo
 
 Overall Average: ${marks.length > 0 ? Math.round(marks.reduce((sum: number, m: any) => sum + m.score, 0) / marks.length) : 0}%
 
-ATTENDANCE RECORD:
-Total School Days: ${attendance.length}
-Days Present: ${attendance.filter((r: any) => r.isPresent).length}
-Days Absent: ${attendance.filter((r: any) => !r.isPresent).length}
-Attendance Percentage: ${attendance.length > 0 ? Math.round((attendance.filter((r: any) => r.isPresent).length / attendance.length) * 100) : 0}%
-
 PERFORMANCE ANALYSIS:
 ${marks.length > 0 ? 
   `Highest Score: ${Math.max(...marks.map((m: any) => m.score))}%
@@ -216,8 +171,8 @@ Recent Performance Trend: ${marks.slice(-3).map((m: any) => `${m.subject}: ${m.s
 }
 
 REMARKS:
-${marks.length > 0 && attendance.length > 0 ?
-  `Student shows ${attendance.length > 0 && (attendance.filter((r: any) => r.isPresent).length / attendance.length) > 0.8 ? 'excellent' : 'good'} attendance record and ${marks.reduce((sum: number, m: any) => sum + m.score, 0) / marks.length > 75 ? 'outstanding' : marks.reduce((sum: number, m: any) => sum + m.score, 0) / marks.length > 60 ? 'good' : 'needs improvement'} academic performance.` :
+${marks.length > 0 ?
+  `Student shows ${marks.reduce((sum: number, m: any) => sum + m.score, 0) / marks.length > 75 ? 'outstanding' : marks.reduce((sum: number, m: any) => sum + m.score, 0) / marks.length > 60 ? 'good' : 'needs improvement'} academic performance.` :
   'Evaluation in progress. Please check back for detailed analysis.'
 }`;
         
@@ -232,50 +187,19 @@ ${marks.length > 0 && attendance.length > 0 ?
     }
   };
 
-  if (currentUser?.role === 'teacher') {
-    return (
-      <div className="mt-6 space-y-2">
-        <Separator className="my-4 bg-sidebar-border/50" />
-        <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
-        <Button
-          onClick={handleMarkAttendance}
-          variant="outline"
-          size="sm"
-          className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
-        >
-          <UserCheck className="h-4 w-4 mr-2" />
-          Mark Attendance
-        </Button>
-        <Button
-          onClick={handleDownloadReport}
-          variant="outline"
-          size="sm"
-          className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
-        >
-          <Download className="h-4 w-4 mr-2" />
-          Download Report
-        </Button>
-      </div>
-    );
-  }
-
-  if (currentUser?.role === 'student') {
-    return (
-      <div className="mt-6 space-y-2">
-        <Separator className="my-4 bg-sidebar-border/50" />
-        <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
-        <Button
-          onClick={handleDownloadReport}
-          variant="outline"
-          size="sm"
-          className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
-        >
-          <Download className="h-4 w-4 mr-2" />
-          My Report
-        </Button>
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div className="mt-6 space-y-2">
+      <Separator className="my-4 bg-sidebar-border/50" />
+      <p className="text-xs font-medium text-sidebar-foreground/70 px-3">Quick Actions</p>
+      <Button
+        onClick={handleDownloadReport}
+        variant="outline"
+        size="sm"
+        className="w-full justify-start bg-sidebar hover:bg-sidebar-accent text-sidebar-foreground border-sidebar-border"
+      >
+        <Download className="h-4 w-4 mr-2" />
+        {currentUser?.role === 'teacher' ? 'Download Class Report' : 'My Report'}
+      </Button>
+    </div>
+  );
 };
