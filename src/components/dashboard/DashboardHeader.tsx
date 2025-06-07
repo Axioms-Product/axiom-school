@@ -14,15 +14,21 @@ export const DashboardHeader = () => {
   const { currentUser } = useAuth();
   const [open, setOpen] = useState(false);
 
+  // Get page title from pathname
+  const getPageTitle = () => {
+    const path = location.pathname.split('/').pop();
+    return path ? path.charAt(0).toUpperCase() + path.slice(1) : 'Dashboard';
+  };
+
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm border-b py-3 px-4">
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b py-3 px-4 flex-shrink-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {isMobile && (
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu />
+                  <Menu size={20} />
                 </Button>
               </SheetTrigger>
               <MobileSidebar 
@@ -33,8 +39,8 @@ export const DashboardHeader = () => {
               />
             </Sheet>
           )}
-          <h1 className="text-xl font-semibold">
-            {location.pathname.split('/').pop()?.charAt(0).toUpperCase() + location.pathname.split('/').pop()?.slice(1)}
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {getPageTitle()}
           </h1>
         </div>
         
@@ -43,7 +49,7 @@ export const DashboardHeader = () => {
             <Button 
               variant="ghost" 
               size="icon"
-              className="rounded-full"
+              className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <User size={20} />
             </Button>
