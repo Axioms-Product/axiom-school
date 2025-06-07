@@ -11,7 +11,7 @@ import {
   Moon,
   User
 } from 'lucide-react';
-import { useTheme } from '@/components/ui/theme-provider';
+import { useTheme } from 'next-themes';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import {
