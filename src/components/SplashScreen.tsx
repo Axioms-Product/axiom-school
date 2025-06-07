@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Text3D, Center } from '@react-three/drei';
+import { OrbitControls, Box, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface SplashScreenProps {
@@ -13,53 +13,35 @@ function AnimatedLogo() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotation((prev) => prev + 0.01);
+      setRotation((prev) => prev + 0.02);
     }, 16);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <Center>
-      <group rotation={[0, rotation, 0]}>
-        <Text3D
-          font="/fonts/helvetiker_regular.typeface.json"
-          size={0.8}
-          height={0.2}
-          curveSegments={12}
-          bevelEnabled
-          bevelThickness={0.02}
-          bevelSize={0.02}
-          bevelOffset={0}
-          bevelSegments={5}
-        >
-          AXIOMS
-          <meshStandardMaterial 
-            color="#3b82f6" 
-            metalness={0.8}
-            roughness={0.2}
-          />
-        </Text3D>
-        <Text3D
-          font="/fonts/helvetiker_regular.typeface.json"
-          size={0.4}
-          height={0.1}
-          position={[0, -1.2, 0]}
-          curveSegments={12}
-          bevelEnabled
-          bevelThickness={0.01}
-          bevelSize={0.01}
-          bevelOffset={0}
-          bevelSegments={3}
-        >
-          SCHOOL
-          <meshStandardMaterial 
-            color="#8b5cf6" 
-            metalness={0.6}
-            roughness={0.3}
-          />
-        </Text3D>
-      </group>
-    </Center>
+    <group rotation={[0, rotation, 0]}>
+      {/* Main logo using geometric shapes */}
+      <Box args={[2, 0.3, 0.3]} position={[0, 0.5, 0]}>
+        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
+      </Box>
+      <Box args={[0.3, 1.5, 0.3]} position={[-0.8, 0, 0]}>
+        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
+      </Box>
+      <Box args={[1, 0.3, 0.3]} position={[-0.3, -0.3, 0]}>
+        <meshStandardMaterial color="#3b82f6" metalness={0.8} roughness={0.2} />
+      </Box>
+      
+      {/* Decorative spheres */}
+      <Sphere args={[0.1]} position={[1.2, 0.5, 0]}>
+        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
+      </Sphere>
+      <Sphere args={[0.15]} position={[0.8, -0.8, 0]}>
+        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
+      </Sphere>
+      <Sphere args={[0.12]} position={[-1.2, -0.5, 0]}>
+        <meshStandardMaterial color="#8b5cf6" metalness={0.6} roughness={0.3} />
+      </Sphere>
+    </group>
   );
 }
 
@@ -88,14 +70,24 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
           <pointLight position={[10, 10, 10]} intensity={1} />
           <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} intensity={0.5} />
           <AnimatedLogo />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
         </Canvas>
       </div>
 
       {/* Overlay Content */}
       <div className="relative z-10 text-center max-w-lg mx-auto px-4 sm:px-6">
+        {/* Logo Text */}
+        <div className="mb-8">
+          <h1 className="text-4xl sm:text-6xl font-bold text-white mb-2 tracking-wider">
+            AXIOMS
+          </h1>
+          <h2 className="text-xl sm:text-2xl font-light text-blue-200 tracking-widest">
+            SCHOOL
+          </h2>
+        </div>
+
         {/* Loading Section */}
-        <div className="space-y-6 mt-8">
+        <div className="space-y-6">
           <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-white/20 shadow-lg">
             <p className="text-white text-lg sm:text-xl font-light mb-6">
               Initializing Learning Environment{dots}
