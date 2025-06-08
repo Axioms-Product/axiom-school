@@ -10,7 +10,6 @@ const Dashboard = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Close sidebar when route changes on mobile
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
@@ -22,7 +21,7 @@ const Dashboard = () => {
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <DashboardHeader />
         
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto pb-20 md:pb-6">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto pb-24 md:pb-6">
           <Outlet />
         </main>
         

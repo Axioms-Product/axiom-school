@@ -86,6 +86,10 @@
     padding-top: env(safe-area-inset-top);
   }
   
+  .h-safe-area-inset-bottom {
+    height: env(safe-area-inset-bottom);
+  }
+  
   /* GPU acceleration for smooth animations */
   .gpu-accelerated {
     transform: translateZ(0);
@@ -99,11 +103,21 @@
   }
 }
 
-/* Improve mobile touch targets */
+/* Improve mobile touch targets and bottom navigation spacing */
 @media (max-width: 768px) {
   button, a, [role="button"] {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Extra padding for bottom navigation */
+  main {
+    padding-bottom: 6rem !important;
+  }
+  
+  /* Ensure proper spacing for mobile bottom nav */
+  .bottom-nav-spacing {
+    margin-bottom: 5rem;
   }
 }
 
@@ -115,4 +129,13 @@
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Hide Lovable watermark/badge */
+[data-lovable-badge],
+.lovable-badge,
+#lovable-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
