@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -165,8 +164,9 @@ const MarksView = () => {
         color: subj === Subject.MATHEMATICS ? '#3b82f6' :
                subj === Subject.SCIENCE ? '#10b981' :
                subj === Subject.ENGLISH ? '#f59e0b' :
-               subj === Subject.HISTORY ? '#ef4444' :
-               subj === Subject.GEOGRAPHY ? '#8b5cf6' : '#6b7280'
+               subj === Subject.SOCIAL_SCIENCE ? '#ef4444' :
+               subj === Subject.HINDI ? '#8b5cf6' :
+               subj === Subject.COMPUTER ? '#6b7280' : '#6b7280'
       };
     }).filter(item => item.average > 0);
 
