@@ -32,11 +32,31 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
+} from '@/components/ui/chart';
+import { 
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer
+} from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Subject, Mark } from '@/models/types';
 import { format } from 'date-fns';
-import { Trophy, TrendingUp, Award, Star, Target, BarChart3, Calendar, CheckCircle, Clock, FileText, Zap, Brain, Sparkles, Rocket, Heart, ArrowRight, PlayCircle, ChevronRight, GraduationCap, BookOpen } from 'lucide-react';
+import { Trophy, TrendingUp, Award, Star, Target, BarChart3, Calendar, CheckCircle, Clock, FileText, Zap, Brain, Sparkles, Rocket, Heart, ArrowRight, PlayCircle, ChevronRight, GraduationCap, BookOpen, PieChart as PieChartIcon, Filter } from 'lucide-react';
 
 const MarksView = () => {
   const { currentUser } = useAuth();
@@ -56,6 +76,7 @@ const MarksView = () => {
       ? currentUser.subject 
       : 'all'
   );
+  const [selectedChartSubject, setSelectedChartSubject] = useState<Subject | 'all'>('all');
   
   const isTeacher = currentUser?.role === 'teacher';
   const marks = getFilteredMarks();
@@ -126,6 +147,74 @@ const MarksView = () => {
 
   const subjectList = Object.values(Subject);
 
+  // Chart data preparation
+  const getChartData = () => {
+    const filteredMarks = selectedChartSubject === 'all' 
+      ? marks 
+      : marks.filter(mark => mark.subject === selectedChartSubject);
+
+    // For bar chart - average by subject
+    const subjectAverages = subjectList.map(subj => {
+      const subjMarks = marks.filter(mark => mark.subject === subj);
+      const average = subjMarks.length > 0 
+        ? subjMarks.reduce((acc, mark) => acc + (mark.score / mark.totalScore) * 100, 0) / subjMarks.length
+        : 0;
+      return {
+        subject: subj.substring(0, 8),
+        average: parseFloat(average.toFixed(1)),
+        color: subj === Subject.MATHEMATICS ? '#3b82f6' :
+               subj === Subject.SCIENCE ? '#10b981' :
+               subj === Subject.ENGLISH ? '#f59e0b' :
+               subj === Subject.HISTORY ? '#ef4444' :
+               subj === Subject.GEOGRAPHY ? '#8b5cf6' : '#6b7280'
+      };
+    }).filter(item => item.average > 0);
+
+    // For line chart - performance trend
+    const trendData = filteredMarks
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+      .map((mark, index) => ({
+        test: index + 1,
+        percentage: parseFloat(((mark.score / mark.totalScore) * 100).toFixed(1)),
+        testName: mark.testName.substring(0, 10)
+      }));
+
+    // For pie chart - grade distribution
+    const gradeDistribution = filteredMarks.reduce((acc, mark) => {
+      const percentage = (mark.score / mark.totalScore) * 100;
+      const grade = percentage >= 90 ? 'A' :
+                    percentage >= 80 ? 'B' :
+                    percentage >= 70 ? 'C' :
+                    percentage >= 60 ? 'D' : 'F';
+      acc[grade] = (acc[grade] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const pieData = Object.entries(gradeDistribution).map(([grade, count]) => ({
+      grade,
+      count,
+      color: grade === 'A' ? '#10b981' :
+             grade === 'B' ? '#3b82f6' :
+             grade === 'C' ? '#f59e0b' :
+             grade === 'D' ? '#f97316' : '#ef4444'
+    }));
+
+    return { subjectAverages, trendData, pieData };
+  };
+
+  const chartConfig = {
+    average: {
+      label: "Average",
+      color: "hsl(var(--chart-1))",
+    },
+    percentage: {
+      label: "Percentage",
+      color: "hsl(var(--chart-2))",
+    },
+  };
+
+  const { subjectAverages, trendData, pieData } = getChartData();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 p-4 pb-24 md:pb-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -146,7 +235,7 @@ const MarksView = () => {
                     <p className="text-indigo-100 text-sm md:text-lg">
                       {isTeacher 
                         ? `Track student progress in ${currentUser?.subject}`
-                        : "Monitor your academic journey"
+                        : "Monitor your academic journey with detailed analytics"
                       }
                     </p>
                   </div>
@@ -316,6 +405,142 @@ const MarksView = () => {
                   </Card>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Charts Section */}
+        {marks.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="text-xl font-bold flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-indigo-600" />
+                Performance Analytics
+              </h2>
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <Select value={selectedChartSubject} onValueChange={(value) => setSelectedChartSubject(value as Subject | 'all')}>
+                  <SelectTrigger className="w-48 rounded-xl">
+                    <SelectValue placeholder="Select Subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Subjects</SelectItem>
+                    {subjectList.map((subj) => (
+                      <SelectItem key={subj} value={subj}>
+                        {subj}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Subject Averages Bar Chart */}
+              <Card className="border-0 shadow-xl rounded-3xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-indigo-600" />
+                    Subject Averages
+                  </CardTitle>
+                  <CardDescription>
+                    Compare performance across subjects
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className="h-[300px]">
+                    <BarChart data={subjectAverages}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="subject" />
+                      <YAxis domain={[0, 100]} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="average" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              {/* Performance Trend Line Chart */}
+              <Card className="border-0 shadow-xl rounded-3xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    Performance Trend
+                  </CardTitle>
+                  <CardDescription>
+                    Track progress over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className="h-[300px]">
+                    <LineChart data={trendData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="test" />
+                      <YAxis domain={[0, 100]} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="percentage" 
+                        stroke="#10b981" 
+                        strokeWidth={3}
+                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              {/* Grade Distribution Pie Chart */}
+              {pieData.length > 0 && (
+                <Card className="border-0 shadow-xl rounded-3xl lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <PieChartIcon className="h-5 w-5 text-purple-600" />
+                      Grade Distribution
+                    </CardTitle>
+                    <CardDescription>
+                      Breakdown of grades achieved
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col lg:flex-row items-center gap-8">
+                      <div className="flex-1">
+                        <ChartContainer config={chartConfig} className="h-[300px]">
+                          <PieChart>
+                            <Pie
+                              data={pieData}
+                              cx="50%"
+                              cy="50%"
+                              outerRadius={100}
+                              fill="#8884d8"
+                              dataKey="count"
+                              label={({ grade, count }) => `${grade}: ${count}`}
+                            >
+                              {pieData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                          </PieChart>
+                        </ChartContainer>
+                      </div>
+                      <div className="flex flex-wrap gap-2 lg:flex-col">
+                        {pieData.map((entry) => (
+                          <div key={entry.grade} className="flex items-center gap-2">
+                            <div 
+                              className="w-4 h-4 rounded-full" 
+                              style={{ backgroundColor: entry.color }}
+                            ></div>
+                            <span className="text-sm font-medium">
+                              Grade {entry.grade}: {entry.count} tests
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         )}
