@@ -37,7 +37,7 @@ export const NavigationItems = ({ location, currentUser }: NavigationItemsProps)
   }
 
   // Bottom nav items for mobile (these will be excluded from sidebar on mobile)
-  const bottomNavPaths = ['/dashboard/home', '/dashboard/homework', '/dashboard/marks', '/dashboard/profile'];
+  const bottomNavPaths = ['/dashboard/home', '/dashboard/homework', '/dashboard/marks', '/dashboard/messages', '/dashboard/profile'];
   
   // Filter items for desktop sidebar (show all) and mobile sidebar (exclude bottom nav items)
   const sidebarItems = allNavigationItems.filter(item => 
