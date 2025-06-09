@@ -58,11 +58,11 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
         <div className="mb-10 relative">
           <div className="absolute inset-0 bg-gradient-radial from-blue-500/50 via-purple-500/40 to-transparent rounded-full blur-3xl scale-150 animate-pulse"></div>
           
-          <div className="relative bg-gradient-to-br from-slate-800/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl rounded-3xl p-10 border border-white/30 shadow-2xl transform hover:scale-105 transition-transform duration-500">
+          <div className="relative bg-gradient-to-br from-slate-800/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-white/30 shadow-2xl transform hover:scale-105 transition-transform duration-500">
             <div className="absolute inset-4 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-2xl blur-sm animate-pulse"></div>
             
-            <div className="relative">
-              <h1 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-wider">
+            <div className="relative z-10">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 tracking-wider">
                 <span className="inline-block transform hover:scale-110 transition-transform duration-300 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">A</span>
                 <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-75 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">X</span>
                 <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-150 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">I</span>
@@ -70,7 +70,7 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
                 <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-300 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">M</span>
                 <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-375 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">S</span>
               </h1>
-              <h2 className="text-xl md:text-2xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200 tracking-[0.6em] animate-fade-in">
+              <h2 className="text-lg md:text-2xl lg:text-3xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200 tracking-[0.6em] animate-fade-in">
                 SCHOOL
               </h2>
             </div>
@@ -79,13 +79,13 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
 
         {/* Enhanced Loading Section */}
         <div className="space-y-8">
-          <div className="bg-white/15 backdrop-blur-xl rounded-3xl p-8 border border-white/25 shadow-2xl">
-            <p className="text-white text-xl font-light mb-8 animate-fade-in">
+          <div className="bg-white/15 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/25 shadow-2xl">
+            <p className="text-white text-lg md:text-xl font-light mb-6 md:mb-8 animate-fade-in">
               {phases[currentPhase]?.text}{dots}
             </p>
             
-            <div className="relative mb-8">
-              <div className="w-full bg-white/25 rounded-full h-4 overflow-hidden shadow-inner">
+            <div className="relative mb-6 md:mb-8">
+              <div className="w-full bg-white/25 rounded-full h-3 md:h-4 overflow-hidden shadow-inner">
                 <div 
                   className={`h-full bg-gradient-to-r ${phases[currentPhase]?.color} rounded-full transition-all duration-700 ease-out shadow-lg relative overflow-hidden`}
                   style={{ width: `${Math.min(progress, 100)}%` }}
@@ -96,16 +96,16 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
               </div>
             </div>
             
-            <div className="flex justify-between items-center text-base text-blue-100">
+            <div className="flex justify-between items-center text-sm md:text-base text-blue-100">
               <span className="font-medium animate-fade-in">
                 Phase {currentPhase + 1} of 5
               </span>
-              <span className="font-mono font-bold text-white text-2xl animate-scale-in">{Math.round(progress)}%</span>
+              <span className="font-mono font-bold text-white text-xl md:text-2xl animate-scale-in">{Math.round(progress)}%</span>
             </div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 animate-fade-in">
-            <p className="text-blue-200/90 text-lg font-light">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-white/15 animate-fade-in">
+            <p className="text-blue-200/90 text-base md:text-lg font-light">
               🎓 Empowering Education • 🚀 Innovation in Learning • ✨ Building Tomorrow
             </p>
           </div>
