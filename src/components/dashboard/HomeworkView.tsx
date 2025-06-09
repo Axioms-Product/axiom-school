@@ -16,7 +16,7 @@ import { BookOpen, Calendar, Clock, Plus, CheckCircle, AlertCircle, FileText, Ta
 
 const HomeworkView = () => {
   const { currentUser } = useAuth();
-  const { homeworks, addHomework } = useData();
+  const { homework, addHomework } = useData();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -39,16 +39,18 @@ const HomeworkView = () => {
         title,
         description,
         subject: currentUser.subject,
-        dueDate: dueDate,
-        assignedClass: currentUser.class || ''
+        dueDate: new Date(dueDate),
+        assignedBy: currentUser.id,
+        class: currentUser.class
       });
     } else {
       addHomework({
         title,
         description,
         subject,
-        dueDate: dueDate,
-        assignedClass: currentUser?.class || ''
+        dueDate: new Date(dueDate),
+        assignedBy: currentUser?.id || '',
+        class: currentUser?.class || ''
       });
     }
     
@@ -60,18 +62,17 @@ const HomeworkView = () => {
 
   const getFilteredHomework = () => {
     if (isTeacher) {
-      return homeworks.filter(hw => hw.createdBy === currentUser?.id);
+      return homework.filter(hw => hw.assignedBy === currentUser?.id);
     } else {
-      return homeworks.filter(hw => hw.assignedClass === currentUser?.class);
+      return homework.filter(hw => hw.class === currentUser?.class);
     }
   };
 
   const filteredHomework = getFilteredHomework();
 
-  const getStatusColor = (dueDate: string) => {
+  const getStatusColor = (dueDate: Date) => {
     const now = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - now.getTime();
+    const diffTime = dueDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) return 'from-red-500 to-pink-600';
@@ -80,10 +81,9 @@ const HomeworkView = () => {
     return 'from-green-500 to-emerald-600';
   };
 
-  const getStatusIcon = (dueDate: string) => {
+  const getStatusIcon = (dueDate: Date) => {
     const now = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - now.getTime();
+    const diffTime = dueDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) return AlertCircle;
@@ -295,18 +295,17 @@ const HomeworkView = () => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Due: {format(new Date(hw.dueDate), 'MMM d, yyyy h:mm a')}</span>
+                        <span className="font-medium">Due: {format(hw.dueDate, 'MMM d, yyyy h:mm a')}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>Class {hw.assignedClass}</span>
+                        <span>Class {hw.class}</span>
                       </div>
                       
                       {(() => {
                         const now = new Date();
-                        const due = new Date(hw.dueDate);
-                        const diffTime = due.getTime() - now.getTime();
+                        const diffTime = hw.dueDate.getTime() - now.getTime();
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
                         return (
