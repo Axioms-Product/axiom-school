@@ -16,7 +16,7 @@ import { BookOpen, Calendar, Clock, Plus, CheckCircle, AlertCircle, FileText, Ta
 
 const HomeworkView = () => {
   const { currentUser } = useAuth();
-  const { homework, addHomework } = useData();
+  const { homeworks, addHomework } = useData();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -39,18 +39,16 @@ const HomeworkView = () => {
         title,
         description,
         subject: currentUser.subject,
-        dueDate: new Date(dueDate),
-        assignedBy: currentUser.id,
-        class: currentUser.class
+        dueDate: dueDate,
+        assignedClass: currentUser.class || ''
       });
     } else {
       addHomework({
         title,
         description,
         subject,
-        dueDate: new Date(dueDate),
-        assignedBy: currentUser?.id || '',
-        class: currentUser?.class || ''
+        dueDate: dueDate,
+        assignedClass: currentUser?.class || ''
       });
     }
     
@@ -61,18 +59,21 @@ const HomeworkView = () => {
   };
 
   const getFilteredHomework = () => {
+    if (!homeworks) return [];
+    
     if (isTeacher) {
-      return homework.filter(hw => hw.assignedBy === currentUser?.id);
+      return homeworks.filter(hw => hw.createdBy === currentUser?.id);
     } else {
-      return homework.filter(hw => hw.class === currentUser?.class);
+      return homeworks.filter(hw => hw.assignedClass === currentUser?.class);
     }
   };
 
   const filteredHomework = getFilteredHomework();
 
-  const getStatusColor = (dueDate: Date) => {
+  const getStatusColor = (dueDate: string) => {
     const now = new Date();
-    const diffTime = dueDate.getTime() - now.getTime();
+    const due = new Date(dueDate);
+    const diffTime = due.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) return 'from-red-500 to-pink-600';
@@ -81,9 +82,10 @@ const HomeworkView = () => {
     return 'from-green-500 to-emerald-600';
   };
 
-  const getStatusIcon = (dueDate: Date) => {
+  const getStatusIcon = (dueDate: string) => {
     const now = new Date();
-    const diffTime = dueDate.getTime() - now.getTime();
+    const due = new Date(dueDate);
+    const diffTime = due.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) return AlertCircle;
@@ -136,7 +138,7 @@ const HomeworkView = () => {
               </div>
               
               {isTeacher && (
-                <div className="flex justify-center lg:justify-end w-full lg:w-auto">
+                <div className="flex justify-center lg:justify-center w-full lg:w-auto">
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-xl shadow-lg">
@@ -295,17 +297,18 @@ const HomeworkView = () => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Due: {format(hw.dueDate, 'MMM d, yyyy h:mm a')}</span>
+                        <span className="font-medium">Due: {format(new Date(hw.dueDate), 'MMM d, yyyy h:mm a')}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>Class {hw.class}</span>
+                        <span>Class {hw.assignedClass}</span>
                       </div>
                       
                       {(() => {
                         const now = new Date();
-                        const diffTime = hw.dueDate.getTime() - now.getTime();
+                        const due = new Date(hw.dueDate);
+                        const diffTime = due.getTime() - now.getTime();
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
                         return (
