@@ -2,14 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Subject } from '@/models/types';
-import { User, Mail, Lock, Eye, EyeOff, UserPlus, GraduationCap } from 'lucide-react';
-import Logo from '@/components/ui/logo';
+import { Eye, EyeOff, GraduationCap } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -90,219 +87,158 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-8 bg-gradient-to-br from-purple-50 to-pink-100">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      
-      <div className="w-full max-w-lg z-10 my-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 py-8">
+      <div className="max-w-sm w-full">
+        {/* Logo and Title */}
         <div className="text-center mb-8">
-          <Logo size="lg" className="justify-center mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Join Axioms School</h1>
-          <p className="text-gray-600">Create your account to start learning</p>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
+            <GraduationCap className="h-12 w-12 mx-auto text-blue-600 mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900">Axioms School</h1>
+            <p className="text-gray-600 text-sm mt-2">Sign up to get started</p>
+          </div>
         </div>
-        
-        <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center pb-6">
-            <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-            <CardDescription className="text-purple-100">Fill in your details to get started</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
+
+        {/* Register Form */}
+        <div className="bg-white border border-gray-300 rounded-lg p-6 mb-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className="bg-gray-50 border-gray-300 text-sm h-11"
+              required
+            />
+            
+            <Input
+              placeholder="Username"
+              value={formData.username}
+              onChange={(e) => handleInputChange('username', e.target.value)}
+              className="bg-gray-50 border-gray-300 text-sm h-11"
+              required
+            />
+            
+            <Input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="bg-gray-50 border-gray-300 text-sm h-11"
+              required
+            />
+            
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                className="bg-gray-50 border-gray-300 text-sm h-11 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                className="bg-gray-50 border-gray-300 text-sm h-11 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            
+            <Select
+              value={formData.role}
+              onValueChange={(value) => handleInputChange('role', value)}
+            >
+              <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="student">Student</SelectItem>
+                <SelectItem value="teacher">Teacher</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select
+              value={formData.assignedClass}
+              onValueChange={(value) => handleInputChange('assignedClass', value)}
+            >
+              <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+                <SelectValue placeholder="Select Class" />
+              </SelectTrigger>
+              <SelectContent>
+                {classes.map((cls) => (
+                  <SelectItem key={cls} value={cls}>
+                    Class {cls}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {formData.role === 'teacher' && (
+              <Select
+                value={formData.subject}
+                onValueChange={(value) => handleInputChange('subject', value)}
+              >
+                <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+                  <SelectValue placeholder="Select Subject" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjects.map((subj) => (
+                    <SelectItem key={subj} value={subj}>
+                      {subj}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+              <div className="text-red-500 text-sm text-center">
                 {error}
               </div>
             )}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700 font-medium">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="name"
-                      placeholder="John Doe"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-gray-700 font-medium">Username</Label>
-                  <div className="relative">
-                    <UserPlus className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="username"
-                      placeholder="john_doe"
-                      value={formData.username}
-                      onChange={(e) => handleInputChange('username', e.target.value)}
-                      className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-9 pr-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-9 pr-9 bg-gray-50 border-gray-200 text-gray-900 focus:border-purple-500 focus:ring-purple-500 h-11"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="role" className="text-gray-700 font-medium">Role</Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => handleInputChange('role', value)}
-                  >
-                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
-                      <SelectValue placeholder="Select Role" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200">
-                      <SelectItem value="student" className="text-gray-900">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          Student
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="teacher" className="text-gray-900">
-                        <div className="flex items-center gap-2">
-                          <GraduationCap className="h-4 w-4" />
-                          Teacher
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="class" className="text-gray-700 font-medium">
-                    {formData.role === 'teacher' ? 'Assigned Class' : 'Your Class'}
-                  </Label>
-                  <Select
-                    value={formData.assignedClass}
-                    onValueChange={(value) => handleInputChange('assignedClass', value)}
-                  >
-                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
-                      <SelectValue placeholder="Select Class" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200">
-                      {classes.map((cls) => (
-                        <SelectItem key={cls} value={cls} className="text-gray-900">
-                          Class {cls}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              {formData.role === 'teacher' && (
-                <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-gray-700 font-medium">Subject You Teach</Label>
-                  <Select
-                    value={formData.subject}
-                    onValueChange={(value) => handleInputChange('subject', value)}
-                  >
-                    <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-11">
-                      <SelectValue placeholder="Select Subject" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200">
-                      {subjects.map((subj) => (
-                        <SelectItem key={subj} value={subj} className="text-gray-900">
-                          {subj}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              
-              <Button 
-                type="submit" 
-                className="w-full h-12 text-white font-semibold rounded-lg shadow-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Creating Account...
-                  </div>
-                ) : (
-                  'Create Account'
-                )}
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="bg-gray-50 text-center py-4">
-            <p className="text-sm text-gray-600 w-full">
-              Already have an account?{' '}
-              <Link to="/login" className="text-purple-600 hover:text-purple-700 font-medium">
-                Sign In
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold h-11 rounded-lg"
+              disabled={loading}
+            >
+              {loading ? 'Creating Account...' : 'Sign Up'}
+            </Button>
+          </form>
+        </div>
+
+        {/* Sign In Link */}
+        <div className="bg-white border border-gray-300 rounded-lg p-4 text-center">
+          <p className="text-sm text-gray-600">
+            Have an account?{' '}
+            <Link to="/login" className="text-blue-500 font-semibold hover:text-blue-700">
+              Sign in
+            </Link>
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-xs text-gray-400">
+          © 2024 Axioms School. All rights reserved.
+        </div>
       </div>
     </div>
   );

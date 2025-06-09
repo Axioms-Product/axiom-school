@@ -21,14 +21,16 @@ import {
   Plus,
   FileText,
   UserCheck,
-  TrendingUp
+  TrendingUp,
+  Star,
+  Activity
 } from 'lucide-react';
 
 const HomeView = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { 
-    getFilteredHomeworks, 
+    getFilteredHomework, 
     getFilteredNotices, 
     getFilteredEvents,
     getFilteredMarks,
@@ -37,7 +39,7 @@ const HomeView = () => {
   } = useData();
 
   const isStudent = currentUser?.role === 'student';
-  const homework = getFilteredHomeworks();
+  const homework = getFilteredHomework();
   const notices = getFilteredNotices();
   const events = getFilteredEvents();
   const recentMarks = getFilteredMarks().slice(0, 5);
@@ -59,12 +61,17 @@ const HomeView = () => {
     return eventDate >= today;
   }).slice(0, 3);
 
-  // Teacher specific stats (real data)
+  // Teacher specific stats
   const teacherStats = {
     totalStudents: studentsInClass.length,
     assignmentsGiven: homework.length,
     eventsPlanned: events.length
   };
+
+  // Calculate average performance for student
+  const averageMarks = recentMarks.length > 0 
+    ? Math.round(recentMarks.reduce((sum, mark) => sum + mark.marks, 0) / recentMarks.length)
+    : 0;
 
   const handleQuickAction = (action: string) => {
     switch (action) {
@@ -89,6 +96,9 @@ const HomeView = () => {
       case 'exams':
         navigate('/dashboard/exams');
         break;
+      case 'profile':
+        navigate('/dashboard/profile');
+        break;
       default:
         break;
     }
@@ -96,10 +106,13 @@ const HomeView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-2 sm:p-4 md:p-6">
-      <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
-        {/* Welcome Header */}
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-lg p-4 sm:p-6 md:p-8 border border-blue-100">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        {/* Enhanced Welcome Header */}
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 sm:p-6 md:p-8 border border-blue-100 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200 to-purple-200 rounded-full -translate-y-16 translate-x-16 opacity-60"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-200 to-pink-200 rounded-full translate-y-12 -translate-x-12 opacity-60"></div>
+          
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
                 <div className="relative">
@@ -128,21 +141,21 @@ const HomeView = () => {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-blue-100 text-blue-700 px-2 py-1 text-xs md:text-sm">
+                <Badge className="bg-blue-100 text-blue-700 px-3 py-1 text-xs md:text-sm font-medium">
                   Class {currentUser?.class}
                 </Badge>
-                <Badge className="bg-green-100 text-green-700 px-2 py-1 text-xs md:text-sm capitalize">
+                <Badge className="bg-green-100 text-green-700 px-3 py-1 text-xs md:text-sm font-medium capitalize">
                   {currentUser?.role}
                 </Badge>
                 {currentUser?.subject && (
-                  <Badge className="bg-purple-100 text-purple-700 px-2 py-1 text-xs md:text-sm">
+                  <Badge className="bg-purple-100 text-purple-700 px-3 py-1 text-xs md:text-sm font-medium">
                     {currentUser.subject}
                   </Badge>
                 )}
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white text-center min-w-[160px] md:min-w-[200px] shadow-lg">
+            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white text-center min-w-[160px] md:min-w-[200px] shadow-xl">
               <div className="text-xs md:text-sm opacity-90 mb-1 md:mb-2">Today's Date</div>
               <div className="text-lg md:text-2xl font-bold mb-1 md:mb-2">
                 {new Date().toLocaleDateString('en-US', { 
@@ -158,11 +171,11 @@ const HomeView = () => {
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+        {/* Enhanced Quick Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {isStudent ? (
             <>
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -170,14 +183,14 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{pendingHomework}</p>
                       <p className="text-xs text-gray-500">Pending</p>
                     </div>
-                    <div className="bg-blue-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-2 md:p-3">
                       <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -185,14 +198,14 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{notices.length}</p>
                       <p className="text-xs text-gray-500">Active</p>
                     </div>
-                    <div className="bg-yellow-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg p-2 md:p-3">
                       <Bell className="h-5 w-5 md:h-6 md:w-6 text-yellow-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -200,23 +213,23 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{upcomingEvents.length}</p>
                       <p className="text-xs text-gray-500">Upcoming</p>
                     </div>
-                    <div className="bg-green-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-lg p-2 md:p-3">
                       <Calendar className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 col-span-2 lg:col-span-3">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Messages</p>
-                      <p className="text-xl md:text-2xl font-bold text-gray-900">{unreadMessages}</p>
-                      <p className="text-xs text-gray-500">Unread</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Average</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{averageMarks}%</p>
+                      <p className="text-xs text-gray-500">Performance</p>
                     </div>
-                    <div className="bg-purple-100 rounded-lg p-2 md:p-3">
-                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
+                    <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-2 md:p-3">
+                      <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -224,7 +237,7 @@ const HomeView = () => {
             </>
           ) : (
             <>
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -232,14 +245,14 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.totalStudents}</p>
                       <p className="text-xs text-gray-500">In your class</p>
                     </div>
-                    <div className="bg-blue-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-2 md:p-3">
                       <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -247,14 +260,14 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.assignmentsGiven}</p>
                       <p className="text-xs text-gray-500">Given</p>
                     </div>
-                    <div className="bg-green-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-lg p-2 md:p-3">
                       <FileText className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -262,8 +275,23 @@ const HomeView = () => {
                       <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.eventsPlanned}</p>
                       <p className="text-xs text-gray-500">Planned</p>
                     </div>
-                    <div className="bg-yellow-100 rounded-lg p-2 md:p-3">
+                    <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg p-2 md:p-3">
                       <Calendar className="h-5 w-5 md:h-6 md:w-6 text-yellow-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Messages</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{messages.length}</p>
+                      <p className="text-xs text-gray-500">Total</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-2 md:p-3">
+                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -273,84 +301,82 @@ const HomeView = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {/* Progress Overview */}
-          <Card className="bg-white shadow-lg border-0 rounded-xl">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-xl p-3 md:p-4">
+          {/* Enhanced Progress Overview */}
+          <Card className="bg-white shadow-xl border-0 rounded-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 md:p-4">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Target className="h-4 w-4 md:h-5 md:w-5" />
                 {isStudent ? 'Learning Progress' : 'Class Overview'}
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-3 md:p-4">
+            <CardContent className="p-4 md:p-6">
               {isStudent ? (
-                <div className="space-y-4 md:space-y-6">
-                  <div className="space-y-2 md:space-y-3">
+                <div className="space-y-6">
+                  <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs md:text-sm font-medium text-gray-700">Homework Completion</span>
-                      <span className="text-xs md:text-sm font-bold text-gray-900">{Math.round(homeworkProgress)}%</span>
+                      <span className="text-sm font-medium text-gray-700">Homework Completion</span>
+                      <span className="text-sm font-bold text-gray-900">{Math.round(homeworkProgress)}%</span>
                     </div>
-                    <Progress value={homeworkProgress} className="h-2 md:h-3" />
+                    <Progress value={homeworkProgress} className="h-3" />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
-                      <div className="text-lg md:text-2xl font-bold text-green-600 mb-1">{completedHomework}</div>
-                      <div className="text-xs md:text-sm text-gray-600">Completed</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                      <div className="text-2xl font-bold text-green-600 mb-1">{completedHomework}</div>
+                      <div className="text-sm text-gray-600">Completed</div>
                     </div>
-                    <div className="text-center p-3 md:p-4 bg-orange-50 rounded-lg">
-                      <div className="text-lg md:text-2xl font-bold text-orange-600 mb-1">{pendingHomework}</div>
-                      <div className="text-xs md:text-sm text-gray-600">Pending</div>
+                    <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200">
+                      <div className="text-2xl font-bold text-orange-600 mb-1">{pendingHomework}</div>
+                      <div className="text-sm text-gray-600">Pending</div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="text-center p-3 md:p-4 bg-blue-50 rounded-lg">
-                      <div className="text-lg md:text-2xl font-bold text-blue-600 mb-1">{homework.length}</div>
-                      <div className="text-xs md:text-sm text-gray-600">Assignments</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                      <div className="text-2xl font-bold text-blue-600 mb-1">{homework.length}</div>
+                      <div className="text-sm text-gray-600">Assignments</div>
                     </div>
-                    <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
-                      <div className="text-lg md:text-2xl font-bold text-green-600 mb-1">{notices.length}</div>
-                      <div className="text-xs md:text-sm text-gray-600">Notices</div>
+                    <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                      <div className="text-2xl font-bold text-green-600 mb-1">{notices.length}</div>
+                      <div className="text-sm text-gray-600">Notices</div>
                     </div>
                   </div>
-                  <div className="p-3 md:p-4 bg-purple-50 rounded-lg">
-                    <div className="text-center">
-                      <div className="text-lg md:text-2xl font-bold text-purple-600 mb-1">{events.length}</div>
-                      <div className="text-xs md:text-sm text-gray-600">Events Planned</div>
-                    </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                    <div className="text-2xl font-bold text-purple-600 mb-1">{events.length}</div>
+                    <div className="text-sm text-gray-600">Events Planned</div>
                   </div>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Recent Activity */}
-          <Card className="bg-white shadow-lg border-0 rounded-xl">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-t-xl p-3 md:p-4">
+          {/* Enhanced Recent Activity */}
+          <Card className="bg-white shadow-xl border-0 rounded-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white p-3 md:p-4">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                <Clock className="h-4 w-4 md:h-5 md:w-5" />
+                <Activity className="h-4 w-4 md:h-5 md:w-5" />
                 Recent Activity
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-3 md:p-4">
-              <div className="space-y-3 md:space-y-4">
+            <CardContent className="p-4 md:p-6">
+              <div className="space-y-4">
                 {homework.slice(0, 3).map((hw) => {
                   const isCompleted = hw.completedBy?.includes(currentUser?.id || '');
                   return (
-                    <div key={hw.id} className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                      <div className={`rounded-full p-1.5 md:p-2 ${
+                    <div key={hw.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
+                      <div className={`rounded-full p-2 ${
                         isCompleted ? 'bg-green-100' : 'bg-orange-100'
                       }`}>
                         {isCompleted ? (
-                          <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
+                          <CheckCircle className="h-4 w-4 text-green-600" />
                         ) : (
-                          <Clock className="h-3 w-3 md:h-4 md:w-4 text-orange-600" />
+                          <Clock className="h-4 w-4 text-orange-600" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs md:text-sm font-medium text-gray-900 truncate">{hw.title}</p>
+                        <p className="text-sm font-medium text-gray-900 truncate">{hw.title}</p>
                         <p className="text-xs text-gray-500">{hw.subject}</p>
                       </div>
                       <Badge 
@@ -366,9 +392,9 @@ const HomeView = () => {
                   );
                 })}
                 {homework.length === 0 && (
-                  <div className="text-center py-6 md:py-8 text-gray-500">
-                    <BookOpen className="h-8 w-8 md:h-12 md:w-12 mx-auto mb-2 md:mb-3 opacity-50" />
-                    <p className="text-xs md:text-sm">No homework assigned yet</p>
+                  <div className="text-center py-8 text-gray-500">
+                    <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-sm">No homework assigned yet</p>
                   </div>
                 )}
               </div>
@@ -376,76 +402,90 @@ const HomeView = () => {
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <Card className="bg-white shadow-lg border-0 rounded-xl">
-          <CardHeader className="p-3 md:p-4">
-            <CardTitle className="flex items-center gap-2 text-gray-900 text-base md:text-lg">
-              <Zap className="h-4 w-4 md:h-5 md:w-5 text-yellow-500" />
+        {/* Enhanced Quick Actions */}
+        <Card className="bg-white shadow-xl border-0 rounded-xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Zap className="h-5 w-5 text-yellow-300" />
               Quick Actions
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-3 md:p-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {isStudent ? (
                 <>
                   <Button 
                     onClick={() => handleQuickAction('homework')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <BookOpen className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Homework</span>
+                    <BookOpen className="h-6 w-6" />
+                    <span className="text-sm font-medium">Homework</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('events')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Calendar className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Events</span>
+                    <Calendar className="h-6 w-6" />
+                    <span className="text-sm font-medium">Events</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('messages')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <MessageSquare className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Messages</span>
+                    <MessageSquare className="h-6 w-6" />
+                    <span className="text-sm font-medium">Messages</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('marks')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Award className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Marks</span>
+                    <Award className="h-6 w-6" />
+                    <span className="text-sm font-medium">Marks</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('profile')}
+                    className="h-20 bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  >
+                    <Star className="h-6 w-6" />
+                    <span className="text-sm font-medium">Profile</span>
                   </Button>
                 </>
               ) : (
                 <>
                   <Button 
                     onClick={() => handleQuickAction('students')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Users className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Students</span>
+                    <Users className="h-6 w-6" />
+                    <span className="text-sm font-medium">Students</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('homework')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Plus className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Assignment</span>
+                    <Plus className="h-6 w-6" />
+                    <span className="text-sm font-medium">Assignment</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('events')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Calendar className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Events</span>
+                    <Calendar className="h-6 w-6" />
+                    <span className="text-sm font-medium">Events</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('notices')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Bell className="h-4 w-4 md:h-6 md:w-6" />
-                    <span className="text-xs md:text-sm font-medium">Notices</span>
+                    <Bell className="h-6 w-6" />
+                    <span className="text-sm font-medium">Notices</span>
+                  </Button>
+                  <Button 
+                    onClick={() => handleQuickAction('profile')}
+                    className="h-20 bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  >
+                    <Star className="h-6 w-6" />
+                    <span className="text-sm font-medium">Profile</span>
                   </Button>
                 </>
               )}
@@ -455,26 +495,29 @@ const HomeView = () => {
 
         {/* Upcoming Events Preview */}
         {upcomingEvents.length > 0 && (
-          <Card className="bg-white shadow-lg border-0 rounded-xl">
-            <CardHeader className="p-3 md:p-4">
-              <CardTitle className="flex items-center gap-2 text-gray-900 text-base md:text-lg">
-                <Calendar className="h-4 w-4 md:h-5 md:w-5 text-green-500" />
+          <Card className="bg-white shadow-xl border-0 rounded-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-teal-600 text-white p-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Calendar className="h-5 w-5" />
                 Upcoming Events
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-3 md:p-4">
-              <div className="space-y-2 md:space-y-3">
+            <CardContent className="p-6">
+              <div className="space-y-3">
                 {upcomingEvents.map((event) => (
-                  <div key={event.id} className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-green-50 rounded-lg">
-                    <div className="bg-green-100 rounded-full p-1.5 md:p-2">
-                      <Calendar className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
+                  <div key={event.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200">
+                    <div className="bg-green-100 rounded-full p-2">
+                      <Calendar className="h-4 w-4 text-green-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs md:text-sm font-medium text-gray-900">{event.title}</p>
+                      <p className="text-sm font-medium text-gray-900">{event.title}</p>
                       <p className="text-xs text-gray-500">
                         {new Date(event.date).toLocaleDateString()}
                       </p>
                     </div>
+                    <Badge className="bg-green-100 text-green-700">
+                      {Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24))} days
+                    </Badge>
                   </div>
                 ))}
               </div>
