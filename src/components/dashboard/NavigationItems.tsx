@@ -11,6 +11,7 @@ import {
   FileText,
   GraduationCap,
   User,
+  Users,
 } from 'lucide-react';
 
 interface NavigationItemsProps {
@@ -27,6 +28,7 @@ export const NavigationItems = ({ location, currentUser }: NavigationItemsProps)
     { name: 'Marks', path: '/dashboard/marks', icon: <PenSquare size={18} /> },
     { name: 'Messages', path: '/dashboard/messages', icon: <MessageCircle size={18} /> },
     { name: 'Exams', path: '/dashboard/exams', icon: <FileText size={18} /> },
+    { name: 'Class Members', path: '/dashboard/class-members', icon: <Users size={18} /> },
     { name: 'Profile', path: '/dashboard/profile', icon: <User size={18} /> },
   ];
   
