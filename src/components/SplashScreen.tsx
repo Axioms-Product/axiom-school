@@ -10,11 +10,11 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
   const [currentPhase, setCurrentPhase] = useState(0);
 
   const phases = [
-    { text: '🚀 Initializing System', color: 'from-blue-400 to-cyan-600' },
-    { text: '📚 Loading Resources', color: 'from-purple-400 to-pink-600' },
-    { text: '⚡ Setting up Interface', color: 'from-green-400 to-teal-600' },
-    { text: '✨ Finalizing Setup', color: 'from-orange-400 to-red-600' },
-    { text: '🎯 Ready to Launch!', color: 'from-indigo-400 to-purple-600' }
+    { text: '🚀 Initializing System', color: 'from-blue-500 to-cyan-600' },
+    { text: '📚 Loading Resources', color: 'from-purple-500 to-pink-600' },
+    { text: '⚡ Setting up Interface', color: 'from-green-500 to-teal-600' },
+    { text: '✨ Finalizing Setup', color: 'from-orange-500 to-red-600' },
+    { text: '🎯 Ready to Launch!', color: 'from-indigo-500 to-purple-600' }
   ];
 
   useEffect(() => {
@@ -40,39 +40,37 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-hidden">
-      {/* Animated Background Elements */}
+      {/* Enhanced Animated Background */}
       <div className="absolute inset-0">
-        {/* Floating geometric shapes with enhanced animations */}
-        <div className="absolute top-1/4 left-1/4 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-cyan-400 to-blue-600 transform rotate-45 shadow-2xl opacity-70 animate-bounce"></div>
-        <div className="absolute top-1/3 right-1/3 w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-purple-400 to-pink-600 transform rotate-12 shadow-xl opacity-60 animate-pulse"></div>
-        <div className="absolute bottom-1/3 left-1/2 w-14 h-14 md:w-22 md:h-22 bg-gradient-to-br from-emerald-400 to-teal-600 transform -rotate-45 shadow-lg opacity-50 animate-spin"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-10 h-10 md:w-16 md:h-16 bg-gradient-to-br from-orange-400 to-red-600 transform rotate-30 shadow-md opacity-80 animate-bounce"></div>
+        <div className="absolute top-1/4 left-1/4 w-20 h-20 md:w-32 md:h-32 bg-gradient-to-br from-cyan-400 to-blue-600 transform rotate-45 shadow-2xl opacity-70 animate-bounce"></div>
+        <div className="absolute top-1/3 right-1/3 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full shadow-xl opacity-60 animate-pulse"></div>
+        <div className="absolute bottom-1/3 left-1/2 w-18 h-18 md:w-28 md:h-28 bg-gradient-to-br from-emerald-400 to-teal-600 transform -rotate-45 shadow-lg opacity-50 animate-spin"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-orange-400 to-red-600 rounded-full shadow-md opacity-80 animate-bounce"></div>
         
-        {/* Animated particles */}
-        <div className="absolute top-1/6 left-1/5 w-3 h-3 bg-white rounded-full opacity-60 animate-ping"></div>
-        <div className="absolute top-2/3 right-1/6 w-2 h-2 bg-cyan-400 rounded-full opacity-80 animate-pulse"></div>
-        <div className="absolute bottom-1/5 left-1/3 w-4 h-4 bg-purple-400 rounded-full opacity-50 animate-bounce"></div>
+        <div className="absolute top-1/6 left-1/5 w-4 h-4 bg-white rounded-full opacity-60 animate-ping"></div>
+        <div className="absolute top-2/3 right-1/6 w-3 h-3 bg-cyan-400 rounded-full opacity-80 animate-pulse"></div>
+        <div className="absolute bottom-1/5 left-1/3 w-5 h-5 bg-purple-400 rounded-full opacity-50 animate-bounce"></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 text-center max-w-md mx-auto px-6">
+      <div className="relative z-10 text-center max-w-lg mx-auto px-6">
         {/* Enhanced Logo */}
-        <div className="mb-8 relative">
-          <div className="absolute inset-0 bg-gradient-radial from-blue-500/40 via-purple-500/30 to-transparent rounded-full blur-3xl scale-150 animate-pulse"></div>
+        <div className="mb-10 relative">
+          <div className="absolute inset-0 bg-gradient-radial from-blue-500/50 via-purple-500/40 to-transparent rounded-full blur-3xl scale-150 animate-pulse"></div>
           
-          <div className="relative bg-gradient-to-br from-slate-800/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl transform hover:scale-105 transition-transform duration-500">
-            <div className="absolute inset-3 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-2xl blur-sm animate-pulse"></div>
+          <div className="relative bg-gradient-to-br from-slate-800/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl rounded-3xl p-10 border border-white/30 shadow-2xl transform hover:scale-105 transition-transform duration-500">
+            <div className="absolute inset-4 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-2xl blur-sm animate-pulse"></div>
             
             <div className="relative">
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-3 tracking-wider">
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 text-shadow-3d animate-pulse">A</span>
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-75 text-shadow-3d animate-pulse">X</span>
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-150 text-shadow-3d animate-pulse">I</span>
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-225 text-shadow-3d animate-pulse">O</span>
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-300 text-shadow-3d animate-pulse">M</span>
-                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-375 text-shadow-3d animate-pulse">S</span>
+              <h1 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-wider">
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">A</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-75 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">X</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-150 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">I</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-225 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500">O</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-300 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">M</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-375 text-shadow-3d animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">S</span>
               </h1>
-              <h2 className="text-lg md:text-xl font-light text-blue-200/90 tracking-[0.4em] animate-fade-in">
+              <h2 className="text-xl md:text-2xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200 tracking-[0.6em] animate-fade-in">
                 SCHOOL
               </h2>
             </div>
@@ -80,14 +78,14 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
         </div>
 
         {/* Enhanced Loading Section */}
-        <div className="space-y-6">
-          <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/25 shadow-2xl">
-            <p className="text-white text-lg font-light mb-6 animate-fade-in">
+        <div className="space-y-8">
+          <div className="bg-white/15 backdrop-blur-xl rounded-3xl p-8 border border-white/25 shadow-2xl">
+            <p className="text-white text-xl font-light mb-8 animate-fade-in">
               {phases[currentPhase]?.text}{dots}
             </p>
             
-            <div className="relative mb-6">
-              <div className="w-full bg-white/25 rounded-full h-3 overflow-hidden shadow-inner">
+            <div className="relative mb-8">
+              <div className="w-full bg-white/25 rounded-full h-4 overflow-hidden shadow-inner">
                 <div 
                   className={`h-full bg-gradient-to-r ${phases[currentPhase]?.color} rounded-full transition-all duration-700 ease-out shadow-lg relative overflow-hidden`}
                   style={{ width: `${Math.min(progress, 100)}%` }}
@@ -98,16 +96,16 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
               </div>
             </div>
             
-            <div className="flex justify-between items-center text-sm text-blue-100">
+            <div className="flex justify-between items-center text-base text-blue-100">
               <span className="font-medium animate-fade-in">
                 Phase {currentPhase + 1} of 5
               </span>
-              <span className="font-mono font-bold text-white text-lg animate-scale-in">{Math.round(progress)}%</span>
+              <span className="font-mono font-bold text-white text-2xl animate-scale-in">{Math.round(progress)}%</span>
             </div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15 animate-fade-in">
-            <p className="text-blue-200/90 text-base font-light">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 animate-fade-in">
+            <p className="text-blue-200/90 text-lg font-light">
               🎓 Empowering Education • 🚀 Innovation in Learning • ✨ Building Tomorrow
             </p>
           </div>
