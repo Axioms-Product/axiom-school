@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { User, Mail, Phone, MapPin, Calendar, GraduationCap, BookOpen, Users, Edit } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, GraduationCap, BookOpen, Edit } from 'lucide-react';
 import { useState } from 'react';
 
 const ProfilePage = () => {
@@ -15,7 +14,14 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   if (!currentUser) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p>Loading profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -27,49 +33,49 @@ const ProfilePage = () => {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2230%22%20cy=%2230%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
           
           <div className="relative px-6 py-12">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-center gap-6 text-white">
-                <Avatar className="h-24 w-24 border-4 border-white/30 shadow-2xl">
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="text-white">
+                <Avatar className="h-24 w-24 border-4 border-white/30 shadow-2xl mx-auto mb-4">
                   <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.id}`} />
                   <AvatarFallback className="bg-white/20 text-white text-2xl font-bold">
                     {currentUser.name?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 
-                <div>
-                  <h1 className="text-4xl font-bold mb-2">{currentUser.name}</h1>
-                  <div className="flex flex-wrap gap-2 mb-4">
+                <h1 className="text-4xl font-bold mb-2">{currentUser.name}</h1>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
+                    <User className="h-4 w-4 mr-1" />
+                    {currentUser.role}
+                  </Badge>
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
+                    <GraduationCap className="h-4 w-4 mr-1" />
+                    Class {currentUser.class}
+                  </Badge>
+                  {currentUser.subject && (
                     <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
-                      <User className="h-4 w-4 mr-1" />
-                      {currentUser.role}
+                      <BookOpen className="h-4 w-4 mr-1" />
+                      {currentUser.subject}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
-                      <GraduationCap className="h-4 w-4 mr-1" />
-                      Class {currentUser.class}
-                    </Badge>
-                    {currentUser.subject && (
-                      <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
-                        <BookOpen className="h-4 w-4 mr-1" />
-                        {currentUser.subject}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-indigo-100 text-lg">
-                    {currentUser.role === 'teacher' 
-                      ? `Teaching ${currentUser.subject} • Class ${currentUser.class}`
-                      : `Student in Class ${currentUser.class}`
-                    }
-                  </p>
+                  )}
                 </div>
+                <p className="text-indigo-100 text-lg">
+                  {currentUser.role === 'teacher' 
+                    ? `Teaching ${currentUser.subject} • Class ${currentUser.class}`
+                    : `Student in Class ${currentUser.class}`
+                  }
+                </p>
               </div>
               
-              <Button 
-                onClick={() => setIsEditing(!isEditing)}
-                className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-xl shadow-lg"
-              >
-                <Edit className="mr-2 h-5 w-5" />
-                {isEditing ? 'Cancel' : 'Edit Profile'}
-              </Button>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-xl shadow-lg"
+                >
+                  <Edit className="mr-2 h-5 w-5" />
+                  {isEditing ? 'Cancel' : 'Edit Profile'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -92,7 +98,7 @@ const ProfilePage = () => {
                 <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                 <Input
                   id="name"
-                  value={currentUser.name}
+                  value={currentUser.name || ''}
                   disabled={!isEditing}
                   className="rounded-xl"
                 />
@@ -104,7 +110,7 @@ const ProfilePage = () => {
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
-                    value={currentUser.email}
+                    value={currentUser.email || ''}
                     disabled={!isEditing}
                     className="pl-10 rounded-xl"
                   />
@@ -139,15 +145,15 @@ const ProfilePage = () => {
             </CardContent>
           </Card>
 
-          {/* Academic Information */}
+          {/* Role Information */}
           <Card className="border-0 shadow-xl rounded-3xl">
             <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-t-3xl">
               <CardTitle className="flex items-center gap-2 text-xl">
                 <GraduationCap className="h-6 w-6" />
-                Academic Information
+                Role Information
               </CardTitle>
               <CardDescription className="text-purple-100">
-                Your academic details and role
+                Your role and class details
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
@@ -179,7 +185,7 @@ const ProfilePage = () => {
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <div className="pl-10 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                    <span className="font-medium">September 2024</span>
+                    <span className="font-medium">Recently joined</span>
                   </div>
                 </div>
               </div>

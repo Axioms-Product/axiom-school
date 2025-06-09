@@ -16,7 +16,7 @@ import { BookOpen, Calendar, Clock, Plus, CheckCircle, AlertCircle, FileText, Ta
 
 const HomeworkView = () => {
   const { currentUser } = useAuth();
-  const { homeworks, addHomework } = useData();
+  const { homeworks = [], addHomework } = useData();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -32,7 +32,7 @@ const HomeworkView = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title || !description || !dueDate) return;
+    if (!title || !description || !dueDate || !addHomework) return;
     
     if (isTeacher && currentUser?.subject) {
       addHomework({
@@ -59,7 +59,7 @@ const HomeworkView = () => {
   };
 
   const getFilteredHomework = () => {
-    if (!homeworks) return [];
+    if (!homeworks || !Array.isArray(homeworks)) return [];
     
     if (isTeacher) {
       return homeworks.filter(hw => hw.createdBy === currentUser?.id);
@@ -104,24 +104,22 @@ const HomeworkView = () => {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2230%22%20cy=%2230%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
           
           <div className="relative px-6 py-8 md:py-12">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex flex-col items-center text-center gap-6">
               <div className="text-white">
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex justify-center mb-4">
                   <div className="h-16 w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
                     <BookOpen className="h-8 w-8 text-white" />
                   </div>
-                  <div>
-                    <h1 className="text-3xl md:text-4xl font-bold mb-1">Homework Hub</h1>
-                    <p className="text-indigo-100 text-lg">
-                      {isTeacher 
-                        ? "Manage and assign homework to your students"
-                        : "Track your assignments and due dates"
-                      }
-                    </p>
-                  </div>
                 </div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">Homework Hub</h1>
+                <p className="text-indigo-100 text-lg mb-4">
+                  {isTeacher 
+                    ? "Manage and assign homework to your students"
+                    : "Track your assignments and due dates"
+                  }
+                </p>
                 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-3 py-1">
                     <Brain className="h-4 w-4 mr-1" />
                     {isTeacher ? "Teacher" : "Student"}
@@ -138,7 +136,7 @@ const HomeworkView = () => {
               </div>
               
               {isTeacher && (
-                <div className="flex justify-center lg:justify-center w-full lg:w-auto">
+                <div className="flex justify-center">
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-xl shadow-lg">
@@ -256,13 +254,15 @@ const HomeworkView = () => {
                 </p>
                 
                 {isTeacher && (
-                  <Button 
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-6 py-3"
-                    onClick={() => setDialogOpen(true)}
-                  >
-                    <Plus className="mr-2 h-5 w-5" />
-                    Create First Homework
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button 
+                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-6 py-3"
+                      onClick={() => setDialogOpen(true)}
+                    >
+                      <Plus className="mr-2 h-5 w-5" />
+                      Create First Homework
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -330,12 +330,14 @@ const HomeworkView = () => {
                     </div>
                     
                     {!isTeacher && (
-                      <Button 
-                        className="w-full mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl"
-                      >
-                        <FileText className="mr-2 h-4 w-4" />
-                        View Details
-                      </Button>
+                      <div className="flex justify-center mt-4">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl"
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          View Details
+                        </Button>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
