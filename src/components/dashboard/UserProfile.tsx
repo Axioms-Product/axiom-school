@@ -16,24 +16,9 @@ export const UserProfile = ({ currentUser }: UserProfileProps) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    await logout();
+    navigate('/');
   };
-
-  if (!currentUser) {
-    return (
-      <>
-        <Separator className="mb-4 bg-sidebar-border/50" />
-        <div className="flex items-center justify-center p-4">
-          <div className="text-sm text-muted-foreground">Loading...</div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -44,14 +29,14 @@ export const UserProfile = ({ currentUser }: UserProfileProps) => {
           className="flex items-center gap-2 group"
         >
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.id || 'default'}`} />
+            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.id}`} />
             <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
-              {currentUser?.name?.charAt(0) || 'U'}
+              {currentUser?.name?.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm font-medium leading-none">{currentUser?.name || 'User'}</span>
-            <span className="text-xs text-muted-foreground capitalize">{currentUser?.role || 'student'}</span>
+            <span className="text-sm font-medium leading-none">{currentUser?.name}</span>
+            <span className="text-xs text-muted-foreground capitalize">{currentUser?.role}</span>
           </div>
         </Link>
         

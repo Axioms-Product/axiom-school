@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, LogOut } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 const ExitConfirmationDialog = () => {
   const [showDialog, setShowDialog] = useState(false);
@@ -52,34 +52,30 @@ const ExitConfirmationDialog = () => {
 
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogContent className="sm:max-w-md mx-4 rounded-3xl border-0 shadow-2xl">
-        <DialogHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full flex items-center justify-center shadow-lg">
-              <AlertTriangle className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-orange-100 rounded-full p-2">
+              <AlertTriangle className="h-5 w-5 text-orange-600" />
             </div>
+            <DialogTitle className="text-lg font-semibold">Exit Confirmation</DialogTitle>
           </div>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-            Exit Confirmation
-          </DialogTitle>
-          <DialogDescription className="text-base text-center mt-3 leading-relaxed">
+          <DialogDescription className="text-base">
             Are you sure you want to exit the application? Any unsaved changes will be lost.
           </DialogDescription>
         </DialogHeader>
-        
-        <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
+        <DialogFooter className="flex gap-2">
           <Button
             variant="outline"
             onClick={handleCancel}
-            className="flex-1 rounded-xl py-3 text-base font-medium border-2 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="flex-1"
           >
             Cancel
           </Button>
           <Button
             onClick={handleExit}
-            className="flex-1 rounded-xl py-3 text-base font-medium bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white shadow-lg"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white"
           >
-            <LogOut className="mr-2 h-4 w-4" />
             Exit
           </Button>
         </DialogFooter>

@@ -21,9 +21,7 @@ import {
   Plus,
   FileText,
   UserCheck,
-  TrendingUp,
-  Star,
-  Sparkles
+  TrendingUp
 } from 'lucide-react';
 
 const HomeView = () => {
@@ -61,6 +59,7 @@ const HomeView = () => {
     return eventDate >= today;
   }).slice(0, 3);
 
+  // Teacher specific stats (real data)
   const teacherStats = {
     totalStudents: studentsInClass.length,
     assignmentsGiven: homework.length,
@@ -96,132 +95,128 @@ const HomeView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-sky-50 to-cyan-50 p-3 sm:p-4 md:p-6 smooth-scroll">
-      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
-        {/* Enhanced Welcome Header */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 text-white">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/10 to-transparent rounded-full blur-3xl"></div>
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                  <div className="relative">
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-xl transform rotate-3">
-                      {isStudent ? (
-                        <GraduationCap className="h-8 w-8 md:h-10 md:w-10 text-white" />
-                      ) : (
-                        <UserCheck className="h-8 w-8 md:h-10 md:w-10 text-white" />
-                      )}
-                    </div>
-                    <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full flex items-center justify-center animate-pulse">
-                      <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-white" />
-                    </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-2 sm:p-4 md:p-6">
+      <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+        {/* Welcome Header */}
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-lg p-4 sm:p-6 md:p-8 border border-blue-100">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                <div className="relative">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
+                    {isStudent ? (
+                      <GraduationCap className="h-6 w-6 md:h-8 md:w-8 text-white" />
+                    ) : (
+                      <UserCheck className="h-6 w-6 md:h-8 md:w-8 text-white" />
+                    )}
                   </div>
-                  <div>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2">
-                      Welcome back, {currentUser?.name}! ✨
-                    </h1>
-                    <p className="text-sm md:text-lg text-white/90">
-                      {isStudent 
-                        ? `Ready to explore new lessons in Class ${currentUser?.class}?`
-                        : `Ready to inspire Class ${currentUser?.class} today?`
-                      }
-                    </p>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 md:w-6 md:h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full animate-pulse"></div>
                   </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-3 py-1">
-                    Class {currentUser?.class}
-                  </Badge>
-                  <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-3 py-1 capitalize">
-                    {currentUser?.role}
-                  </Badge>
-                  {currentUser?.subject && (
-                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-3 py-1">
-                      {currentUser.subject}
-                    </Badge>
-                  )}
+                <div>
+                  <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                    Welcome back, {currentUser?.name}! 👋
+                  </h1>
+                  <p className="text-sm md:text-base text-gray-600">
+                    {isStudent 
+                      ? `Ready to explore new lessons in Class ${currentUser?.class}?`
+                      : `Ready to inspire Class ${currentUser?.class} today?`
+                    }
+                  </p>
                 </div>
               </div>
               
-              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 md:p-6 text-center min-w-[180px] border border-white/30">
-                <div className="text-xs md:text-sm opacity-90 mb-2">Today's Date</div>
-                <div className="text-lg md:text-2xl font-bold mb-2">
-                  {new Date().toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                </div>
-                <div className="text-xs md:text-sm opacity-90">
-                  {new Date().getFullYear()}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-blue-100 text-blue-700 px-2 py-1 text-xs md:text-sm">
+                  Class {currentUser?.class}
+                </Badge>
+                <Badge className="bg-green-100 text-green-700 px-2 py-1 text-xs md:text-sm capitalize">
+                  {currentUser?.role}
+                </Badge>
+                {currentUser?.subject && (
+                  <Badge className="bg-purple-100 text-purple-700 px-2 py-1 text-xs md:text-sm">
+                    {currentUser.subject}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white text-center min-w-[160px] md:min-w-[200px] shadow-lg">
+              <div className="text-xs md:text-sm opacity-90 mb-1 md:mb-2">Today's Date</div>
+              <div className="text-lg md:text-2xl font-bold mb-1 md:mb-2">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'short', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </div>
+              <div className="text-xs md:text-sm opacity-90">
+                {new Date().getFullYear()}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Enhanced Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {isStudent ? (
             <>
-              <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Homework</p>
-                      <p className="text-lg md:text-2xl font-bold">{pendingHomework}</p>
-                      <p className="text-xs opacity-80">Pending</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Homework</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{pendingHomework}</p>
+                      <p className="text-xs text-gray-500">Pending</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <BookOpen className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-blue-100 rounded-lg p-2 md:p-3">
+                      <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Notices</p>
-                      <p className="text-lg md:text-2xl font-bold">{notices.length}</p>
-                      <p className="text-xs opacity-80">Active</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Notices</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{notices.length}</p>
+                      <p className="text-xs text-gray-500">Active</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <Bell className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-yellow-100 rounded-lg p-2 md:p-3">
+                      <Bell className="h-5 w-5 md:h-6 md:w-6 text-yellow-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Events</p>
-                      <p className="text-lg md:text-2xl font-bold">{upcomingEvents.length}</p>
-                      <p className="text-xs opacity-80">Upcoming</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Events</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{upcomingEvents.length}</p>
+                      <p className="text-xs text-gray-500">Upcoming</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <Calendar className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-green-100 rounded-lg p-2 md:p-3">
+                      <Calendar className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 col-span-2 lg:col-span-3">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Messages</p>
-                      <p className="text-lg md:text-2xl font-bold">{unreadMessages}</p>
-                      <p className="text-xs opacity-80">Unread</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Messages</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{unreadMessages}</p>
+                      <p className="text-xs text-gray-500">Unread</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-purple-100 rounded-lg p-2 md:p-3">
+                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -229,61 +224,46 @@ const HomeView = () => {
             </>
           ) : (
             <>
-              <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Students</p>
-                      <p className="text-lg md:text-2xl font-bold">{teacherStats.totalStudents}</p>
-                      <p className="text-xs opacity-80">In your class</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Students</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.totalStudents}</p>
+                      <p className="text-xs text-gray-500">In your class</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <Users className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-blue-100 rounded-lg p-2 md:p-3">
+                      <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Assignments</p>
-                      <p className="text-lg md:text-2xl font-bold">{teacherStats.assignmentsGiven}</p>
-                      <p className="text-xs opacity-80">Given</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Assignments</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.assignmentsGiven}</p>
+                      <p className="text-xs text-gray-500">Given</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <FileText className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-green-100 rounded-lg p-2 md:p-3">
+                      <FileText className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Events</p>
-                      <p className="text-lg md:text-2xl font-bold">{teacherStats.eventsPlanned}</p>
-                      <p className="text-xs opacity-80">Planned</p>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Events</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{teacherStats.eventsPlanned}</p>
+                      <p className="text-xs text-gray-500">Planned</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <Calendar className="h-5 w-5 md:h-6 md:w-6" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-xl border-0 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                <CardContent className="p-3 md:p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs md:text-sm font-medium opacity-90 mb-1">Messages</p>
-                      <p className="text-lg md:text-2xl font-bold">{messages.length}</p>
-                      <p className="text-xs opacity-80">Total</p>
-                    </div>
-                    <div className="bg-white/20 rounded-lg p-2">
-                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+                    <div className="bg-yellow-100 rounded-lg p-2 md:p-3">
+                      <Calendar className="h-5 w-5 md:h-6 md:w-6 text-yellow-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -293,9 +273,9 @@ const HomeView = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {/* Enhanced Progress Overview */}
-          <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-violet-600 to-purple-600 text-white p-3 md:p-4">
+          {/* Progress Overview */}
+          <Card className="bg-white shadow-lg border-0 rounded-xl">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-xl p-3 md:p-4">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Target className="h-4 w-4 md:h-5 md:w-5" />
                 {isStudent ? 'Learning Progress' : 'Class Overview'}
@@ -304,20 +284,20 @@ const HomeView = () => {
             <CardContent className="p-3 md:p-4">
               {isStudent ? (
                 <div className="space-y-4 md:space-y-6">
-                  <div className="space-y-3">
+                  <div className="space-y-2 md:space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-xs md:text-sm font-medium text-gray-700">Homework Completion</span>
                       <span className="text-xs md:text-sm font-bold text-gray-900">{Math.round(homeworkProgress)}%</span>
                     </div>
-                    <Progress value={homeworkProgress} className="h-3" />
+                    <Progress value={homeworkProgress} className="h-2 md:h-3" />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
                       <div className="text-lg md:text-2xl font-bold text-green-600 mb-1">{completedHomework}</div>
                       <div className="text-xs md:text-sm text-gray-600">Completed</div>
                     </div>
-                    <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-100">
+                    <div className="text-center p-3 md:p-4 bg-orange-50 rounded-lg">
                       <div className="text-lg md:text-2xl font-bold text-orange-600 mb-1">{pendingHomework}</div>
                       <div className="text-xs md:text-sm text-gray-600">Pending</div>
                     </div>
@@ -325,17 +305,17 @@ const HomeView = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="text-center p-3 md:p-4 bg-blue-50 rounded-lg">
                       <div className="text-lg md:text-2xl font-bold text-blue-600 mb-1">{homework.length}</div>
                       <div className="text-xs md:text-sm text-gray-600">Assignments</div>
                     </div>
-                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
                       <div className="text-lg md:text-2xl font-bold text-green-600 mb-1">{notices.length}</div>
                       <div className="text-xs md:text-sm text-gray-600">Notices</div>
                     </div>
                   </div>
-                  <div className="p-3 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+                  <div className="p-3 md:p-4 bg-purple-50 rounded-lg">
                     <div className="text-center">
                       <div className="text-lg md:text-2xl font-bold text-purple-600 mb-1">{events.length}</div>
                       <div className="text-xs md:text-sm text-gray-600">Events Planned</div>
@@ -346,27 +326,27 @@ const HomeView = () => {
             </CardContent>
           </Card>
 
-          {/* Enhanced Recent Activity */}
-          <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 md:p-4">
+          {/* Recent Activity */}
+          <Card className="bg-white shadow-lg border-0 rounded-xl">
+            <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-t-xl p-3 md:p-4">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Clock className="h-4 w-4 md:h-5 md:w-5" />
                 Recent Activity
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 md:p-4">
-              <div className="space-y-3">
+              <div className="space-y-3 md:space-y-4">
                 {homework.slice(0, 3).map((hw) => {
                   const isCompleted = hw.completedBy?.includes(currentUser?.id || '');
                   return (
-                    <div key={hw.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border">
-                      <div className={`rounded-full p-2 ${
+                    <div key={hw.id} className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+                      <div className={`rounded-full p-1.5 md:p-2 ${
                         isCompleted ? 'bg-green-100' : 'bg-orange-100'
                       }`}>
                         {isCompleted ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
                         ) : (
-                          <Clock className="h-4 w-4 text-orange-600" />
+                          <Clock className="h-3 w-3 md:h-4 md:w-4 text-orange-600" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -376,8 +356,8 @@ const HomeView = () => {
                       <Badge 
                         className={`text-xs ${
                           isCompleted 
-                            ? 'bg-green-100 text-green-700 border-green-200' 
-                            : 'bg-orange-100 text-orange-700 border-orange-200'
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-orange-100 text-orange-700'
                         }`}
                       >
                         {isCompleted ? 'Done' : 'Pending'}
@@ -386,9 +366,9 @@ const HomeView = () => {
                   );
                 })}
                 {homework.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">No homework assigned yet</p>
+                  <div className="text-center py-6 md:py-8 text-gray-500">
+                    <BookOpen className="h-8 w-8 md:h-12 md:w-12 mx-auto mb-2 md:mb-3 opacity-50" />
+                    <p className="text-xs md:text-sm">No homework assigned yet</p>
                   </div>
                 )}
               </div>
@@ -396,44 +376,44 @@ const HomeView = () => {
           </Card>
         </div>
 
-        {/* Enhanced Quick Actions */}
-        <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-pink-600 to-rose-600 text-white p-3 md:p-4">
-            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-              <Zap className="h-4 w-4 md:h-5 md:w-5" />
+        {/* Quick Actions */}
+        <Card className="bg-white shadow-lg border-0 rounded-xl">
+          <CardHeader className="p-3 md:p-4">
+            <CardTitle className="flex items-center gap-2 text-gray-900 text-base md:text-lg">
+              <Zap className="h-4 w-4 md:h-5 md:w-5 text-yellow-500" />
               Quick Actions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-3 md:p-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {isStudent ? (
                 <>
                   <Button 
                     onClick={() => handleQuickAction('homework')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <BookOpen className="h-5 w-5 md:h-6 md:w-6" />
+                    <BookOpen className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Homework</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('events')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Calendar className="h-5 w-5 md:h-6 md:w-6" />
+                    <Calendar className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Events</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('messages')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+                    <MessageSquare className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Messages</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('marks')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Award className="h-5 w-5 md:h-6 md:w-6" />
+                    <Award className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Marks</span>
                   </Button>
                 </>
@@ -441,30 +421,30 @@ const HomeView = () => {
                 <>
                   <Button 
                     onClick={() => handleQuickAction('students')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Users className="h-5 w-5 md:h-6 md:w-6" />
+                    <Users className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Students</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('homework')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Plus className="h-5 w-5 md:h-6 md:w-6" />
+                    <Plus className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Assignment</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('events')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Calendar className="h-5 w-5 md:h-6 md:w-6" />
+                    <Calendar className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Events</span>
                   </Button>
                   <Button 
                     onClick={() => handleQuickAction('notices')}
-                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="h-16 md:h-20 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg flex flex-col items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Bell className="h-5 w-5 md:h-6 md:w-6" />
+                    <Bell className="h-4 w-4 md:h-6 md:w-6" />
                     <span className="text-xs md:text-sm font-medium">Notices</span>
                   </Button>
                 </>
@@ -475,19 +455,19 @@ const HomeView = () => {
 
         {/* Upcoming Events Preview */}
         {upcomingEvents.length > 0 && (
-          <Card className="bg-white shadow-xl border-0 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-emerald-600 to-green-600 text-white p-3 md:p-4">
-              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                <Calendar className="h-4 w-4 md:h-5 md:w-5" />
+          <Card className="bg-white shadow-lg border-0 rounded-xl">
+            <CardHeader className="p-3 md:p-4">
+              <CardTitle className="flex items-center gap-2 text-gray-900 text-base md:text-lg">
+                <Calendar className="h-4 w-4 md:h-5 md:w-5 text-green-500" />
                 Upcoming Events
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 md:p-4">
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {upcomingEvents.map((event) => (
-                  <div key={event.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <div className="bg-green-100 rounded-full p-2">
-                      <Calendar className="h-4 w-4 text-green-600" />
+                  <div key={event.id} className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-green-50 rounded-lg">
+                    <div className="bg-green-100 rounded-full p-1.5 md:p-2">
+                      <Calendar className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs md:text-sm font-medium text-gray-900">{event.title}</p>
@@ -495,7 +475,6 @@ const HomeView = () => {
                         {new Date(event.date).toLocaleDateString()}
                       </p>
                     </div>
-                    <Star className="h-4 w-4 text-yellow-500" />
                   </div>
                 ))}
               </div>

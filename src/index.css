@@ -74,14 +74,9 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  
-  html {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
-/* Enhanced Performance optimizations */
+/* Performance optimizations */
 @layer utilities {
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
@@ -95,19 +90,16 @@
     height: env(safe-area-inset-bottom);
   }
   
-  /* Enhanced smooth scrolling */
-  .smooth-scroll {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  
   /* GPU acceleration for smooth animations */
   .gpu-accelerated {
     transform: translateZ(0);
     will-change: transform;
-    backface-visibility: hidden;
+  }
+  
+  /* Smooth scrolling */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Optimize rendering performance */
@@ -115,68 +107,46 @@
     contain: layout style paint;
     content-visibility: auto;
   }
-  
-  /* Enhanced card animations */
-  .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .card-hover:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
 }
 
-/* Enhanced mobile responsiveness */
+/* Improve mobile touch targets and bottom navigation spacing */
 @media (max-width: 768px) {
   button, a, [role="button"] {
     min-height: 44px;
     min-width: 44px;
   }
   
-  /* Enhanced mobile spacing */
+  /* Reduced padding for smaller bottom navigation */
   main {
     padding-bottom: 5rem !important;
   }
   
-  /* Improved mobile scrolling */
-  .mobile-scroll {
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: y proximity;
-  }
-  
-  /* Better touch targets */
-  .touch-target {
-    min-height: 48px;
-    min-width: 48px;
+  /* Ensure proper spacing for mobile bottom nav */
+  .bottom-nav-spacing {
+    margin-bottom: 4rem;
   }
 }
 
-/* Improved transitions for better performance */
-button, a, [role="button"], .card {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Optimize for faster rendering */
+* {
+  box-sizing: border-box;
 }
 
-/* Enhanced responsive text */
-@media (max-width: 640px) {
-  .responsive-text {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Enhanced performance optimizations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-@media (min-width: 641px) and (max-width: 768px) {
-  .responsive-text {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-}
-
-@media (min-width: 769px) {
-  .responsive-text {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-  }
+/* Faster transitions for better performance */
+button, a, [role="button"] {
+  transition: all 0.15s ease-out;
 }
 
 /* Hide Lovable watermark/badge */
@@ -186,31 +156,4 @@ button, a, [role="button"], .card {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
-}
-
-/* Enhanced scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.5);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.7);
-}
-
-/* Improved focus states for accessibility */
-button:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
 }
