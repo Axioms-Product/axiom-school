@@ -201,7 +201,7 @@ const MarksView = () => {
                   <div className="text-2xl font-bold text-red-600">
                     {marks.filter(m => m.marks < 40).length}
                   </div>
-                  <div className="text-sm text-gray-600">Needs Improvement (<40)</div>
+                  <div className="text-sm text-gray-600">Needs Improvement (&lt;40)</div>
                 </div>
               </div>
             </CardContent>
