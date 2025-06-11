@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
-import { Eye, EyeOff, GraduationCap } from 'lucide-react';
+import { Eye, EyeOff, GraduationCap, Mail, Lock } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -37,74 +37,105 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-3">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center p-4">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-1/4 right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl animate-pulse delay-300"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-24 h-24 bg-white/10 rounded-full blur-xl animate-pulse delay-700"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         {/* Logo and Title */}
         <div className="text-center mb-6">
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 mb-4">
-            <GraduationCap className="h-8 w-8 mx-auto text-blue-600 mb-2" />
-            <h1 className="text-xl font-bold text-gray-900">Axioms School</h1>
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 mb-4">
+            <GraduationCap className="h-10 w-10 mx-auto text-white mb-3" />
+            <h1 className="text-2xl font-bold text-white">Axioms School</h1>
+            <p className="text-white/80 text-sm mt-1">Welcome back! Please sign in</p>
           </div>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white border border-gray-300 rounded-lg p-4 mb-3">
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <Input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-50 border-gray-300 text-sm h-9"
-              required
-            />
+        <div className="bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-2xl">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Username or Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="pl-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
             
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-50 border-gray-300 text-sm h-9 pr-8"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-              </button>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 pr-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div className="text-red-500 text-xs text-center">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-lg text-sm">
                 {error}
               </div>
             )}
             
             <Button 
               type="submit" 
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold h-9 rounded-lg text-sm"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold h-11 rounded-lg"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign In'
+              )}
             </Button>
+
+            <div className="text-center text-sm text-gray-600">
+              <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+                Forgot your password?
+              </Link>
+            </div>
           </form>
         </div>
 
         {/* Sign Up Link */}
-        <div className="bg-white border border-gray-300 rounded-lg p-3 text-center">
-          <p className="text-xs text-gray-600">
+        <div className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mt-4 text-center shadow-lg">
+          <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link to="/register" className="text-blue-500 font-semibold hover:text-blue-700">
-              Sign up
+            <Link to="/register" className="text-blue-600 font-semibold hover:text-blue-700">
+              Sign up here
             </Link>
           </p>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 text-xs text-gray-400">
+        <div className="text-center mt-6 text-white/80 text-xs">
           © 2025 Axioms School. All rights reserved.
         </div>
       </div>
