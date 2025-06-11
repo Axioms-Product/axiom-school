@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Subject } from '../models/types';
 
@@ -10,7 +11,6 @@ export interface User {
   email: string;
   role: UserRole;
   class: string;
-  rollNo?: string;
   subject?: Subject;
   avatar?: string;
   phone?: string;
@@ -21,6 +21,9 @@ export interface User {
   achievements?: string[];
   emergencyContact?: string;
   experienceYears?: number;
+  dateOfBirth?: string;
+  bloodGroup?: string;
+  hobbies?: string;
 }
 
 interface AuthContextType {
@@ -40,7 +43,6 @@ interface RegisterData {
   password: string;
   role: UserRole;
   assignedClass: string;
-  rollNo?: string;
   subject?: Subject;
 }
 
@@ -85,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string) => {
     try {
       // Simulated API request delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       const users = JSON.parse(localStorage.getItem('users') || '{}');
       const userRecord = Object.values(users).find(
@@ -110,11 +112,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Updated registration function with username
+  // Updated registration function
   const register = async (userData: RegisterData) => {
     try {
       // Simulated API request delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       // Check if user already exists
       const users = JSON.parse(localStorage.getItem('users') || '{}');
@@ -136,7 +138,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role: userData.role,
         class: userData.assignedClass,
         joiningDate: new Date().toISOString().split('T')[0],
-        ...(userData.role === 'student' && userData.rollNo ? { rollNo: userData.rollNo } : {}),
         ...(userData.role === 'teacher' && userData.subject ? { subject: userData.subject } : {})
       };
       
@@ -170,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       // Simulated API request delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Update user in localStorage
       const users = JSON.parse(localStorage.getItem('users') || '{}');
