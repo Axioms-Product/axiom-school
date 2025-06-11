@@ -37,45 +37,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center p-4 overflow-hidden">
-      {/* Animated Background Images */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 flex items-center justify-center p-4">
+      {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full overflow-hidden opacity-20 animate-float">
-          <img 
-            src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute top-1/4 right-16 w-24 h-24 rounded-full overflow-hidden opacity-15 animate-float delay-300">
-          <img 
-            src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-1/4 left-1/4 w-20 h-20 rounded-full overflow-hidden opacity-25 animate-float delay-700">
-          <img 
-            src="https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-16 right-1/4 w-16 h-16 rounded-full overflow-hidden opacity-20 animate-float delay-1000">
-          <img 
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute top-1/2 left-10 w-12 h-12 rounded-full overflow-hidden opacity-30 animate-float delay-500">
-          <img 
-            src="https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        {/* Floating particles */}
         <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-1/4 right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl animate-pulse delay-300"></div>
         <div className="absolute bottom-1/4 left-1/4 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse delay-700"></div>
@@ -164,10 +128,9 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Footer - Centered */}
-        <div className="text-center mt-6">
-          <p className="text-white/80 text-xs">© 2025 Axioms School. All rights reserved.</p>
-          <p className="text-white/70 text-xs mt-1">Powered by Axioms Product with Satyam Rojha!</p>
+        {/* Footer */}
+        <div className="text-center mt-6 text-white/80 text-xs">
+          © 2025 Axioms School. All rights reserved.
         </div>
       </div>
     </div>

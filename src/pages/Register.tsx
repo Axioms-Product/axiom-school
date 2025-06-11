@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -84,45 +85,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 flex items-center justify-center p-4 py-6 overflow-hidden">
-      {/* Animated Background Images */}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-700 flex items-center justify-center p-4 py-6">
+      {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 left-10 w-28 h-28 rounded-full overflow-hidden opacity-20 animate-float">
-          <img 
-            src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-20 right-10 w-20 h-20 rounded-full overflow-hidden opacity-15 animate-float delay-500">
-          <img 
-            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full overflow-hidden opacity-25 animate-float delay-1000">
-          <img 
-            src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-1/4 left-16 w-14 h-14 rounded-full overflow-hidden opacity-20 animate-float delay-700">
-          <img 
-            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute top-1/2 right-12 w-12 h-12 rounded-full overflow-hidden opacity-30 animate-float delay-300">
-          <img 
-            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        {/* Floating particles */}
         <div className="absolute top-10 left-10 w-28 h-28 bg-white/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-20 h-20 bg-white/5 rounded-full blur-2xl animate-pulse delay-500"></div>
         <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-white/10 rounded-full blur-xl animate-pulse delay-1000"></div>
@@ -321,10 +286,9 @@ const Register = () => {
           </p>
         </div>
 
-        {/* Footer - Centered */}
-        <div className="text-center mt-6">
-          <p className="text-white/80 text-xs">© 2025 Axioms School. All rights reserved.</p>
-          <p className="text-white/70 text-xs mt-1">Powered by Axioms Product with Satyam Rojha!</p>
+        {/* Footer */}
+        <div className="text-center mt-6 text-white/80 text-xs">
+          © 2025 Axioms School. All rights reserved.
         </div>
       </div>
     </div>

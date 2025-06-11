@@ -103,14 +103,7 @@ iframe[src*="lovable"],
 div[class*="watermark"],
 div[class*="lovable"],
 a[href*="lovable.dev"],
-div:has(a[href*="lovable.dev"]),
-*[class*="watermark"],
-*[data-testid*="watermark"],
-*[aria-label*="watermark"],
-*[title*="Edit with Lovable"],
-*[alt*="Edit with Lovable"],
-*:contains("Edit with Lovable"),
-*:contains("lovable") {
+div:has(a[href*="lovable.dev"]) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -120,7 +113,6 @@ div:has(a[href*="lovable.dev"]),
   width: 0 !important;
   height: 0 !important;
   z-index: -9999 !important;
-  pointer-events: none !important;
 }
 
 /* Enhanced scrollbar styles */
@@ -152,14 +144,14 @@ div:has(a[href*="lovable.dev"]),
   transform: translateZ(0);
 }
 
-/* Ultra fast transitions for all interactive elements */
+/* Fast transitions for all interactive elements */
 button, input, select, textarea, a {
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Card animations */
 .card-hover {
-  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
@@ -180,7 +172,7 @@ button, input, select, textarea, a {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.2s ease-out;
+  animation: fade-in 0.3s ease-out;
 }
 
 /* Scale animations */
@@ -196,30 +188,10 @@ button, input, select, textarea, a {
 }
 
 .animate-scale-in {
-  animation: scale-in 0.15s ease-out;
+  animation: scale-in 0.2s ease-out;
 }
 
-/* Floating animation for background images */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) translateX(0px);
-  }
-  25% {
-    transform: translateY(-10px) translateX(5px);
-  }
-  50% {
-    transform: translateY(-20px) translateX(0px);
-  }
-  75% {
-    transform: translateY(-10px) translateX(-5px);
-  }
-}
-
-.animate-float {
-  animation: float 8s ease-in-out infinite;
-}
-
-/* Mobile optimizations - Ultra fast */
+/* Mobile optimizations */
 @media (max-width: 768px) {
   body {
     -webkit-tap-highlight-color: transparent;
@@ -231,24 +203,6 @@ button, input, select, textarea, a {
     -webkit-overflow-scrolling: touch;
     transform: translateZ(0);
   }
-  
-  /* Faster transitions on mobile */
-  * {
-    transition: all 0.05s ease !important;
-  }
-}
-
-/* GPU acceleration for smoother animations */
-.animate-float,
-.animate-pulse,
-.animate-bounce,
-.card-hover,
-button,
-input {
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 @layer base {

@@ -33,38 +33,9 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
   const IconComponent = icons[currentIcon];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 overflow-hidden">
-      {/* Animated Background Images */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full overflow-hidden opacity-20 animate-bounce">
-          <img 
-            src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute top-1/4 right-10 w-24 h-24 rounded-full overflow-hidden opacity-15 animate-pulse delay-300">
-          <img 
-            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-1/4 left-1/4 w-20 h-20 rounded-full overflow-hidden opacity-25 animate-pulse delay-700">
-          <img 
-            src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        <div className="absolute bottom-10 right-1/4 w-16 h-16 rounded-full overflow-hidden opacity-20 animate-bounce delay-1000">
-          <img 
-            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop&crop=center" 
-            alt="" 
-            className="w-full h-full object-cover blur-sm"
-          />
-        </div>
-        {/* Floating particles */}
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-1/4 right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl animate-pulse delay-300"></div>
         <div className="absolute bottom-1/4 left-1/4 w-24 h-24 bg-white/10 rounded-full blur-xl animate-pulse delay-700"></div>
@@ -113,10 +84,10 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
         </div>
       </div>
 
-      {/* Enhanced Footer - Centered */}
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+      {/* Enhanced Footer */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <div className="text-center">
-          <p className="text-xs text-white/70 font-medium">Powered by Axioms Product with Satyam Rojha!</p>
+          <p className="text-xs text-white/60 font-medium">Powered By Axioms Product with Satyam Rojha!</p>
           <div className="flex items-center justify-center gap-1 mt-1">
             <div className="w-1 h-1 bg-white/40 rounded-full"></div>
             <div className="w-1 h-1 bg-white/60 rounded-full animate-pulse"></div>
