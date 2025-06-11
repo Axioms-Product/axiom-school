@@ -118,7 +118,7 @@ const AddMarks = () => {
               <SelectContent>
                 {students.map((student) => (
                   <SelectItem key={student.id} value={student.id}>
-                    {student.name} {student.rollNo && `(${student.rollNo})`}
+                    {student.name}
                   </SelectItem>
                 ))}
               </SelectContent>
