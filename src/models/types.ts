@@ -1,3 +1,4 @@
+
 export enum Subject {
   MATHEMATICS = 'Mathematics',
   SCIENCE = 'Science',
@@ -60,6 +61,7 @@ export interface Mark {
   score: number;
   totalScore: number;
   testName: string;
+  examType: string;
   timestamp: number;
   createdBy: string;
   creatorName: string;

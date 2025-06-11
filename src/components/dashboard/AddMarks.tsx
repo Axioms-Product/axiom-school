@@ -18,7 +18,8 @@ const AddMarks = () => {
     subject: currentUser?.subject || '',
     score: '',
     totalScore: '',
-    examType: 'Test'
+    examType: 'Test',
+    testName: ''
   });
   const [isAdding, setIsAdding] = useState(false);
 
@@ -40,7 +41,8 @@ const AddMarks = () => {
       subject: formData.subject as Subject,
       score: parseInt(formData.score),
       totalScore: parseInt(formData.totalScore),
-      examType: formData.examType
+      examType: formData.examType,
+      testName: formData.testName || formData.examType
     });
 
     // Reset form
@@ -49,7 +51,8 @@ const AddMarks = () => {
       subject: currentUser?.subject || '',
       score: '',
       totalScore: '',
-      examType: 'Test'
+      examType: 'Test',
+      testName: ''
     });
     setIsAdding(false);
   };
