@@ -14,16 +14,16 @@ const MarksView = () => {
 
   const calculateAverage = () => {
     if (marks.length === 0) return 0;
-    const total = marks.reduce((sum, mark) => sum + mark.marks, 0);
+    const total = marks.reduce((sum, mark) => sum + (mark.score / mark.totalScore * 100), 0);
     return Math.round(total / marks.length);
   };
 
-  const getGrade = (marks: number) => {
-    if (marks >= 90) return { grade: 'A+', color: 'bg-green-500' };
-    if (marks >= 80) return { grade: 'A', color: 'bg-green-400' };
-    if (marks >= 70) return { grade: 'B+', color: 'bg-blue-500' };
-    if (marks >= 60) return { grade: 'B', color: 'bg-blue-400' };
-    if (marks >= 50) return { grade: 'C', color: 'bg-yellow-500' };
+  const getGrade = (percentage: number) => {
+    if (percentage >= 90) return { grade: 'A+', color: 'bg-green-500' };
+    if (percentage >= 80) return { grade: 'A', color: 'bg-green-400' };
+    if (percentage >= 70) return { grade: 'B+', color: 'bg-blue-500' };
+    if (percentage >= 60) return { grade: 'B', color: 'bg-blue-400' };
+    if (percentage >= 50) return { grade: 'C', color: 'bg-yellow-500' };
     return { grade: 'F', color: 'bg-red-500' };
   };
 
@@ -114,7 +114,6 @@ const MarksView = () => {
                   <thead>
                     <tr className="border-b">
                       <th className="text-left py-3 px-4 font-medium text-gray-900">Subject</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900">Exam Type</th>
                       <th className="text-center py-3 px-4 font-medium text-gray-900">Marks</th>
                       <th className="text-center py-3 px-4 font-medium text-gray-900">Grade</th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900">Date</th>
@@ -123,7 +122,8 @@ const MarksView = () => {
                   </thead>
                   <tbody>
                     {marks.map((mark) => {
-                      const gradeInfo = getGrade(mark.marks);
+                      const percentage = Math.round((mark.score / mark.totalScore) * 100);
+                      const gradeInfo = getGrade(percentage);
                       return (
                         <tr key={mark.id} className="border-b hover:bg-gray-50">
                           <td className="py-4 px-4">
@@ -132,12 +132,10 @@ const MarksView = () => {
                               <span className="font-medium">{mark.subject}</span>
                             </div>
                           </td>
-                          <td className="py-4 px-4">
-                            <Badge variant="outline">{mark.examType}</Badge>
-                          </td>
                           <td className="py-4 px-4 text-center">
-                            <span className="text-lg font-bold">{mark.marks}</span>
-                            <span className="text-gray-500 ml-1">/ {mark.totalMarks}</span>
+                            <span className="text-lg font-bold">{mark.score}</span>
+                            <span className="text-gray-500 ml-1">/ {mark.totalScore}</span>
+                            <div className="text-sm text-gray-600">({percentage}%)</div>
                           </td>
                           <td className="py-4 px-4 text-center">
                             <Badge className={`${gradeInfo.color} text-white`}>
@@ -147,7 +145,7 @@ const MarksView = () => {
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-1 text-gray-600">
                               <Calendar className="h-3 w-3" />
-                              {new Date(mark.date).toLocaleDateString()}
+                              {new Date(mark.timestamp).toLocaleDateString()}
                             </div>
                           </td>
                           {!isStudent && (
@@ -181,25 +179,31 @@ const MarksView = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <div className="text-2xl font-bold text-green-600">
-                    {marks.filter(m => m.marks >= 80).length}
+                    {marks.filter(m => (m.score / m.totalScore * 100) >= 80).length}
                   </div>
                   <div className="text-sm text-gray-600">Excellent (80+)</div>
                 </div>
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600">
-                    {marks.filter(m => m.marks >= 60 && m.marks < 80).length}
+                    {marks.filter(m => {
+                      const percentage = (m.score / m.totalScore * 100);
+                      return percentage >= 60 && percentage < 80;
+                    }).length}
                   </div>
                   <div className="text-sm text-gray-600">Good (60-79)</div>
                 </div>
                 <div className="text-center p-4 bg-yellow-50 rounded-lg">
                   <div className="text-2xl font-bold text-yellow-600">
-                    {marks.filter(m => m.marks >= 40 && m.marks < 60).length}
+                    {marks.filter(m => {
+                      const percentage = (m.score / m.totalScore * 100);
+                      return percentage >= 40 && percentage < 60;
+                    }).length}
                   </div>
                   <div className="text-sm text-gray-600">Average (40-59)</div>
                 </div>
                 <div className="text-center p-4 bg-red-50 rounded-lg">
                   <div className="text-2xl font-bold text-red-600">
-                    {marks.filter(m => m.marks < 40).length}
+                    {marks.filter(m => (m.score / m.totalScore * 100) < 40).length}
                   </div>
                   <div className="text-sm text-gray-600">Needs Improvement (&lt;40)</div>
                 </div>

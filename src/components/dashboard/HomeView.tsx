@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,14 +22,15 @@ import {
   UserCheck,
   TrendingUp,
   Star,
-  Activity
+  Activity,
+  School
 } from 'lucide-react';
 
 const HomeView = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { 
-    getFilteredHomework, 
+    getFilteredHomeworks, 
     getFilteredNotices, 
     getFilteredEvents,
     getFilteredMarks,
@@ -39,7 +39,7 @@ const HomeView = () => {
   } = useData();
 
   const isStudent = currentUser?.role === 'student';
-  const homework = getFilteredHomework();
+  const homework = getFilteredHomeworks();
   const notices = getFilteredNotices();
   const events = getFilteredEvents();
   const recentMarks = getFilteredMarks().slice(0, 5);
@@ -70,7 +70,7 @@ const HomeView = () => {
 
   // Calculate average performance for student
   const averageMarks = recentMarks.length > 0 
-    ? Math.round(recentMarks.reduce((sum, mark) => sum + mark.marks, 0) / recentMarks.length)
+    ? Math.round(recentMarks.reduce((sum, mark) => sum + (mark.score / mark.totalScore * 100), 0) / recentMarks.length)
     : 0;
 
   const handleQuickAction = (action: string) => {
@@ -172,7 +172,7 @@ const HomeView = () => {
         </div>
 
         {/* Enhanced Quick Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
           {isStudent ? (
             <>
               <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
@@ -230,6 +230,21 @@ const HomeView = () => {
                     </div>
                     <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-2 md:p-3">
                       <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Messages</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{unreadMessages}</p>
+                      <p className="text-xs text-gray-500">Unread</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-lg p-2 md:p-3">
+                      <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-indigo-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -292,6 +307,21 @@ const HomeView = () => {
                     </div>
                     <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-2 md:p-3">
                       <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs md:text-sm font-medium text-gray-600 mb-1">Class</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">{currentUser?.class}</p>
+                      <p className="text-xs text-gray-500">Teaching</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-lg p-2 md:p-3">
+                      <School className="h-5 w-5 md:h-6 md:w-6 text-indigo-600" />
                     </div>
                   </div>
                 </CardContent>
