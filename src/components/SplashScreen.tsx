@@ -28,15 +28,15 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
       <div className="text-center max-w-xs mx-auto px-6">
         {/* Logo */}
         <div className="mb-12">
-          <div className="w-24 h-24 mx-auto bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg mb-6">
-            <GraduationCap className="h-12 w-12 text-white" />
+          <div className="w-20 h-20 mx-auto bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+            <GraduationCap className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Axioms School</h1>
-          <p className="text-gray-600">Learning made simple</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Axioms School</h1>
+          <p className="text-gray-600 text-sm">Learning made simple</p>
         </div>
 
         {/* Loading Animation */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-1 overflow-hidden">
               <div 
@@ -53,8 +53,8 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <p className="text-xs text-gray-400">© 2024 Axioms School</p>
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+        <p className="text-xs text-gray-400">Powered By Axioms Product with Satyam Rojha!</p>
       </div>
     </div>
   );

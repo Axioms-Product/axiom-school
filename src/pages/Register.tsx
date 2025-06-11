@@ -87,25 +87,25 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 py-8">
-      <div className="max-w-sm w-full">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-3 py-6">
+      <div className="w-full max-w-sm">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
-            <GraduationCap className="h-12 w-12 mx-auto text-blue-600 mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900">Axioms School</h1>
-            <p className="text-gray-600 text-sm mt-2">Sign up to get started</p>
+        <div className="text-center mb-6">
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 mb-4">
+            <GraduationCap className="h-8 w-8 mx-auto text-blue-600 mb-2" />
+            <h1 className="text-xl font-bold text-gray-900">Axioms School</h1>
+            <p className="text-gray-600 text-xs mt-1">Sign up to get started</p>
           </div>
         </div>
 
         {/* Register Form */}
-        <div className="bg-white border border-gray-300 rounded-lg p-6 mb-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white border border-gray-300 rounded-lg p-4 mb-3">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <Input
               placeholder="Full Name"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
-              className="bg-gray-50 border-gray-300 text-sm h-11"
+              className="bg-gray-50 border-gray-300 text-sm h-9"
               required
             />
             
@@ -113,7 +113,7 @@ const Register = () => {
               placeholder="Username"
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
-              className="bg-gray-50 border-gray-300 text-sm h-11"
+              className="bg-gray-50 border-gray-300 text-sm h-9"
               required
             />
             
@@ -122,7 +122,7 @@ const Register = () => {
               placeholder="Email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className="bg-gray-50 border-gray-300 text-sm h-11"
+              className="bg-gray-50 border-gray-300 text-sm h-9"
               required
             />
             
@@ -132,15 +132,15 @@ const Register = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className="bg-gray-50 border-gray-300 text-sm h-11 pr-10"
+                className="bg-gray-50 border-gray-300 text-sm h-9 pr-8"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
               </button>
             </div>
             
@@ -150,15 +150,15 @@ const Register = () => {
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                className="bg-gray-50 border-gray-300 text-sm h-11 pr-10"
+                className="bg-gray-50 border-gray-300 text-sm h-9 pr-8"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showConfirmPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
               </button>
             </div>
             
@@ -166,7 +166,7 @@ const Register = () => {
               value={formData.role}
               onValueChange={(value) => handleInputChange('role', value)}
             >
-              <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+              <SelectTrigger className="bg-gray-50 border-gray-300 h-9 text-sm">
                 <SelectValue placeholder="Select Role" />
               </SelectTrigger>
               <SelectContent>
@@ -179,7 +179,7 @@ const Register = () => {
               value={formData.assignedClass}
               onValueChange={(value) => handleInputChange('assignedClass', value)}
             >
-              <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+              <SelectTrigger className="bg-gray-50 border-gray-300 h-9 text-sm">
                 <SelectValue placeholder="Select Class" />
               </SelectTrigger>
               <SelectContent>
@@ -196,7 +196,7 @@ const Register = () => {
                 value={formData.subject}
                 onValueChange={(value) => handleInputChange('subject', value)}
               >
-                <SelectTrigger className="bg-gray-50 border-gray-300 h-11">
+                <SelectTrigger className="bg-gray-50 border-gray-300 h-9 text-sm">
                   <SelectValue placeholder="Select Subject" />
                 </SelectTrigger>
                 <SelectContent>
@@ -210,14 +210,14 @@ const Register = () => {
             )}
 
             {error && (
-              <div className="text-red-500 text-sm text-center">
+              <div className="text-red-500 text-xs text-center">
                 {error}
               </div>
             )}
             
             <Button 
               type="submit" 
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold h-11 rounded-lg"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold h-9 rounded-lg text-sm"
               disabled={loading}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
@@ -226,8 +226,8 @@ const Register = () => {
         </div>
 
         {/* Sign In Link */}
-        <div className="bg-white border border-gray-300 rounded-lg p-4 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="bg-white border border-gray-300 rounded-lg p-3 text-center">
+          <p className="text-xs text-gray-600">
             Have an account?{' '}
             <Link to="/login" className="text-blue-500 font-semibold hover:text-blue-700">
               Sign in
@@ -236,8 +236,8 @@ const Register = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-xs text-gray-400">
-          © 2024 Axioms School. All rights reserved.
+        <div className="text-center mt-6 text-xs text-gray-400">
+          © 2025 Axioms School. All rights reserved.
         </div>
       </div>
     </div>
