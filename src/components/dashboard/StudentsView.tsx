@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
-import { Users, Mail, Phone, User, BookOpen, Search } from 'lucide-react';
+import { Users, Mail, Phone, User, BookOpen, Search, GraduationCap, Calendar, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 
@@ -15,11 +15,9 @@ const StudentsView = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Only teachers should see this page
   const isTeacher = currentUser?.role === 'teacher';
   const allStudents = getStudentsForClass(currentUser?.class || '');
 
-  // Memoized filtered students for performance
   const students = useMemo(() => {
     if (!searchTerm) return allStudents;
     return allStudents.filter(student => 
@@ -29,157 +27,171 @@ const StudentsView = () => {
   }, [allStudents, searchTerm]);
 
   const handleViewProfile = (studentId: string) => {
-    // Navigate to profile with student ID as query parameter
     navigate(`/dashboard/profile?studentId=${studentId}`);
   };
 
   if (!isTeacher) {
     return (
-      <div className="space-y-4 sm:space-y-6 p-2 sm:p-4">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Students</h1>
-        <Card className="bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-700">
-          <CardContent className="p-4">
-            <p className="text-sm sm:text-base">This page is only available for teachers.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-yellow-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Restricted</h2>
+            <p className="text-gray-600">This page is only available for teachers.</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Class Students</h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            View and manage students in Class {currentUser?.class}
-          </p>
-        </div>
-        <Badge variant="secondary" className="text-sm sm:text-lg px-3 py-1 sm:py-2 self-start sm:self-center">
-          <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-          {students.length} Students
-        </Badge>
-      </div>
-
-      {/* Search Bar */}
-      {allStudents.length > 0 && (
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search students..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 text-sm"
-          />
-        </div>
-      )}
-
-      {allStudents.length === 0 ? (
-        <Card className="bg-gray-50 dark:bg-gray-800 border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
-            <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-3">
-              <Users className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto p-4 space-y-6">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 border border-blue-100">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <GraduationCap className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Class {currentUser?.class} Students</h1>
+                <p className="text-gray-600">Manage and view your students</p>
+              </div>
             </div>
-            <h3 className="mt-4 text-base sm:text-lg font-medium">No students found</h3>
-            <p className="mt-1 text-xs sm:text-sm text-muted-foreground text-center max-w-md">
-              There are currently no students assigned to Class {currentUser?.class}.
-            </p>
-          </CardContent>
-        </Card>
-      ) : students.length === 0 ? (
-        <Card className="bg-gray-50 dark:bg-gray-800 border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
-            <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-3">
-              <Search className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+            <div className="flex items-center gap-3">
+              <Badge className="bg-blue-100 text-blue-700 px-4 py-2 text-lg font-semibold">
+                <Users className="h-4 w-4 mr-2" />
+                {students.length} Students
+              </Badge>
             </div>
-            <h3 className="mt-4 text-base sm:text-lg font-medium">No matching students</h3>
-            <p className="mt-1 text-xs sm:text-sm text-muted-foreground text-center max-w-md">
-              No students found matching "{searchTerm}".
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        {allStudents.length > 0 && (
+          <div className="bg-white rounded-xl shadow-lg p-4 border border-blue-100">
+            <div className="relative max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                placeholder="Search students by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 text-base border-gray-200 focus:border-blue-400 focus:ring-blue-400 rounded-lg"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Students Grid */}
+        {allStudents.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border border-blue-100">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Students Found</h3>
+            <p className="text-gray-600 max-w-md mx-auto">
+              There are currently no students assigned to Class {currentUser?.class}. 
+              Students will appear here once they join your class.
             </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {students.map((student) => (
-            <Card key={student.id} className="hover:shadow-md transition-all duration-200 bg-white/90 backdrop-blur-sm">
-              <CardHeader className="pb-2 sm:pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                    <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                      <span className="text-white font-medium text-xs sm:text-sm">
+          </div>
+        ) : students.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border border-blue-100">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Search className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Matching Students</h3>
+            <p className="text-gray-600">No students found matching "{searchTerm}".</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {students.map((student) => (
+              <Card key={student.id} className="bg-white hover:shadow-xl transition-all duration-300 border-0 shadow-lg rounded-2xl overflow-hidden group">
+                <CardHeader className="pb-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold text-lg">
                         {student.name.charAt(0)}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <CardTitle className="text-sm sm:text-lg truncate">{student.name}</CardTitle>
-                      <p className="text-xs sm:text-sm text-muted-foreground truncate">@{student.username}</p>
+                      <CardTitle className="text-lg text-white truncate">{student.name}</CardTitle>
+                      <p className="text-blue-100 text-sm truncate">@{student.username}</p>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3">
-                <div className="flex items-center gap-2 text-xs sm:text-sm">
-                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
-                  <span className="truncate">{student.email}</span>
-                </div>
+                </CardHeader>
                 
-                {student.phone && (
-                  <div className="flex items-center gap-2 text-xs sm:text-sm">
-                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
-                    <span className="truncate">{student.phone}</span>
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <Mail className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <span className="truncate flex-1">{student.email}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+                        <BookOpen className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span>Class {student.class}</span>
+                    </div>
+                    
+                    {student.joiningDate && (
+                      <div className="flex items-center gap-3 text-sm text-gray-600">
+                        <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                          <Calendar className="h-4 w-4 text-green-600" />
+                        </div>
+                        <span>Joined {new Date(student.joiningDate).toLocaleDateString()}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                <div className="flex items-center gap-2 text-xs sm:text-sm">
-                  <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0" />
-                  <span>Class {student.class}</span>
-                </div>
-                
-                {student.joiningDate && (
-                  <div className="text-xs text-muted-foreground">
-                    Joined: {new Date(student.joiningDate).toLocaleDateString()}
-                  </div>
-                )}
-                
-                <div className="pt-2">
+                  
                   <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="w-full text-blue-600 border-blue-200 hover:bg-blue-50 text-xs sm:text-sm transition-all duration-200"
                     onClick={() => handleViewProfile(student.id)}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3 rounded-xl transition-all duration-200 group-hover:shadow-lg"
                   >
-                    <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <User className="h-4 w-4 mr-2" />
                     View Profile
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-      
-      {/* Class Information Summary */}
-      <Card className="bg-white/90 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Class Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold text-blue-600">{allStudents.length}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Total Students</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+        
+        {/* Class Stats */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 border border-blue-100">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Class Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-blue-600 mb-1">{allStudents.length}</div>
+              <div className="text-sm text-gray-600">Total Students</div>
             </div>
-            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold text-green-600">Class {currentUser?.class}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Your Class</div>
+            
+            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-green-600 mb-1">Class {currentUser?.class}</div>
+              <div className="text-sm text-gray-600">Your Class</div>
             </div>
-            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold text-purple-600">{currentUser?.subject}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Your Subject</div>
+            
+            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+              <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <GraduationCap className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">{currentUser?.subject}</div>
+              <div className="text-sm text-gray-600">Your Subject</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
