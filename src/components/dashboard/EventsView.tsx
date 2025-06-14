@@ -26,7 +26,17 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { formatDistanceToNow } from 'date-fns';
-import { Calendar, MapPin, Clock, Users, Sparkles, Plus, ArrowRight, PartyPopper, Zap, Star } from 'lucide-react';
+import { 
+  Calendar, 
+  MapPin, 
+  Clock, 
+  Plus, 
+  Sparkles, 
+  Star,
+  Users,
+  ChevronRight,
+  PartyPopper
+} from 'lucide-react';
 
 const EventsView = () => {
   const { currentUser } = useAuth();
@@ -62,224 +72,235 @@ const EventsView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900 p-2 sm:p-4 lg:p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Enhanced Header */}
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl lg:rounded-3xl"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.15%22%3E%3Ccircle%20cx=%2260%22%20cy=%2212%22%20r=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40 rounded-2xl lg:rounded-3xl"></div>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+        
+        {/* Modern Header */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 p-8 shadow-2xl">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute -top-4 -right-4 h-32 w-32 rounded-full bg-white/10 blur-xl"></div>
+          <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-white/5 blur-2xl"></div>
           
-          <div className="relative px-4 py-8 lg:px-8 lg:py-12">
+          <div className="relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="text-white">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-14 w-14 lg:h-16 lg:w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-lg">
-                    <Calendar className="h-7 w-7 lg:h-8 lg:w-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl lg:text-4xl font-bold mb-2">School Events</h1>
-                    <p className="text-emerald-100 text-base lg:text-lg">
-                      {isTeacher 
-                        ? "Organize and manage exciting school events"
-                        : "Stay updated with upcoming school activities"
-                      }
-                    </p>
-                  </div>
+              <div className="flex items-center gap-6">
+                <div className="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                  <Calendar className="h-8 w-8 text-white" />
                 </div>
-                
-                <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
-                    <PartyPopper className="h-4 w-4 mr-2" />
-                    {isTeacher ? "Event Manager" : "Student Portal"}
-                  </Badge>
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
-                    <Star className="h-4 w-4 mr-2" />
-                    Class {currentUser?.class}
-                  </Badge>
-                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
-                    <Zap className="h-4 w-4 mr-2" />
-                    {events.length} Event{events.length !== 1 ? 's' : ''}
-                  </Badge>
+                <div>
+                  <h1 className="text-4xl font-bold text-white mb-2">School Events</h1>
+                  <p className="text-violet-100 text-lg">
+                    {isTeacher 
+                      ? "Create and manage exciting school events" 
+                      : "Discover upcoming school activities"
+                    }
+                  </p>
                 </div>
               </div>
               
               {isTeacher && (
-                <div className="lg:ml-8">
-                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="w-full lg:w-auto bg-white/20 text-white border-white/30 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 group px-6 py-3 text-sm rounded-xl shadow-lg">
-                        <Plus className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                        Create Event
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="w-[95vw] max-w-lg rounded-xl">
-                      <DialogHeader>
-                        <DialogTitle className="text-xl">Create New Event</DialogTitle>
-                        <DialogDescription>
-                          Add an exciting event for your class
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={handleSubmit}>
-                        <div className="space-y-4 py-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="title" className="text-sm font-medium">Event Title</Label>
-                            <Input 
-                              id="title"
-                              value={title}
-                              onChange={(e) => setTitle(e.target.value)}
-                              placeholder="e.g., Annual Science Fair 2024"
-                              required
-                              className="rounded-lg border-2 focus:border-emerald-400"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
-                            <Textarea 
-                              id="description"
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              placeholder="Describe the event details..."
-                              rows={3}
-                              required
-                              className="resize-none rounded-lg border-2 focus:border-emerald-400"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-2">
-                              <Label htmlFor="date" className="text-sm font-medium">Date</Label>
-                              <Input 
-                                id="date"
-                                type="date"
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                required
-                                className="rounded-lg border-2 focus:border-emerald-400"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="time" className="text-sm font-medium">Time</Label>
-                              <Input 
-                                id="time"
-                                type="time"
-                                value={time}
-                                onChange={(e) => setTime(e.target.value)}
-                                required
-                                className="rounded-lg border-2 focus:border-emerald-400"
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="location" className="text-sm font-medium">Location</Label>
-                            <Input 
-                              id="location"
-                              value={location}
-                              onChange={(e) => setLocation(e.target.value)}
-                              placeholder="e.g., School Auditorium"
-                              required
-                              className="rounded-lg border-2 focus:border-emerald-400"
-                            />
-                          </div>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm transition-all duration-300 group px-6 py-3 rounded-xl">
+                      <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform" />
+                      Create Event
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-[95vw] max-w-lg rounded-2xl border-0 shadow-2xl">
+                    <DialogHeader className="space-y-3">
+                      <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                        Create New Event
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-600">
+                        Design an exciting event for your students
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="title" className="text-sm font-semibold text-gray-700">Event Title</Label>
+                        <Input 
+                          id="title"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          placeholder="Amazing Science Fair 2024"
+                          required
+                          className="rounded-xl border-2 focus:border-violet-400 transition-colors"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="description" className="text-sm font-semibold text-gray-700">Description</Label>
+                        <Textarea 
+                          id="description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          placeholder="Describe what makes this event special..."
+                          rows={3}
+                          required
+                          className="resize-none rounded-xl border-2 focus:border-violet-400 transition-colors"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="date" className="text-sm font-semibold text-gray-700">Date</Label>
+                          <Input 
+                            id="date"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            required
+                            className="rounded-xl border-2 focus:border-violet-400 transition-colors"
+                          />
                         </div>
-                        <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
-                          <DialogClose asChild>
-                            <Button type="button" variant="outline" className="rounded-lg">Cancel</Button>
-                          </DialogClose>
-                          <Button 
-                            type="submit" 
-                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg"
-                          >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Create Event
+                        <div className="space-y-2">
+                          <Label htmlFor="time" className="text-sm font-semibold text-gray-700">Time</Label>
+                          <Input 
+                            id="time"
+                            type="time"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                            required
+                            className="rounded-xl border-2 focus:border-violet-400 transition-colors"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="location" className="text-sm font-semibold text-gray-700">Location</Label>
+                        <Input 
+                          id="location"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          placeholder="School Auditorium"
+                          required
+                          className="rounded-xl border-2 focus:border-violet-400 transition-colors"
+                        />
+                      </div>
+                      
+                      <DialogFooter className="flex gap-3 pt-6">
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline" className="rounded-xl">
+                            Cancel
                           </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
+                        </DialogClose>
+                        <Button 
+                          type="submit" 
+                          className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
+                        >
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Create Event
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               )}
+            </div>
+            
+            <div className="flex flex-wrap gap-3 mt-6">
+              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2">
+                <PartyPopper className="h-4 w-4 mr-2" />
+                {isTeacher ? "Event Creator" : "Student View"}
+              </Badge>
+              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2">
+                <Users className="h-4 w-4 mr-2" />
+                Class {currentUser?.class}
+              </Badge>
+              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2">
+                <Star className="h-4 w-4 mr-2" />
+                {events.length} Active Event{events.length !== 1 ? 's' : ''}
+              </Badge>
             </div>
           </div>
         </div>
 
+        {/* Events Grid */}
         {events.length === 0 ? (
-          <Card className="border-0 shadow-xl rounded-2xl overflow-hidden card-hover">
-            <CardContent className="p-8 lg:p-12">
-              <div className="text-center">
-                <div className="relative mb-8">
-                  <div className="h-28 w-28 lg:h-32 lg:w-32 mx-auto bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center shadow-lg">
-                    <Calendar className="h-14 w-14 lg:h-16 lg:w-16 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 h-10 w-10 lg:h-12 lg:w-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                    <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
-                  </div>
+          <Card className="border-0 shadow-xl rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-12 text-center">
+              <div className="relative mb-8">
+                <div className="h-32 w-32 mx-auto bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center shadow-lg">
+                  <Calendar className="h-16 w-16 text-violet-500" />
                 </div>
-                
-                <h3 className="text-2xl lg:text-3xl font-bold mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  No events scheduled yet
-                </h3>
-                <p className="text-base lg:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-                  {isTeacher 
-                    ? "Create exciting events to engage your students and build memorable experiences."
-                    : "No events have been scheduled yet. Check back soon for exciting activities!"
-                  }
-                </p>
-                
-                {isTeacher && (
-                  <Button 
-                    className="mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl px-8 py-4 text-base shadow-lg"
-                    onClick={() => setDialogOpen(true)}
-                  >
-                    <Plus className="mr-3 h-5 w-5" />
-                    Create First Event
-                  </Button>
-                )}
+                <div className="absolute -top-2 -right-8 h-12 w-12 bg-gradient-to-br from-purple-400 to-violet-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
               </div>
+              
+              <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                No Events Yet
+              </h3>
+              <p className="text-gray-600 text-lg max-w-md mx-auto mb-8">
+                {isTeacher 
+                  ? "Start creating amazing events to engage your students and build unforgettable memories."
+                  : "Stay tuned! Exciting events will be announced soon."
+                }
+              </p>
+              
+              {isTeacher && (
+                <Button 
+                  onClick={() => setDialogOpen(true)}
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-2xl px-8 py-4 text-lg shadow-lg transform hover:scale-105 transition-all"
+                >
+                  <Plus className="mr-3 h-5 w-5" />
+                  Create Your First Event
+                  <ChevronRight className="ml-3 h-5 w-5" />
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {events.map((event) => (
-              <Card key={event.id} className="border-0 shadow-lg rounded-2xl overflow-hidden card-hover bg-gradient-to-br from-white to-emerald-50/30 dark:from-gray-800 dark:to-emerald-900/20">
-                <div className="h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500" />
+              <Card key={event.id} className="border-0 shadow-xl rounded-2xl overflow-hidden bg-white/90 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 group hover:-translate-y-2">
+                <div className="h-2 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500" />
                 
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <Badge className="bg-emerald-100 text-emerald-700 rounded-full px-3 py-1">
+                <CardHeader className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <Badge className="bg-violet-100 text-violet-700 rounded-full px-3 py-1 border border-violet-200">
                       <Calendar className="h-3 w-3 mr-1" />
                       Event
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs rounded-full">
                       Class {event.assignedClass}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg lg:text-xl mb-3 line-clamp-2 bg-gradient-to-r from-gray-900 to-emerald-700 bg-clip-text text-transparent dark:from-white dark:to-emerald-300">
+                  
+                  <CardTitle className="text-xl mb-4 group-hover:text-violet-600 transition-colors line-clamp-2">
                     {event.title}
                   </CardTitle>
-                  <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                        <Clock className="h-3 w-3 text-emerald-600" />
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <div className="h-8 w-8 bg-violet-100 rounded-lg flex items-center justify-center">
+                        <Clock className="h-4 w-4 text-violet-600" />
                       </div>
-                      <span>{event.date} at {event.time}</span>
+                      <span className="font-medium">{event.date} at {event.time}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">
-                        <MapPin className="h-3 w-3 text-teal-600" />
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <div className="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <MapPin className="h-4 w-4 text-purple-600" />
                       </div>
-                      <span>{event.location}</span>
+                      <span className="font-medium">{event.location}</span>
                     </div>
                   </div>
                 </CardHeader>
                 
-                <CardContent className="pt-0">
-                  <p className="text-muted-foreground leading-relaxed line-clamp-3">{event.description}</p>
+                <CardContent className="px-6 pb-6">
+                  <p className="text-gray-600 leading-relaxed line-clamp-3">
+                    {event.description}
+                  </p>
                 </CardContent>
                 
-                <CardFooter className="bg-gradient-to-r from-gray-50 to-emerald-50/50 dark:from-gray-800 dark:to-emerald-900/20 border-t">
-                  <div className="flex justify-between w-full text-sm text-muted-foreground">
-                    <span className="font-medium">By: {event.creatorName}</span>
-                    <span>{formatDistanceToNow(new Date(event.timestamp), { addSuffix: true })}</span>
+                <CardFooter className="bg-gradient-to-r from-gray-50 to-violet-50/50 border-t border-gray-100 px-6 py-4">
+                  <div className="flex justify-between w-full text-sm">
+                    <span className="font-semibold text-gray-700">
+                      By: {event.creatorName}
+                    </span>
+                    <span className="text-gray-500">
+                      {formatDistanceToNow(new Date(event.timestamp), { addSuffix: true })}
+                    </span>
                   </div>
                 </CardFooter>
               </Card>

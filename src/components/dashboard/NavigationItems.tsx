@@ -9,7 +9,8 @@ import {
   ClipboardList, 
   Award, 
   Bell,
-  GraduationCap
+  GraduationCap,
+  Calendar
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -41,6 +42,11 @@ const navigationItems: NavigationItem[] = [
     title: 'Homework',
     href: '/dashboard/homework',
     icon: ClipboardList,
+  },
+  {
+    title: 'Events',
+    href: '/dashboard/events',
+    icon: Calendar,
   },
   {
     title: 'Marks',
