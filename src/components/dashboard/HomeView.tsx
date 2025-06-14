@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,23 +87,32 @@ const HomeView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-2 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-2 sm:p-4 pb-24 md:pb-6">
       <div className="max-w-7xl mx-auto space-y-4">
-        {/* Welcome Header */}
-        <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white border-0 shadow-xl">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+        {/* Enhanced Welcome Header */}
+        <Card className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 text-white border-0 shadow-2xl overflow-hidden relative">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+            <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white/5 rounded-full blur-lg"></div>
+          </div>
+          
+          <CardContent className="p-6 sm:p-8 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-4 sm:gap-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg">
                   {isStudent ? (
-                    <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                    <GraduationCap className="h-8 w-8 sm:h-10 sm:w-10 text-white drop-shadow-lg" />
                   ) : (
-                    <UserCheck className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                    <UserCheck className="h-8 w-8 sm:h-10 sm:w-10 text-white drop-shadow-lg" />
                   )}
                 </div>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold mb-1">Welcome back, {currentUser?.name}! 👋</h1>
-                  <p className="text-sm sm:text-base text-blue-100">
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2 drop-shadow-lg">
+                    Welcome back, {currentUser?.name}! 👋
+                  </h1>
+                  <p className="text-base sm:text-lg text-blue-100 font-medium">
                     {isStudent 
                       ? `Ready to explore new lessons in Class ${currentUser?.class}?`
                       : `Ready to inspire Class ${currentUser?.class} today?`
@@ -113,9 +121,9 @@ const HomeView = () => {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center">
-                <div className="text-xs sm:text-sm opacity-90 mb-1">Today's Date</div>
-                <div className="text-lg sm:text-xl font-bold">
+              <div className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-6 text-center border border-white/20 shadow-lg">
+                <div className="text-sm sm:text-base opacity-90 mb-2 font-medium">Today's Date</div>
+                <div className="text-xl sm:text-2xl font-bold drop-shadow-lg">
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'short', 
                     month: 'short', 
@@ -127,95 +135,95 @@ const HomeView = () => {
           </CardContent>
         </Card>
 
-        {/* Stats Grid - Full Screen Width */}
+        {/* Stats Grid - Enhanced with better spacing */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {isStudent ? (
             <>
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Pending</p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{pendingHomework}</p>
-                      <p className="text-xs text-gray-500">Homework</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Pending</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-blue-600">{pendingHomework}</p>
+                      <p className="text-xs text-gray-500 font-medium">Homework</p>
                     </div>
-                    <div className="bg-blue-100 rounded-lg p-2 sm:p-3 self-center">
-                      <BookOpen className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+                    <div className="bg-blue-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <BookOpen className="h-5 w-5 sm:h-7 sm:w-7 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Active</p>
-                      <p className="text-xl sm:text-2xl font-bold text-orange-600">{notices.length}</p>
-                      <p className="text-xs text-gray-500">Notices</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Active</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-orange-600">{notices.length}</p>
+                      <p className="text-xs text-gray-500 font-medium">Notices</p>
                     </div>
-                    <div className="bg-orange-100 rounded-lg p-2 sm:p-3 self-center">
-                      <Bell className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
+                    <div className="bg-orange-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Bell className="h-5 w-5 sm:h-7 sm:w-7 text-orange-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Upcoming</p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-600">{upcomingEvents.length}</p>
-                      <p className="text-xs text-gray-500">Events</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Upcoming</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-green-600">{upcomingEvents.length}</p>
+                      <p className="text-xs text-gray-500 font-medium">Events</p>
                     </div>
-                    <div className="bg-green-100 rounded-lg p-2 sm:p-3 self-center">
-                      <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
+                    <div className="bg-green-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Calendar className="h-5 w-5 sm:h-7 sm:w-7 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Average</p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-600">{averageMarks}%</p>
-                      <p className="text-xs text-gray-500">Score</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Average</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-purple-600">{averageMarks}%</p>
+                      <p className="text-xs text-gray-500 font-medium">Score</p>
                     </div>
-                    <div className="bg-purple-100 rounded-lg p-2 sm:p-3 self-center">
-                      <TrendingUp className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
+                    <div className="bg-purple-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <TrendingUp className="h-5 w-5 sm:h-7 sm:w-7 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Unread</p>
-                      <p className="text-xl sm:text-2xl font-bold text-indigo-600">{unreadMessages}</p>
-                      <p className="text-xs text-gray-500">Messages</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Unread</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{unreadMessages}</p>
+                      <p className="text-xs text-gray-500 font-medium">Messages</p>
                     </div>
-                    <div className="bg-indigo-100 rounded-lg p-2 sm:p-3 self-center">
-                      <MessageSquare className="h-4 w-4 sm:h-6 sm:w-6 text-indigo-600" />
+                    <div className="bg-indigo-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <MessageSquare className="h-5 w-5 sm:h-7 sm:w-7 text-indigo-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Completed</p>
-                      <p className="text-xl sm:text-2xl font-bold text-emerald-600">{completedHomework}</p>
-                      <p className="text-xs text-gray-500">Tasks</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Study</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-emerald-600">4.2h</p>
+                      <p className="text-xs text-gray-500 font-medium">Today</p>
                     </div>
-                    <div className="bg-emerald-100 rounded-lg p-2 sm:p-3 self-center">
-                      <Trophy className="h-4 w-4 sm:h-6 sm:w-6 text-emerald-600" />
+                    <div className="bg-emerald-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Clock className="h-5 w-5 sm:h-7 sm:w-7 text-emerald-600" />
                     </div>
                   </div>
                 </CardContent>
@@ -223,91 +231,91 @@ const HomeView = () => {
             </>
           ) : (
             <>
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Students</p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{teacherStats.totalStudents}</p>
-                      <p className="text-xs text-gray-500">In class</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Students</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-blue-600">{teacherStats.totalStudents}</p>
+                      <p className="text-xs text-gray-500 font-medium">In class</p>
                     </div>
-                    <div className="bg-blue-100 rounded-lg p-2 sm:p-3 self-center">
-                      <Users className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+                    <div className="bg-blue-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Users className="h-5 w-5 sm:h-7 sm:w-7 text-blue-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Assignments</p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-600">{teacherStats.assignmentsGiven}</p>
-                      <p className="text-xs text-gray-500">Given</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Assignments</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-green-600">{teacherStats.assignmentsGiven}</p>
+                      <p className="text-xs text-gray-500 font-medium">Given</p>
                     </div>
-                    <div className="bg-green-100 rounded-lg p-2 sm:p-3 self-center">
-                      <FileText className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
+                    <div className="bg-green-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <FileText className="h-5 w-5 sm:h-7 sm:w-7 text-green-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Events</p>
-                      <p className="text-xl sm:text-2xl font-bold text-orange-600">{teacherStats.eventsPlanned}</p>
-                      <p className="text-xs text-gray-500">Planned</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Events</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-orange-600">{teacherStats.eventsPlanned}</p>
+                      <p className="text-xs text-gray-500 font-medium">Planned</p>
                     </div>
-                    <div className="bg-orange-100 rounded-lg p-2 sm:p-3 self-center">
-                      <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
+                    <div className="bg-orange-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Calendar className="h-5 w-5 sm:h-7 sm:w-7 text-orange-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Messages</p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-600">{messages.length}</p>
-                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Messages</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-purple-600">{messages.length}</p>
+                      <p className="text-xs text-gray-500 font-medium">Total</p>
                     </div>
-                    <div className="bg-purple-100 rounded-lg p-2 sm:p-3 self-center">
-                      <MessageSquare className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
+                    <div className="bg-purple-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <MessageSquare className="h-5 w-5 sm:h-7 sm:w-7 text-purple-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Class</p>
-                      <p className="text-xl sm:text-2xl font-bold text-indigo-600">{currentUser?.class}</p>
-                      <p className="text-xs text-gray-500">Teaching</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Class</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{currentUser?.class}</p>
+                      <p className="text-xs text-gray-500 font-medium">Teaching</p>
                     </div>
-                    <div className="bg-indigo-100 rounded-lg p-2 sm:p-3 self-center">
-                      <School className="h-4 w-4 sm:h-6 sm:w-6 text-indigo-600" />
+                    <div className="bg-indigo-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <School className="h-5 w-5 sm:h-7 sm:w-7 text-indigo-600" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-all duration-300 h-full">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <Card className="hover:shadow-xl transition-all duration-300 h-full border-0 shadow-lg">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Notices</p>
-                      <p className="text-xl sm:text-2xl font-bold text-teal-600">{notices.length}</p>
-                      <p className="text-xs text-gray-500">Posted</p>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Active</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-teal-600">85%</p>
+                      <p className="text-xs text-gray-500 font-medium">Students</p>
                     </div>
-                    <div className="bg-teal-100 rounded-lg p-2 sm:p-3 self-center">
-                      <BookCheck className="h-4 w-4 sm:h-6 sm:w-6 text-teal-600" />
+                    <div className="bg-teal-100 rounded-xl p-3 sm:p-4 self-center shadow-sm">
+                      <Activity className="h-5 w-5 sm:h-7 sm:w-7 text-teal-600" />
                     </div>
                   </div>
                 </CardContent>

@@ -15,7 +15,7 @@ const Dashboard = () => {
         
         <main className="flex-1 overflow-hidden">
           <ScrollArea className="h-full will-change-scroll" style={{ scrollBehavior: 'smooth' }}>
-            <div className="p-3 sm:p-4 lg:p-6 pb-20 md:pb-6 min-h-full">
+            <div className="p-3 sm:p-4 lg:p-6 pb-24 md:pb-6 min-h-full">
               <div className="will-change-transform">
                 <Outlet />
               </div>
