@@ -37,31 +37,34 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-sm space-y-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-blue-100">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-600 text-sm">Sign in to continue learning</p>
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <p className="text-gray-600">Sign in to continue learning</p>
           </div>
 
           {/* Feature highlights */}
-          <div className="grid grid-cols-3 gap-3 py-3">
+          <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="text-center">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <BookOpen className="h-5 w-5 text-blue-600" />
               </div>
               <p className="text-xs text-gray-600">Learn</p>
             </div>
             <div className="text-center">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <Users className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-xs text-gray-600">Connect</p>
             </div>
             <div className="text-center">
-              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <Award className="h-5 w-5 text-orange-600" />
               </div>
               <p className="text-xs text-gray-600">Achieve</p>
@@ -69,38 +72,42 @@ const Login = () => {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Email or Username</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email or Username</label>
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
                 <Input
                   type="text"
                   placeholder="Enter your email or username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="h-11 pl-11 pr-4 text-sm"
+                  className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Password</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 pl-11 pr-11 text-sm"
+                  className="pl-10 pr-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -108,14 +115,14 @@ const Login = () => {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
             
             <Button 
               type="submit" 
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+              className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl"
               disabled={loading}
             >
               {loading ? (
@@ -133,7 +140,7 @@ const Login = () => {
           </form>
 
           {/* Sign Up Link */}
-          <div className="text-center">
+          <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <Link to="/register" className="text-blue-600 font-semibold hover:text-blue-700">
@@ -142,11 +149,11 @@ const Login = () => {
             </p>
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="text-center pb-4">
-        <p className="text-xs text-gray-500">© 2025 Axioms School. All rights reserved.</p>
+        
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-xs text-gray-500">© 2025 Axioms School. All rights reserved.</p>
+        </div>
       </div>
     </div>
   );
