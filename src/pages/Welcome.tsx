@@ -1,158 +1,83 @@
 
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Welcome = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
-  const slides = [
-    {
-      id: 1,
-      title: "Get Detailed Analytics",
-      subtitle: "Complete the quiz to get a detailed report of your performance and challenge yourself to achieve more.",
-      image: "/lovable-uploads/a04b2cf5-ff1c-4eb2-ae57-585579c75e47.png"
-    },
-    {
-      id: 2,
-      title: "Track Your Progress",
-      subtitle: "Monitor your learning journey with comprehensive analytics and personalized insights.",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop"
-    },
-    {
-      id: 3,
-      title: "Interactive Learning",
-      subtitle: "Engage with interactive content designed to enhance your educational experience.",
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop"
-    },
-    {
-      id: 4,
-      title: "Personalized Education",
-      subtitle: "Get customized learning paths tailored to your individual needs and goals.",
-      image: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400&h=400&fit=crop"
-    },
-    {
-      id: 5,
-      title: "Collaborative Learning",
-      subtitle: "Connect with peers and teachers in a collaborative learning environment.",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop"
-    }
-  ];
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  const handleNext = () => {
-    if (currentSlide === slides.length - 1) {
-      navigate('/login');
-    } else {
-      nextSlide();
-    }
-  };
-
-  const handleSkip = () => {
-    navigate('/login');
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-purple-200/30 rounded-full blur-xl"></div>
-        <div className="absolute bottom-20 right-10 w-48 h-48 bg-blue-200/30 rounded-full blur-xl"></div>
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-pink-200/30 rounded-full blur-xl"></div>
-      </div>
-
-      <div className="w-full max-w-sm mx-auto relative z-10">
-        {/* Phone-like container */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden" style={{ aspectRatio: '9/19.5' }}>
-          {/* Status bar */}
-          <div className="flex justify-between items-center px-6 py-2 text-xs font-medium">
-            <span>9:41</span>
-            <div className="flex items-center gap-1">
-              <div className="flex gap-1">
-                <div className="w-1 h-1 bg-black rounded-full"></div>
-                <div className="w-1 h-1 bg-black rounded-full"></div>
-                <div className="w-1 h-1 bg-black rounded-full"></div>
-                <div className="w-1 h-1 bg-black/50 rounded-full"></div>
-              </div>
-              <svg className="w-4 h-3 ml-1" viewBox="0 0 24 18" fill="currentColor">
-                <path d="M2 4.5h20v9H2z"/>
-                <path d="M23 7.5h1v3h-1z"/>
-              </svg>
-              <div className="w-6 h-3 bg-black rounded-sm ml-1"></div>
-            </div>
-          </div>
-
-          {/* Content area */}
-          <div className="px-8 py-8 h-full flex flex-col">
-            {/* Main illustration */}
-            <div className="flex-1 flex items-center justify-center mb-8">
-              <div className="relative w-64 h-64">
-                <img 
-                  src={slides[currentSlide].image} 
-                  alt={slides[currentSlide].title}
-                  className="w-full h-full object-contain rounded-2xl"
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
-                {slides[currentSlide].title}
-              </h1>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {slides[currentSlide].subtitle}
-              </p>
-            </div>
-
-            {/* Page indicators */}
-            <div className="flex justify-center gap-2 mb-8">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentSlide 
-                      ? 'bg-gray-900 w-6' 
-                      : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Navigation buttons */}
-            <div className="flex justify-between items-center">
-              <Button
-                variant="ghost"
-                onClick={handleSkip}
-                className="text-gray-600 hover:text-gray-900 font-medium"
-              >
-                Skip
-              </Button>
-              
-              <Button
-                onClick={handleNext}
-                className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-xl font-medium"
-              >
-                {currentSlide === slides.length - 1 ? 'Get Started' : 'Next'}
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-purple-600 flex flex-col items-center justify-center px-6">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-white text-2xl font-semibold mb-2">Axioms School</h1>
+        <div className="flex justify-center space-x-2 mb-8">
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
         </div>
       </div>
+
+      {/* Illustration Card */}
+      <div className="bg-white rounded-3xl p-8 mb-8 shadow-lg max-w-sm w-full">
+        <div className="text-center">
+          {/* Simple Illustration */}
+          <div className="mb-6">
+            <div className="w-32 h-32 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+              <svg viewBox="0 0 120 120" className="w-24 h-24">
+                {/* Documents */}
+                <rect x="20" y="30" width="30" height="40" rx="4" fill="#e5e7eb" stroke="#d1d5db" strokeWidth="2"/>
+                <rect x="25" y="20" width="30" height="40" rx="4" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="2"/>
+                <rect x="30" y="10" width="30" height="40" rx="4" fill="#ffffff" stroke="#d1d5db" strokeWidth="2"/>
+                
+                {/* Calendar */}
+                <rect x="70" y="25" width="30" height="35" rx="4" fill="#ffffff" stroke="#d1d5db" strokeWidth="2"/>
+                <rect x="70" y="25" width="30" height="8" rx="4" fill="#3b82f6"/>
+                <circle cx="75" cy="35" r="1.5" fill="#d1d5db"/>
+                <circle cx="80" cy="35" r="1.5" fill="#d1d5db"/>
+                <circle cx="85" cy="35" r="1.5" fill="#d1d5db"/>
+                <circle cx="90" cy="35" r="1.5" fill="#d1d5db"/>
+                <circle cx="95" cy="35" r="1.5" fill="#d1d5db"/>
+                <circle cx="75" cy="40" r="1.5" fill="#3b82f6"/>
+                <circle cx="80" cy="40" r="1.5" fill="#d1d5db"/>
+                <circle cx="85" cy="40" r="1.5" fill="#d1d5db"/>
+                
+                {/* Cute faces */}
+                <circle cx="40" cy="25" r="3" fill="#fbbf24"/>
+                <circle cx="38" cy="23" r="0.5" fill="#1f2937"/>
+                <circle cx="42" cy="23" r="0.5" fill="#1f2937"/>
+                <path d="M37 26 Q40 28 43 26" stroke="#1f2937" strokeWidth="0.5" fill="none"/>
+                
+                <circle cx="85" cy="45" r="3" fill="#f87171"/>
+                <circle cx="83" cy="43" r="0.5" fill="#1f2937"/>
+                <circle cx="87" cy="43" r="0.5" fill="#1f2937"/>
+                <circle cx="85" cy="46" r="0.5" fill="#1f2937"/>
+              </svg>
+            </div>
+            
+            {/* Plus Button */}
+            <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+          </div>
+
+          <p className="text-gray-500 text-sm mb-6">Axioms School Enterprise</p>
+          
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Transformative collaboration<br/>
+            for larger teams
+          </h2>
+        </div>
+      </div>
+
+      {/* Get Started Button */}
+      <Button 
+        onClick={() => navigate('/login')}
+        className="w-full max-w-sm bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-2xl h-12 font-medium hover:bg-white/30 transition-all"
+      >
+        Get Started
+      </Button>
     </div>
   );
 };

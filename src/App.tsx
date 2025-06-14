@@ -1,13 +1,10 @@
 
-import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { DataProvider } from '@/contexts/DataContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import SplashScreen from '@/components/SplashScreen';
-import Welcome from '@/pages/Welcome';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
@@ -27,28 +24,6 @@ import HelpSupportPage from '@/pages/HelpSupportPage';
 import NotFound from '@/pages/NotFound';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 500);
-          return 100;
-        }
-        return prev + Math.random() * 15;
-      });
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (isLoading) {
-    return <SplashScreen progress={progress} />;
-  }
-
   return (
     <ThemeProvider
       attribute="class"
