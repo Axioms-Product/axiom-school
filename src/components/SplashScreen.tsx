@@ -84,8 +84,8 @@ const SplashScreen = ({ progress }: SplashScreenProps) => {
         </div>
       </div>
 
-      {/* Enhanced Footer */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+      {/* Enhanced Footer - Centered */}
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center">
         <div className="text-center">
           <p className="text-xs text-white/60 font-medium">Powered By Axioms Product with Satyam Rojha!</p>
           <div className="flex items-center justify-center gap-1 mt-1">
