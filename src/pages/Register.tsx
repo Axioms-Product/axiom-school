@@ -87,83 +87,83 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
       {/* Mobile-optimized container */}
-      <div className="flex-1 flex items-center justify-center p-3 sm:p-6">
-        <div className="w-full max-w-xs sm:max-w-sm space-y-4">
+      <div className="flex-1 flex items-center justify-center p-2 sm:p-4">
+        <div className="w-full max-w-xs space-y-3">
           {/* Header Section */}
-          <div className="text-center space-y-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Join Axioms School</h1>
-            <p className="text-gray-600 text-xs sm:text-sm">Create your account and start learning</p>
+          <div className="text-center space-y-1">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Join Axioms School</h1>
+            <p className="text-gray-600 text-xs">Create your account and start learning</p>
           </div>
 
-          {/* Feature highlights - smaller on mobile */}
-          <div className="grid grid-cols-3 gap-2 py-2">
+          {/* Feature highlights - smaller */}
+          <div className="grid grid-cols-3 gap-1 py-1">
             <div className="text-center">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1">
-                <BookOpen className="h-4 w-4 text-blue-600" />
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-0.5">
+                <BookOpen className="h-3 w-3 text-blue-600" />
               </div>
               <p className="text-xs text-gray-600">Learn</p>
             </div>
             <div className="text-center">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Users className="h-4 w-4 text-green-600" />
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-0.5">
+                <Users className="h-3 w-3 text-green-600" />
               </div>
               <p className="text-xs text-gray-600">Connect</p>
             </div>
             <div className="text-center">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Award className="h-4 w-4 text-orange-600" />
+              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-0.5">
+                <Award className="h-3 w-3 text-orange-600" />
               </div>
               <p className="text-xs text-gray-600">Achieve</p>
             </div>
           </div>
 
-          {/* Register Form - Compact */}
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-700">Full Name</label>
+          {/* Register Form - Very Compact */}
+          <form onSubmit={handleSubmit} className="space-y-2">
+            <div className="space-y-0.5">
+              <label className="text-xs font-medium text-gray-700">Full Name</label>
               <div className="relative">
                 <Input
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="h-9 sm:h-10 pl-9 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-8 pl-8 pr-3 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <User className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-700">Username</label>
+            <div className="space-y-0.5">
+              <label className="text-xs font-medium text-gray-700">Username</label>
               <div className="relative">
                 <Input
                   placeholder="Choose a username"
                   value={formData.username}
                   onChange={(e) => handleInputChange('username', e.target.value)}
-                  className="h-9 sm:h-10 pl-9 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-8 pl-8 pr-3 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <User className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-700">Email</label>
+            <div className="space-y-0.5">
+              <label className="text-xs font-medium text-gray-700">Email</label>
               <div className="relative">
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="h-9 sm:h-10 pl-9 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-8 pl-8 pr-3 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <Mail className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="space-y-0.5">
                 <label className="text-xs font-medium text-gray-700">Password</label>
                 <div className="relative">
                   <Input
@@ -171,21 +171,21 @@ const Register = () => {
                     placeholder="Password"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="h-9 pr-8 pl-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="h-8 pl-7 pr-7 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     required
                   />
-                  <Lock className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                  <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-2.5 w-2.5 text-gray-400" />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    {showPassword ? <EyeOff className="h-2.5 w-2.5" /> : <Eye className="h-2.5 w-2.5" />}
                   </button>
                 </div>
               </div>
               
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <label className="text-xs font-medium text-gray-700">Confirm</label>
                 <div className="relative">
                   <Input
@@ -193,29 +193,29 @@ const Register = () => {
                     placeholder="Confirm"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className="h-9 pr-8 pl-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="h-8 pl-7 pr-7 text-xs border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     required
                   />
-                  <Lock className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                  <Lock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-2.5 w-2.5 text-gray-400" />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showConfirmPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    {showConfirmPassword ? <EyeOff className="h-2.5 w-2.5" /> : <Eye className="h-2.5 w-2.5" />}
                   </button>
                 </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <label className="text-xs sm:text-sm font-medium text-gray-700">Role</label>
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="space-y-0.5">
+                <label className="text-xs font-medium text-gray-700">Role</label>
                 <Select
                   value={formData.role}
                   onValueChange={(value) => handleInputChange('role', value)}
                 >
-                  <SelectTrigger className="h-9 sm:h-10 border-gray-300 focus:border-blue-500 text-xs sm:text-sm">
+                  <SelectTrigger className="h-8 border-gray-300 focus:border-blue-500 text-xs">
                     <SelectValue placeholder="Select Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -225,13 +225,13 @@ const Register = () => {
                 </Select>
               </div>
               
-              <div className="space-y-1">
-                <label className="text-xs sm:text-sm font-medium text-gray-700">Class</label>
+              <div className="space-y-0.5">
+                <label className="text-xs font-medium text-gray-700">Class</label>
                 <Select
                   value={formData.assignedClass}
                   onValueChange={(value) => handleInputChange('assignedClass', value)}
                 >
-                  <SelectTrigger className="h-9 sm:h-10 border-gray-300 focus:border-blue-500 text-xs sm:text-sm">
+                  <SelectTrigger className="h-8 border-gray-300 focus:border-blue-500 text-xs">
                     <SelectValue placeholder="Select Class" />
                   </SelectTrigger>
                   <SelectContent>
@@ -246,13 +246,13 @@ const Register = () => {
             </div>
             
             {formData.role === 'teacher' && (
-              <div className="space-y-1">
-                <label className="text-xs sm:text-sm font-medium text-gray-700">Subject</label>
+              <div className="space-y-0.5">
+                <label className="text-xs font-medium text-gray-700">Subject</label>
                 <Select
                   value={formData.subject}
                   onValueChange={(value) => handleInputChange('subject', value)}
                 >
-                  <SelectTrigger className="h-9 sm:h-10 border-gray-300 focus:border-blue-500 text-xs sm:text-sm">
+                  <SelectTrigger className="h-8 border-gray-300 focus:border-blue-500 text-xs">
                     <SelectValue placeholder="Select Subject" />
                   </SelectTrigger>
                   <SelectContent>
@@ -267,25 +267,25 @@ const Register = () => {
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-2 py-1.5 rounded-lg text-xs">
                 {error}
               </div>
             )}
             
             <Button 
               type="submit" 
-              className="w-full h-10 sm:h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm"
+              className="w-full h-9 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-xs mt-3"
               disabled={loading}
             >
               {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                  <span className="text-xs sm:text-sm">Creating account...</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="animate-spin rounded-full h-2.5 w-2.5 border-b-2 border-white"></div>
+                  <span className="text-xs">Creating account...</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm">Create Account</span>
-                  <ArrowRight className="h-3 w-3" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs">Create Account</span>
+                  <ArrowRight className="h-2.5 w-2.5" />
                 </div>
               )}
             </Button>
@@ -293,7 +293,7 @@ const Register = () => {
 
           {/* Sign In Link */}
           <div className="text-center">
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs text-gray-600">
               Already have an account?{' '}
               <Link to="/login" className="text-blue-600 font-semibold hover:text-blue-700">
                 Sign in
@@ -304,7 +304,7 @@ const Register = () => {
       </div>
 
       {/* Footer */}
-      <div className="text-center pb-safe-area-inset-bottom p-2">
+      <div className="text-center pb-safe-area-inset-bottom p-1">
         <p className="text-xs text-gray-500">© 2025 Axioms School. All rights reserved.</p>
       </div>
     </div>
