@@ -7,7 +7,6 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { DataProvider } from '@/contexts/DataContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import SplashScreen from '@/components/SplashScreen';
-import ExitConfirmationDialog from '@/components/ExitConfirmationDialog';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
@@ -82,7 +81,6 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />
-            <ExitConfirmationDialog />
           </Router>
         </DataProvider>
       </AuthProvider>
