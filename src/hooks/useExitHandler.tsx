@@ -30,7 +30,7 @@ export const useExitHandler = () => {
       return message;
     };
 
-    // Handle Escape key and other keyboard shortcuts
+    // Handle Escape key
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         console.log('Escape key pressed - showing exit dialog');
@@ -59,11 +59,30 @@ export const useExitHandler = () => {
   }, [location.pathname]);
 
   const handleConfirmExit = () => {
-    console.log('Exit confirmed - navigating to login');
+    console.log('Exit confirmed - attempting to close app');
     setShowExitDialog(false);
-    // Clear the history state before navigating
-    window.history.replaceState(null, '', window.location.pathname);
-    navigate('/login', { replace: true });
+    
+    // Try multiple methods to exit the app
+    try {
+      // Method 1: Try to close the window (works if opened by script)
+      window.close();
+      
+      // Method 2: If it's a PWA or mobile app, try navigation
+      if (window.navigator && 'app' in window.navigator) {
+        // @ts-ignore
+        window.navigator.app.exitApp();
+      }
+      
+      // Method 3: Navigate to about:blank as fallback
+      setTimeout(() => {
+        window.location.href = 'about:blank';
+      }, 100);
+      
+    } catch (error) {
+      console.log('Could not close app automatically, navigating to login');
+      // Fallback: navigate to login
+      navigate('/login', { replace: true });
+    }
   };
 
   const handleCancelExit = () => {
