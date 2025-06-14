@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { DataProvider } from '@/contexts/DataContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Welcome from '@/pages/Welcome';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
@@ -35,7 +36,7 @@ function App() {
         <DataProvider>
           <Router>
             <Routes>
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Welcome />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>

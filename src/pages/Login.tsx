@@ -4,11 +4,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import LeftSideIllustration from '@/components/auth/LeftSideIllustration';
+import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, isAuthenticated } = useAuth();
@@ -36,71 +37,85 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <LeftSideIllustration />
-      
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Lets Sign you in
-            </h1>
-            <p className="text-gray-600">
-              Welcome Back,<br/>
-              You have been missed
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-purple-600">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 pt-12">
+        <button 
+          onClick={() => navigate('/')}
+          className="text-white p-2"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <div className="flex items-center space-x-4">
+          <span className="text-white text-sm">Don't have an account?</span>
+          <Link 
+            to="/register"
+            className="text-white text-sm font-medium bg-white/20 px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
 
-          <div className="bg-white rounded-lg p-8 shadow-lg">
-            <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Logo */}
+      <div className="text-center mb-8">
+        <h1 className="text-white text-2xl font-semibold">Axioms School</h1>
+      </div>
+
+      {/* Login Form Card */}
+      <div className="bg-white rounded-t-3xl min-h-[70vh] px-6 pt-8">
+        <div className="max-w-sm mx-auto">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome Back</h2>
+          <p className="text-gray-600 text-sm mb-8">Enter your details below</p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-gray-700 text-sm font-medium block mb-2">Email</label>
               <Input
                 type="text"
-                placeholder="Email, phone & username"
+                placeholder="nicholas@ergemla.com"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="h-12 border-gray-300 rounded-lg"
+                className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm"
                 required
               />
-              
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 border-gray-300 rounded-lg"
-                required
-              />
-
-              <div className="text-right">
-                <a href="#" className="text-sm text-gray-600 hover:text-gray-800">
-                  Forgot Password ?
-                </a>
+            </div>
+            
+            <div>
+              <label className="text-gray-700 text-sm font-medium block mb-2">Password</label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm pr-12"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+            </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-12 rounded-lg"
-                disabled={loading}
-              >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </Button>
-            </form>
-          </div>
-
-          <div className="text-center mt-6">
-            <p className="text-gray-600 text-sm">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-blue-600 font-semibold hover:text-blue-700">
-                Register Now
-              </Link>
-            </p>
-          </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium h-12 rounded-xl mt-8"
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
         </div>
       </div>
     </div>
