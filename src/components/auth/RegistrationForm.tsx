@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Subject } from '@/models/types';
-import { User, Mail, Lock, GraduationCap, BookOpen } from 'lucide-react';
+import { User, Mail, Lock, GraduationCap, BookOpen, Eye, EyeOff } from 'lucide-react';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +19,8 @@ const RegistrationForm = () => {
     assignedClass: '',
     subject: '' as Subject | ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { register } = useAuth();
@@ -81,9 +83,12 @@ const RegistrationForm = () => {
     setLoading(true);
     
     try {
+      // Generate a unique username if not provided
+      const username = formData.username || `${formData.email.split('@')[0]}_${Date.now()}`;
+      
       await register({
         name: formData.name,
-        username: formData.username || formData.email.split('@')[0], // Generate username from email if not provided
+        username,
         email: formData.email,
         password: formData.password,
         role: formData.role,
@@ -99,17 +104,17 @@ const RegistrationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
       {/* Name Input with Icon */}
       <div className="relative">
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <User className="h-5 w-5" />
+          <User className="h-4 w-4 md:h-5 md:w-5" />
         </div>
         <Input
           placeholder="Full Name"
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
-          className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
+          className="h-12 md:h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
           required
         />
       </div>
@@ -117,59 +122,73 @@ const RegistrationForm = () => {
       {/* Email Input with Icon */}
       <div className="relative">
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <Mail className="h-5 w-5" />
+          <Mail className="h-4 w-4 md:h-5 md:w-5" />
         </div>
         <Input
           type="email"
           placeholder="Email Address"
           value={formData.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
-          className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
+          className="h-12 md:h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
           required
         />
       </div>
       
-      {/* Password Input with Icon */}
+      {/* Password Input with Icon and Toggle */}
       <div className="relative">
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <Lock className="h-5 w-5" />
+          <Lock className="h-4 w-4 md:h-5 md:w-5" />
         </div>
         <Input
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           value={formData.password}
           onChange={(e) => handleInputChange('password', e.target.value)}
-          className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
+          className="h-12 md:h-14 pl-12 pr-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
           required
         />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+        >
+          {showPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
+        </button>
       </div>
 
-      {/* Confirm Password Input with Icon */}
+      {/* Confirm Password Input with Icon and Toggle */}
       <div className="relative">
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <Lock className="h-5 w-5" />
+          <Lock className="h-4 w-4 md:h-5 md:w-5" />
         </div>
         <Input
-          type="password"
+          type={showConfirmPassword ? 'text' : 'password'}
           placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-          className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
+          className="h-12 md:h-14 pl-12 pr-12 bg-white/5 border border-white/20 rounded-xl text-white placeholder:text-gray-400 backdrop-blur-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
           required
         />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+        >
+          {showConfirmPassword ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
+        </button>
       </div>
       
       {/* Role and Class Selection */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="relative">
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10">
-            <GraduationCap className="h-5 w-5" />
+            <GraduationCap className="h-4 w-4 md:h-5 md:w-5" />
           </div>
           <Select
             value={formData.role}
             onValueChange={(value) => handleInputChange('role', value)}
           >
-            <SelectTrigger className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
+            <SelectTrigger className="h-12 md:h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
               <SelectValue placeholder="Role" />
             </SelectTrigger>
             <SelectContent className="bg-gray-900/95 backdrop-blur-md border-gray-700">
@@ -184,7 +203,7 @@ const RegistrationForm = () => {
             value={formData.assignedClass}
             onValueChange={(value) => handleInputChange('assignedClass', value)}
           >
-            <SelectTrigger className="h-14 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
+            <SelectTrigger className="h-12 md:h-14 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
               <SelectValue placeholder="Class" />
             </SelectTrigger>
             <SelectContent className="bg-gray-900/95 backdrop-blur-md border-gray-700">
@@ -202,13 +221,13 @@ const RegistrationForm = () => {
       {formData.role === 'teacher' && (
         <div className="relative">
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10">
-            <BookOpen className="h-5 w-5" />
+            <BookOpen className="h-4 w-4 md:h-5 md:w-5" />
           </div>
           <Select
             value={formData.subject}
             onValueChange={(value) => handleInputChange('subject', value)}
           >
-            <SelectTrigger className="h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
+            <SelectTrigger className="h-12 md:h-14 pl-12 bg-white/5 border border-white/20 rounded-xl text-white backdrop-blur-sm focus:border-purple-400">
               <SelectValue placeholder="Subject You Teach" />
             </SelectTrigger>
             <SelectContent className="bg-gray-900/95 backdrop-blur-md border-gray-700">
@@ -235,7 +254,7 @@ const RegistrationForm = () => {
       {/* Enhanced Submit Button */}
       <Button 
         type="submit" 
-        className="w-full h-14 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold rounded-xl border-none shadow-2xl mt-8 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-purple-500/25"
+        className="w-full h-12 md:h-14 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold rounded-xl border-none shadow-2xl mt-6 md:mt-8 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-purple-500/25"
         disabled={loading}
       >
         <div className="flex items-center justify-center space-x-2">
