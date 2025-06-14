@@ -1,4 +1,3 @@
-
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -85,17 +84,18 @@ function App() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Ultra-fast loading - complete in under 1 second
+    // Extended loading to 5 seconds with smooth progress
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 100); // Minimal delay
+          // Keep splash screen for 5 seconds total
+          setTimeout(() => setIsLoading(false), 5000);
           return 100;
         }
-        return prev + Math.random() * 40; // Very fast progress jumps
+        return prev + Math.random() * 20; // Slower progress for 5 second duration
       });
-    }, 40); // Very frequent updates for smooth animation
+    }, 100); // More frequent updates for smoother animation
 
     return () => clearInterval(interval);
   }, []);
