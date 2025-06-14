@@ -26,6 +26,7 @@ export const ExitConfirmDialog = ({ open, onOpenChange, onConfirm }: ExitConfirm
   const handleConfirm = () => {
     console.log('Confirm exit button clicked');
     onConfirm();
+    onOpenChange(false);
   };
 
   return (

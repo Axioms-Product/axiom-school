@@ -60,7 +60,6 @@ export const useExitHandler = () => {
 
   const handleConfirmExit = () => {
     console.log('Exit confirmed - attempting to close app');
-    setShowExitDialog(false);
     
     // Try multiple methods to exit the app
     try {
