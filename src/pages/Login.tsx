@@ -4,12 +4,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, isAuthenticated } = useAuth();
@@ -27,7 +26,7 @@ const Login = () => {
     setLoading(true);
     
     try {
-      await login(username, password);
+      await login(email, password);
       navigate('/dashboard');
     } catch (err) {
       setError((err as Error).message || 'Failed to log in');
@@ -37,85 +36,74 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-purple-600">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 pt-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+      {/* Abstract background shapes */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-600/30 to-pink-600/30 rounded-full blur-3xl transform translate-x-32 -translate-y-32"></div>
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-violet-600/20 to-purple-600/20 rounded-full blur-3xl transform -translate-x-20 translate-y-20"></div>
+      <div className="absolute bottom-20 right-10 w-64 h-32 bg-gradient-to-r from-pink-500/40 to-red-500/40 rounded-full blur-2xl"></div>
+
+      {/* Back button */}
+      <div className="absolute top-12 left-6 z-10">
         <button 
-          onClick={() => navigate('/')}
-          className="text-white p-2"
+          onClick={() => navigate('/register')}
+          className="text-white/80 hover:text-white transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <div className="flex items-center space-x-4">
-          <span className="text-white text-sm">Don't have an account?</span>
-          <Link 
-            to="/register"
-            className="text-white text-sm font-medium bg-white/20 px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
-          >
-            Get Started
-          </Link>
-        </div>
       </div>
 
-      {/* Logo */}
-      <div className="text-center mb-8">
-        <h1 className="text-white text-2xl font-semibold">Axioms School</h1>
-      </div>
+      {/* Content */}
+      <div className="flex items-center justify-center min-h-screen px-6 py-12">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-2">Welcome</h1>
+            <h2 className="text-4xl font-bold text-white">Back</h2>
+          </div>
 
-      {/* Login Form Card */}
-      <div className="bg-white rounded-t-3xl min-h-[70vh] px-6 pt-8">
-        <div className="max-w-sm mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-600 text-sm mb-8">Enter your details below</p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="text-gray-700 text-sm font-medium block mb-2">Email</label>
               <Input
-                type="text"
-                placeholder="nicholas@ergemla.com"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-14 bg-black/30 border-none rounded-2xl text-white placeholder:text-gray-400 backdrop-blur-sm"
                 required
               />
             </div>
             
             <div>
-              <label className="text-gray-700 text-sm font-medium block mb-2">Password</label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm pr-12"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-14 bg-black/30 border-none rounded-2xl text-white placeholder:text-gray-400 backdrop-blur-sm"
+                required
+              />
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+              <div className="bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm backdrop-blur-sm">
                 {error}
               </div>
             )}
             
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium h-12 rounded-xl mt-8"
+              className="w-full h-14 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-2xl border-none shadow-lg"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Logging in...' : 'Log in'}
             </Button>
           </form>
+
+          <div className="text-center mt-8">
+            <span className="text-gray-400 text-sm">Don't have an account? </span>
+            <Link to="/register" className="text-purple-400 hover:text-purple-300 text-sm font-medium">
+              Sign in
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Subject } from '@/models/types';
-import { Eye, EyeOff } from 'lucide-react';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +18,6 @@ const RegistrationForm = () => {
     assignedClass: '',
     subject: '' as Subject | ''
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { register } = useAuth();
@@ -80,92 +78,64 @@ const RegistrationForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="text-gray-700 text-sm font-medium block mb-2">Email</label>
         <Input
-          type="email"
-          placeholder="nicholas@ergemla.com"
-          value={formData.email}
-          onChange={(e) => handleInputChange('email', e.target.value)}
-          className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm"
-          required
-        />
-      </div>
-      
-      <div>
-        <label className="text-gray-700 text-sm font-medium block mb-2">Name</label>
-        <Input
-          placeholder="Nicholas Ergemla"
+          placeholder="Full name"
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
-          className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm"
+          className="h-14 bg-black/30 border-none rounded-2xl text-white placeholder:text-gray-400 backdrop-blur-sm"
           required
         />
       </div>
       
       <div>
-        <label className="text-gray-700 text-sm font-medium block mb-2">Username</label>
         <Input
-          placeholder="nicholasergemla"
-          value={formData.username}
-          onChange={(e) => handleInputChange('username', e.target.value)}
-          className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          className="h-14 bg-black/30 border-none rounded-2xl text-white placeholder:text-gray-400 backdrop-blur-sm"
           required
         />
       </div>
       
       <div>
-        <label className="text-gray-700 text-sm font-medium block mb-2">Password</label>
-        <div className="relative">
-          <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="••••••••••••••••"
-            value={formData.password}
-            onChange={(e) => handleInputChange('password', e.target.value)}
-            className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm pr-12"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
-          <div className="absolute right-12 top-1/2 transform -translate-y-1/2 text-xs text-green-500 font-medium">
-            Strong
-          </div>
-        </div>
+        <Input
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={(e) => handleInputChange('password', e.target.value)}
+          className="h-14 bg-black/30 border-none rounded-2xl text-white placeholder:text-gray-400 backdrop-blur-sm"
+          required
+        />
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-gray-700 text-sm font-medium block mb-2">Role</label>
           <Select
             value={formData.role}
             onValueChange={(value) => handleInputChange('role', value)}
           >
-            <SelectTrigger className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm">
+            <SelectTrigger className="h-14 bg-black/30 border-none rounded-2xl text-white backdrop-blur-sm">
               <SelectValue placeholder="Role" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="student">Student</SelectItem>
-              <SelectItem value="teacher">Teacher</SelectItem>
+            <SelectContent className="bg-gray-800 border-gray-700">
+              <SelectItem value="student" className="text-white">Student</SelectItem>
+              <SelectItem value="teacher" className="text-white">Teacher</SelectItem>
             </SelectContent>
           </Select>
         </div>
         
         <div>
-          <label className="text-gray-700 text-sm font-medium block mb-2">Class</label>
           <Select
             value={formData.assignedClass}
             onValueChange={(value) => handleInputChange('assignedClass', value)}
           >
-            <SelectTrigger className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm">
+            <SelectTrigger className="h-14 bg-black/30 border-none rounded-2xl text-white backdrop-blur-sm">
               <SelectValue placeholder="Class" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-gray-800 border-gray-700">
               {classes.map((cls) => (
-                <SelectItem key={cls} value={cls}>
+                <SelectItem key={cls} value={cls} className="text-white">
                   Class {cls}
                 </SelectItem>
               ))}
@@ -176,17 +146,16 @@ const RegistrationForm = () => {
       
       {formData.role === 'teacher' && (
         <div>
-          <label className="text-gray-700 text-sm font-medium block mb-2">Subject</label>
           <Select
             value={formData.subject}
             onValueChange={(value) => handleInputChange('subject', value)}
           >
-            <SelectTrigger className="h-12 border-gray-200 rounded-xl bg-gray-50 border-0 text-sm">
+            <SelectTrigger className="h-14 bg-black/30 border-none rounded-2xl text-white backdrop-blur-sm">
               <SelectValue placeholder="Subject" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-gray-800 border-gray-700">
               {subjects.map((subj) => (
-                <SelectItem key={subj} value={subj}>
+                <SelectItem key={subj} value={subj} className="text-white">
                   {subj}
                 </SelectItem>
               ))}
@@ -196,14 +165,14 @@ const RegistrationForm = () => {
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+        <div className="bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm backdrop-blur-sm">
           {error}
         </div>
       )}
       
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium h-12 rounded-xl mt-8"
+        className="w-full h-14 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold rounded-2xl border-none shadow-lg mt-8"
         disabled={loading}
       >
         {loading ? 'Creating...' : 'Sign up'}

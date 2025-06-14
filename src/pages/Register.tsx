@@ -16,38 +16,38 @@ const Register = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-purple-600">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 pt-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+      {/* Abstract background shapes */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-orange-600/30 to-pink-600/30 rounded-full blur-3xl transform -translate-x-32 -translate-y-32"></div>
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-violet-600/20 to-purple-600/20 rounded-full blur-3xl transform translate-x-20 translate-y-20"></div>
+      <div className="absolute bottom-20 left-10 w-64 h-32 bg-gradient-to-r from-pink-500/40 to-red-500/40 rounded-full blur-2xl"></div>
+
+      {/* Back button */}
+      <div className="absolute top-12 left-6 z-10">
         <button 
           onClick={() => navigate('/login')}
-          className="text-white p-2"
+          className="text-white/80 hover:text-white transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <div className="flex items-center space-x-4">
-          <span className="text-white text-sm">Already have an account?</span>
-          <Link 
-            to="/login"
-            className="text-white text-sm font-medium bg-white/20 px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
-          >
-            Sign in
-          </Link>
-        </div>
       </div>
 
-      {/* Logo */}
-      <div className="text-center mb-8">
-        <h1 className="text-white text-2xl font-semibold">Axioms School</h1>
-      </div>
-
-      {/* Registration Form Card */}
-      <div className="bg-white rounded-t-3xl min-h-[70vh] px-6 pt-8">
-        <div className="max-w-sm mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Get started free.</h2>
-          <p className="text-gray-600 text-sm mb-8">Free forever. No credit card needed.</p>
+      {/* Content */}
+      <div className="flex items-center justify-center min-h-screen px-6 py-12">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-2">Create</h1>
+            <h2 className="text-4xl font-bold text-white">Account</h2>
+          </div>
 
           <RegistrationForm />
+
+          <div className="text-center mt-8">
+            <span className="text-gray-400 text-sm">Already have an account? </span>
+            <Link to="/login" className="text-purple-400 hover:text-purple-300 text-sm font-medium">
+              Log in
+            </Link>
+          </div>
         </div>
       </div>
     </div>
