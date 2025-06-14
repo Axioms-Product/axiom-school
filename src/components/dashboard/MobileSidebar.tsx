@@ -20,20 +20,14 @@ export const MobileSidebar = ({ open, onOpenChange, location, currentUser }: Mob
   // Auto-close sidebar when route changes on mobile
   useEffect(() => {
     if (open) {
-      // Add a small delay to ensure smooth transition
-      const timer = setTimeout(() => {
-        onOpenChange(false);
-      }, 100);
-      return () => clearTimeout(timer);
+      onOpenChange(false);
     }
-  }, [location.pathname, open, onOpenChange]);
+  }, [location.pathname]);
 
   // Custom navigation handler that closes sidebar immediately
   const handleNavigation = (to: string) => {
-    onOpenChange(false); // Close immediately
-    setTimeout(() => {
-      navigate(to);
-    }, 200); // Navigate after close animation
+    onOpenChange(false);
+    navigate(to);
   };
 
   return (
