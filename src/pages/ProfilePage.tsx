@@ -41,10 +41,8 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Get all students if teacher, otherwise use current user
   const students = currentUser?.role === 'teacher' ? getStudentsForClass(currentUser?.class || '') : [];
 
-  // Determine which user profile to show
   const profileUser = useMemo(() => {
     if (studentId && currentUser?.role === 'teacher') {
       return students.find(user => user.id === studentId) || currentUser;
@@ -112,9 +110,9 @@ const ProfilePage = () => {
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-3 sm:p-4 lg:p-6">
-      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header Section - Mobile Optimized */}
+    <div className="h-full overflow-auto bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="max-w-5xl mx-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+        {/* Header Section */}
         <div className="flex flex-col space-y-3 sm:space-y-4">
           {isViewingOtherProfile && (
             <Button
@@ -130,7 +128,7 @@ const ProfilePage = () => {
           
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
             <div className="w-full sm:w-auto">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                 {isViewingOtherProfile ? `${profileUser?.name}'s Profile` : 'Profile Settings'}
               </h1>
               <p className="text-sm sm:text-base text-gray-600">
@@ -152,10 +150,10 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Mobile-First Grid Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
-          {/* Profile Overview - Mobile Optimized */}
-          <div className="xl:col-span-1 space-y-4 sm:space-y-6">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Profile Overview */}
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Profile Card */}
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardContent className="p-4 sm:p-6 text-center">
@@ -224,8 +222,8 @@ const ProfilePage = () => {
             </Card>
           </div>
 
-          {/* Details Section - Mobile Optimized */}
-          <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+          {/* Details Section */}
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Personal Information */}
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader className="flex flex-col space-y-3">
