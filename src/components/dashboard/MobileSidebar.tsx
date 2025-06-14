@@ -4,6 +4,8 @@ import { BookOpen } from 'lucide-react';
 import { NavigationItems } from './NavigationItems';
 import { QuickActions } from './QuickActions';
 import { UserProfile } from './UserProfile';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface MobileSidebarProps {
   open: boolean;
@@ -13,6 +15,21 @@ interface MobileSidebarProps {
 }
 
 export const MobileSidebar = ({ open, onOpenChange, location, currentUser }: MobileSidebarProps) => {
+  const navigate = useNavigate();
+
+  // Auto-close sidebar when route changes on mobile
+  useEffect(() => {
+    if (open) {
+      onOpenChange(false);
+    }
+  }, [location.pathname]);
+
+  // Custom navigation handler that closes sidebar
+  const handleNavigation = (to: string) => {
+    navigate(to);
+    onOpenChange(false);
+  };
+
   return (
     <SheetContent side="left" className="w-64 p-0 bg-sidebar border-sidebar-border">
       <div className="flex flex-col h-full">
@@ -27,12 +44,17 @@ export const MobileSidebar = ({ open, onOpenChange, location, currentUser }: Mob
           </div>
         </SheetHeader>
         
-        <div className="flex-1 p-4 pt-0">
-          <NavigationItems location={location} currentUser={currentUser} />
+        <div className="flex-1 p-4 pt-0 overflow-y-auto">
+          <NavigationItems 
+            location={location} 
+            currentUser={currentUser} 
+            onNavigate={handleNavigation}
+            isMobile={true}
+          />
           <QuickActions currentUser={currentUser} />
         </div>
         
-        <div className="p-4">
+        <div className="p-4 border-t border-sidebar-border/50">
           <UserProfile currentUser={currentUser} />
         </div>
       </div>
