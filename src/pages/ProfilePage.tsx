@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { 
@@ -40,6 +41,7 @@ const ProfilePage = () => {
   
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(!currentUser); // Add loading state
 
   const students = currentUser?.role === 'teacher' ? getStudentsForClass(currentUser?.class || '') : [];
 
@@ -82,50 +84,143 @@ const ProfilePage = () => {
     return Math.round((filledFields / fields.length) * 100);
   }, [formData]);
 
-  const handleSave = async () => {
-    if (!updateUserProfile || isViewingOtherProfile) return;
-    
-    setIsSaving(true);
-    try {
-      await updateUserProfile(formData);
-      toast.success('Profile updated successfully!');
-      setIsEditing(false);
-    } catch (error) {
-      toast.error('Failed to update profile');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  // Loading skeleton component
+  const ProfileSkeleton = () => (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto p-4 lg:p-8">
+        {/* Header Skeleton */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <Skeleton className="h-12 w-12 rounded-xl" />
+                <div>
+                  <Skeleton className="h-8 w-64 mb-2" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              </div>
+            </div>
+            <Skeleton className="h-10 w-24" />
+          </div>
+        </div>
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+        {/* Main Content Grid Skeleton */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          {/* Sidebar Skeleton */}
+          <div className="xl:col-span-1 space-y-6">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl overflow-hidden">
+              <div className="h-24 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+              <CardContent className="p-6 text-center -mt-12 relative">
+                <Skeleton className="h-24 w-24 rounded-full mx-auto mb-4" />
+                <Skeleton className="h-6 w-32 mx-auto mb-2" />
+                <Skeleton className="h-4 w-40 mx-auto mb-4" />
+                <div className="flex flex-wrap gap-2 justify-center mb-4">
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-6 w-20" />
+                  <Skeleton className="h-6 w-18" />
+                </div>
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-8" />
+                  </div>
+                  <Skeleton className="h-2 w-full rounded-full" />
+                </div>
+              </CardContent>
+            </Card>
 
-  const handleCancel = () => {
-    setFormData({
-      name: profileUser?.name || '',
-      email: profileUser?.email || '',
-      phone: profileUser?.phone || '',
-      address: profileUser?.address || '',
-      bio: profileUser?.bio || '',
-      dateOfBirth: profileUser?.dateOfBirth || '',
-      emergencyContact: profileUser?.emergencyContact || '',
-      bloodGroup: profileUser?.bloodGroup || '',
-      hobbies: profileUser?.hobbies || ''
-    });
-    setIsEditing(false);
-  };
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-5" />
+                  <Skeleton className="h-5 w-20" />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                    <Skeleton className="h-6 w-16" />
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
+          {/* Details Section Skeleton */}
+          <div className="xl:col-span-3 space-y-6">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-lg" />
+                    <Skeleton className="h-6 w-40" />
+                  </div>
+                  <Skeleton className="h-9 w-32" />
+                </div>
+              </CardHeader>
+              
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4" />
+                        <Skeleton className="h-4 w-20" />
+                      </div>
+                      <Skeleton className="h-11 w-full" />
+                    </div>
+                  ))}
+                  <div className="space-y-2 lg:col-span-2">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-20 w-full" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-  const handleBackToStudents = () => {
-    navigate('/dashboard/students');
-  };
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-lg" />
+                  <Skeleton className="h-6 w-40" />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border">
+                      <div className="flex items-center justify-between mb-3">
+                        <Skeleton className="h-6 w-6" />
+                        <Skeleton className="h-6 w-16" />
+                      </div>
+                      <Skeleton className="h-5 w-12 mb-1" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-  const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  // Show skeleton while loading
+  if (isLoading || !profileUser) {
+    return <ProfileSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
