@@ -7,6 +7,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { DataProvider } from '@/contexts/DataContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import SplashScreen from '@/components/SplashScreen';
+import Welcome from '@/pages/Welcome';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
