@@ -33,7 +33,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ProfilePage = () => {
   const { currentUser, updateUserProfile, logout } = useAuth();
-  const { users } = useData();
+  const { getStudentsForClass } = useData();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const studentId = searchParams.get('studentId');
@@ -41,13 +41,16 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Get all students if teacher, otherwise use current user
+  const students = currentUser?.role === 'teacher' ? getStudentsForClass(currentUser?.class || '') : [];
+
   // Determine which user profile to show
   const profileUser = useMemo(() => {
     if (studentId && currentUser?.role === 'teacher') {
-      return users.find(user => user.id === studentId) || currentUser;
+      return students.find(user => user.id === studentId) || currentUser;
     }
     return currentUser;
-  }, [studentId, currentUser, users]);
+  }, [studentId, currentUser, students]);
 
   const isViewingOtherProfile = studentId && currentUser?.role === 'teacher' && profileUser?.id !== currentUser?.id;
 
@@ -109,8 +112,8 @@ const ProfilePage = () => {
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-2 sm:p-4 lg:p-6">
-      <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-3 sm:p-4 lg:p-6">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
         {/* Header Section - Mobile Optimized */}
         <div className="flex flex-col space-y-3 sm:space-y-4">
           {isViewingOtherProfile && (
@@ -118,16 +121,16 @@ const ProfilePage = () => {
               onClick={handleBackToStudents}
               variant="outline"
               size="sm"
-              className="self-start flex items-center gap-2 text-sm"
+              className="self-start flex items-center gap-2 text-sm h-8 px-3"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-3 w-3" />
               Back to Students
             </Button>
           )}
           
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
             <div className="w-full sm:w-auto">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                 {isViewingOtherProfile ? `${profileUser?.name}'s Profile` : 'Profile Settings'}
               </h1>
               <p className="text-sm sm:text-base text-gray-600">
@@ -140,9 +143,9 @@ const ProfilePage = () => {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="w-full sm:w-auto text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200"
+                className="w-full sm:w-auto h-8 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200 text-xs"
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="h-3 w-3 mr-1" />
                 Sign Out
               </Button>
             )}
@@ -166,7 +169,7 @@ const ProfilePage = () => {
                   {isEditing && !isViewingOtherProfile && (
                     <Button
                       size="sm"
-                      className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 h-7 w-7 sm:h-8 sm:w-8 rounded-full p-0 bg-blue-600 hover:bg-blue-700 shadow-lg"
+                      className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 h-6 w-6 sm:h-8 sm:w-8 rounded-full p-0 bg-blue-600 hover:bg-blue-700 shadow-lg"
                     >
                       <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
@@ -175,14 +178,14 @@ const ProfilePage = () => {
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">{formData.name}</h2>
                 <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 break-all">{profileUser?.email}</p>
                 <div className="flex flex-wrap gap-1 sm:gap-2 justify-center">
-                  <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs sm:text-sm">
+                  <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs">
                     {profileUser?.role}
                   </Badge>
-                  <Badge className="bg-purple-100 text-purple-800 border-purple-200 text-xs sm:text-sm">
+                  <Badge className="bg-purple-100 text-purple-800 border-purple-200 text-xs">
                     Class {profileUser?.class}
                   </Badge>
                   {profileUser?.subject && (
-                    <Badge className="bg-green-100 text-green-800 border-green-200 text-xs sm:text-sm">
+                    <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">
                       {profileUser.subject}
                     </Badge>
                   )}
@@ -225,53 +228,55 @@ const ProfilePage = () => {
           <div className="xl:col-span-2 space-y-4 sm:space-y-6">
             {/* Personal Information */}
             <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                  Personal Information
-                </CardTitle>
-                
-                {!isViewingOtherProfile && (
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    {isEditing && (
+              <CardHeader className="flex flex-col space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    Personal Information
+                  </CardTitle>
+                  
+                  {!isViewingOtherProfile && (
+                    <div className="flex gap-2">
+                      {isEditing && (
+                        <Button
+                          onClick={handleCancel}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 sm:flex-none h-8 px-3 text-xs transition-all duration-200"
+                          disabled={isSaving}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Cancel
+                        </Button>
+                      )}
                       <Button
-                        onClick={handleCancel}
-                        variant="outline"
+                        onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                        className={`flex-1 sm:flex-none h-8 px-3 text-xs transition-all duration-200 ${
+                          isEditing ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
+                        }`}
                         size="sm"
-                        className="flex-1 sm:flex-none transition-all duration-200 text-xs sm:text-sm"
                         disabled={isSaving}
                       >
-                        <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                        Cancel
+                        {isSaving ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                            Saving...
+                          </>
+                        ) : isEditing ? (
+                          <>
+                            <Check className="h-3 w-3 mr-1" />
+                            Save
+                          </>
+                        ) : (
+                          <>
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </>
+                        )}
                       </Button>
-                    )}
-                    <Button
-                      onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                      className={`flex-1 sm:flex-none transition-all duration-200 text-xs sm:text-sm ${
-                        isEditing ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                      size="sm"
-                      disabled={isSaving}
-                    >
-                      {isSaving ? (
-                        <>
-                          <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1"></div>
-                          Saving...
-                        </>
-                      ) : isEditing ? (
-                        <>
-                          <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          Save Changes
-                        </>
-                      ) : (
-                        <>
-                          <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          Edit Profile
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </CardHeader>
               
               <CardContent className="space-y-3 sm:space-y-4">
@@ -286,7 +291,7 @@ const ProfilePage = () => {
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   
@@ -301,7 +306,7 @@ const ProfilePage = () => {
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   
@@ -315,7 +320,7 @@ const ProfilePage = () => {
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter phone number"
                     />
                   </div>
@@ -331,7 +336,7 @@ const ProfilePage = () => {
                       value={formData.dateOfBirth}
                       onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
@@ -345,7 +350,7 @@ const ProfilePage = () => {
                       onValueChange={(value) => handleInputChange('bloodGroup', value)}
                       disabled={!isEditing || isViewingOtherProfile}
                     >
-                      <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm">
+                      <SelectTrigger className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500">
                         <SelectValue placeholder="Select blood group" />
                       </SelectTrigger>
                       <SelectContent>
@@ -368,7 +373,7 @@ const ProfilePage = () => {
                       value={formData.emergencyContact}
                       onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       placeholder="Emergency contact number"
                     />
                   </div>
@@ -383,7 +388,7 @@ const ProfilePage = () => {
                       value={formData.address}
                       onChange={(e) => handleInputChange('address', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter your address"
                     />
                   </div>
@@ -397,7 +402,7 @@ const ProfilePage = () => {
                       value={formData.hobbies}
                       onChange={(e) => handleInputChange('hobbies', e.target.value)}
                       disabled={!isEditing || isViewingOtherProfile}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="h-9 text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g. Reading, Sports, Music"
                     />
                   </div>
@@ -413,7 +418,7 @@ const ProfilePage = () => {
                       disabled={!isEditing || isViewingOtherProfile}
                       placeholder="Tell us about yourself..."
                       rows={3}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 text-sm resize-none"
+                      className="text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 resize-none"
                     />
                   </div>
                 </div>

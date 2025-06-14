@@ -4,12 +4,10 @@ import { cn } from '@/lib/utils';
 import { 
   Home, 
   Users, 
-  Calendar, 
   BookOpen, 
   MessageSquare, 
   ClipboardList, 
   Award, 
-  UserCheck,
   Bell,
   GraduationCap
 } from 'lucide-react';
@@ -40,11 +38,6 @@ const navigationItems: NavigationItem[] = [
     roles: ['student'],
   },
   {
-    title: 'Classes',
-    href: '/dashboard/classes',
-    icon: BookOpen,
-  },
-  {
     title: 'Homework',
     href: '/dashboard/homework',
     icon: ClipboardList,
@@ -53,16 +46,6 @@ const navigationItems: NavigationItem[] = [
     title: 'Marks',
     href: '/dashboard/marks',
     icon: Award,
-  },
-  {
-    title: 'Attendance',
-    href: '/dashboard/attendance',
-    icon: UserCheck,
-  },
-  {
-    title: 'Exams',
-    href: '/dashboard/exams',
-    icon: Calendar,
   },
   {
     title: 'Messages',
