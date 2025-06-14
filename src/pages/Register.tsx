@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Subject } from '@/models/types';
-import { Eye, EyeOff, GraduationCap, User, Mail, Lock, UserCheck, BookOpen, Users, Award } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock, UserCheck, ArrowRight, Users, Award, BookOpen } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -85,269 +85,225 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-blue-900 flex items-center justify-center p-4 py-8 relative overflow-hidden">
-      {/* Enhanced Background Pattern */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Floating orbs */}
-        <div className="absolute top-16 left-16 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-16 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute top-1/3 left-1/2 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }}></div>
-        
-        {/* Geometric shapes */}
-        <div className="absolute top-8 right-8 w-4 h-4 bg-white/20 rotate-45 animate-pulse"></div>
-        <div className="absolute bottom-8 left-8 w-6 h-6 bg-white/10 rounded-full animate-bounce"></div>
-        <div className="absolute top-1/4 right-1/3 w-3 h-3 bg-white/30 rotate-45 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col">
+      {/* Mobile-optimized container */}
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-sm space-y-6">
+          {/* Header Section */}
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Join Axioms School</h1>
+            <p className="text-gray-600 text-sm sm:text-base">Create your account and start learning</p>
+          </div>
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Enhanced Header */}
-        <div className="text-center mb-6">
-          <div className="relative mb-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-3xl blur-xl opacity-50 animate-pulse"></div>
-            <div className="relative bg-white/15 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl">
-              <div className="flex items-center justify-center gap-3 mb-3">
+          {/* Feature highlights */}
+          <div className="grid grid-cols-3 gap-3 py-4">
+            <div className="text-center">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <BookOpen className="h-5 w-5 text-blue-600" />
+              </div>
+              <p className="text-xs text-gray-600">Learn</p>
+            </div>
+            <div className="text-center">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Users className="h-5 w-5 text-green-600" />
+              </div>
+              <p className="text-xs text-gray-600">Connect</p>
+            </div>
+            <div className="text-center">
+              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Award className="h-5 w-5 text-orange-600" />
+              </div>
+              <p className="text-xs text-gray-600">Achieve</p>
+            </div>
+          </div>
+
+          {/* Register Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Full Name</label>
+              <div className="relative">
+                <Input
+                  placeholder="Enter your full name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="h-11 pl-11 text-base border-gray-300 focus:border-green-500 focus:ring-green-500"
+                  required
+                />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Username</label>
+              <div className="relative">
+                <Input
+                  placeholder="Choose a username"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  className="h-11 pl-11 text-base border-gray-300 focus:border-green-500 focus:ring-green-500"
+                  required
+                />
+                <UserCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Email</label>
+              <div className="relative">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="h-11 pl-11 text-base border-gray-300 focus:border-green-500 focus:ring-green-500"
+                  required
+                />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-700">Password</label>
                 <div className="relative">
-                  <GraduationCap className="h-10 w-10 text-white" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Axioms School</h1>
-                  <p className="text-white/80 text-sm">Excellence in Education</p>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    className="h-10 pr-8 text-sm border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
                 </div>
               </div>
               
-              {/* Feature highlights */}
-              <div className="flex items-center justify-center gap-4 mt-4">
-                <div className="flex items-center gap-1 text-white/70 text-xs">
-                  <BookOpen className="h-3 w-3" />
-                  <span>Learn</span>
-                </div>
-                <div className="flex items-center gap-1 text-white/70 text-xs">
-                  <Users className="h-3 w-3" />
-                  <span>Connect</span>
-                </div>
-                <div className="flex items-center gap-1 text-white/70 text-xs">
-                  <Award className="h-3 w-3" />
-                  <span>Achieve</span>
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-gray-700">Confirm</label>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm"
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    className="h-10 pr-8 text-sm border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-white">Join Axioms School</h2>
-            <p className="text-white/80">Create your account and start learning today</p>
-          </div>
-        </div>
-
-        {/* Enhanced Register Form */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-2xl blur-xl"></div>
-          <div className="relative bg-white/95 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-2xl">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <User className="h-4 w-4 text-gray-500" />
-                    Full Name
-                  </label>
-                  <Input
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="h-11 border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all duration-300"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <UserCheck className="h-4 w-4 text-gray-500" />
-                    Username
-                  </label>
-                  <Input
-                    placeholder="Choose a username"
-                    value={formData.username}
-                    onChange={(e) => handleInputChange('username', e.target.value)}
-                    className="h-11 border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all duration-300"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-500" />
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="h-11 border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all duration-300"
-                    required
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-700">Password</label>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        className="h-10 pr-10 border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all duration-300"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                      >
-                        {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-700">Confirm</label>
-                    <div className="relative">
-                      <Input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm"
-                        value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                        className="h-10 pr-10 border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all duration-300"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Role</label>
-                    <Select
-                      value={formData.role}
-                      onValueChange={(value) => handleInputChange('role', value)}
-                    >
-                      <SelectTrigger className="h-11 border-2 border-gray-200 focus:border-emerald-500 text-sm">
-                        <SelectValue placeholder="Select Role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="teacher">Teacher</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Class</label>
-                    <Select
-                      value={formData.assignedClass}
-                      onValueChange={(value) => handleInputChange('assignedClass', value)}
-                    >
-                      <SelectTrigger className="h-11 border-2 border-gray-200 focus:border-emerald-500 text-sm">
-                        <SelectValue placeholder="Select Class" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classes.map((cls) => (
-                          <SelectItem key={cls} value={cls}>
-                            Class {cls}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                {formData.role === 'teacher' && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Subject</label>
-                    <Select
-                      value={formData.subject}
-                      onValueChange={(value) => handleInputChange('subject', value)}
-                    >
-                      <SelectTrigger className="h-11 border-2 border-gray-200 focus:border-emerald-500 text-sm">
-                        <SelectValue placeholder="Select Subject" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {subjects.map((subj) => (
-                          <SelectItem key={subj} value={subj}>
-                            {subj}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {error && (
-                  <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm animate-fade-in">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      {error}
-                    </div>
-                  </div>
-                )}
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 hover:from-emerald-700 hover:via-teal-700 hover:to-blue-700 text-white font-semibold h-12 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                  disabled={loading}
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Role</label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => handleInputChange('role', value)}
                 >
-                  {loading ? (
-                    <div className="flex items-center gap-3">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Creating your account...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span>Create Account</span>
-                      <div className="w-1 h-1 bg-white/70 rounded-full animate-pulse"></div>
-                    </div>
-                  )}
-                </Button>
+                  <SelectTrigger className="h-11 border-gray-300 focus:border-green-500 text-sm">
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="teacher">Teacher</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </form>
-          </div>
-        </div>
+              
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Class</label>
+                <Select
+                  value={formData.assignedClass}
+                  onValueChange={(value) => handleInputChange('assignedClass', value)}
+                >
+                  <SelectTrigger className="h-11 border-gray-300 focus:border-green-500 text-sm">
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((cls) => (
+                      <SelectItem key={cls} value={cls}>
+                        Class {cls}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {formData.role === 'teacher' && (
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700">Subject</label>
+                <Select
+                  value={formData.subject}
+                  onValueChange={(value) => handleInputChange('subject', value)}
+                >
+                  <SelectTrigger className="h-11 border-gray-300 focus:border-green-500 text-sm">
+                    <SelectValue placeholder="Select Subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subj) => (
+                      <SelectItem key={subj} value={subj}>
+                        {subj}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-        {/* Enhanced Sign In Link */}
-        <div className="relative mt-6">
-          <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl"></div>
-          <div className="relative bg-white/90 backdrop-blur-xl border border-white/30 rounded-2xl p-4 text-center shadow-lg">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            
+            <Button 
+              type="submit" 
+              className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Creating account...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span>Create Account</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              )}
+            </Button>
+          </form>
+
+          {/* Sign In Link */}
+          <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-transparent bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all duration-200">
-                Sign in here
+              <Link to="/login" className="text-green-600 font-semibold hover:text-green-700">
+                Sign in
               </Link>
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Enhanced Footer */}
-        <div className="text-center mt-8 space-y-2">
-          <div className="flex items-center justify-center gap-2 text-white/60 text-xs">
-            <div className="w-1 h-1 bg-white/40 rounded-full"></div>
-            <span>Secure</span>
-            <div className="w-1 h-1 bg-white/60 rounded-full animate-pulse"></div>
-            <span>Trusted</span>
-            <div className="w-1 h-1 bg-white/40 rounded-full"></div>
-            <span>Reliable</span>
-            <div className="w-1 h-1 bg-white/40 rounded-full"></div>
-          </div>
-          <p className="text-white/60 text-xs">© 2025 Axioms School. All rights reserved.</p>
-        </div>
+      {/* Footer */}
+      <div className="text-center pb-safe-area-inset-bottom p-4">
+        <p className="text-xs text-gray-500">© 2025 Axioms School. All rights reserved.</p>
       </div>
     </div>
   );

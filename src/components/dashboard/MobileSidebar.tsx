@@ -20,14 +20,20 @@ export const MobileSidebar = ({ open, onOpenChange, location, currentUser }: Mob
   // Auto-close sidebar when route changes on mobile
   useEffect(() => {
     if (open) {
-      onOpenChange(false);
+      // Add a small delay to ensure smooth transition
+      const timer = setTimeout(() => {
+        onOpenChange(false);
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [location.pathname]);
+  }, [location.pathname, open, onOpenChange]);
 
-  // Custom navigation handler that closes sidebar
+  // Custom navigation handler that closes sidebar immediately
   const handleNavigation = (to: string) => {
-    navigate(to);
-    onOpenChange(false);
+    onOpenChange(false); // Close immediately
+    setTimeout(() => {
+      navigate(to);
+    }, 200); // Navigate after close animation
   };
 
   return (
@@ -44,7 +50,7 @@ export const MobileSidebar = ({ open, onOpenChange, location, currentUser }: Mob
           </div>
         </SheetHeader>
         
-        <div className="flex-1 p-4 pt-0 overflow-y-auto">
+        <div className="flex-1 p-4 pt-0 overflow-y-auto mobile-scroll">
           <NavigationItems 
             location={location} 
             currentUser={currentUser} 
