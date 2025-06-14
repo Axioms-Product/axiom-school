@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { Subject } from '@/models/types';
+import AuthSkeleton from '@/components/skeletons/AuthSkeleton';
 import { Eye, EyeOff, User, Mail, Lock, ArrowRight, Users, Award, BookOpen } from 'lucide-react';
 
 const Register = () => {
@@ -23,6 +23,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -35,11 +36,23 @@ const Register = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  // Simulate initial page loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 900);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if (formData.role !== 'teacher') {
       setFormData(prev => ({ ...prev, subject: '' }));
     }
   }, [formData.role]);
+
+  if (isPageLoading) {
+    return <AuthSkeleton />;
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
+import AuthSkeleton from '@/components/skeletons/AuthSkeleton';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Users, Award, BookOpen } from 'lucide-react';
 
 const Login = () => {
@@ -12,6 +12,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -20,6 +21,18 @@ const Login = () => {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
+
+  // Simulate initial page loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isPageLoading) {
+    return <AuthSkeleton />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

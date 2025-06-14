@@ -1,3 +1,4 @@
+
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
@@ -8,6 +9,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import SplashScreen from '@/components/SplashScreen';
 import { ExitConfirmDialog } from '@/components/ExitConfirmDialog';
 import { useExitHandler } from '@/hooks/useExitHandler';
+import { Skeleton, SkeletonCard } from '@/components/ui/skeleton';
 
 // Lazy load components for better performance
 const Login = lazy(() => import('@/pages/Login'));
@@ -28,12 +30,38 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const HelpSupportPage = lazy(() => import('@/pages/HelpSupportPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Ultra-fast loading fallback component
+// Enhanced loading fallback component with skeleton UI
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div className="flex flex-col items-center space-y-2">
-      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-xs text-gray-600 font-medium">Loading...</p>
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="max-w-4xl mx-auto">
+      {/* Header skeleton */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-12 w-12 rounded-xl" />
+            <div>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-24" />
+        </div>
+      </div>
+
+      {/* Content skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+
+      {/* Loading indicator */}
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-gray-600 font-medium">Loading content...</p>
+        </div>
+      </div>
     </div>
   </div>
 );

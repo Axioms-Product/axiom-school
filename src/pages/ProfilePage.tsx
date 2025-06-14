@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
+import ProfileSkeleton from '@/components/skeletons/ProfileSkeleton';
 import { 
   User, 
   Mail, 
@@ -40,6 +41,10 @@ const ProfilePage = () => {
   
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  setTimeout(() => setIsLoading(false), 1500);
 
   const students = currentUser?.role === 'teacher' ? getStudentsForClass(currentUser?.class || '') : [];
 
@@ -81,6 +86,10 @@ const ProfilePage = () => {
     const filledFields = fields.filter(field => field && field.trim() !== '').length;
     return Math.round((filledFields / fields.length) * 100);
   }, [formData]);
+
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
 
   const handleSave = async () => {
     if (!updateUserProfile || isViewingOtherProfile) return;
@@ -223,10 +232,12 @@ const ProfilePage = () => {
                     <span className="text-sm font-medium text-gray-700">Profile Complete</span>
                     <span className="text-sm font-bold text-blue-600">{profileCompletion}%</span>
                   </div>
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300" 
-                    style={{ width: `${profileCompletion}%` }}
-                  ></div>
+                  <div className="bg-gray-200 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${profileCompletion}%` }}
+                    ></div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

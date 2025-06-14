@@ -1,8 +1,11 @@
+
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const NotFound = () => {
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     console.error(
@@ -10,6 +13,26 @@ const NotFound = () => {
       location.pathname
     );
   }, [location.pathname]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center space-y-4">
+          <Skeleton className="h-16 w-32 mx-auto" />
+          <Skeleton className="h-6 w-64 mx-auto" />
+          <Skeleton className="h-6 w-48 mx-auto" />
+          <Skeleton className="h-10 w-40 mx-auto" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
