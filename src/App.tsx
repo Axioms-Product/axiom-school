@@ -29,11 +29,11 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const HelpSupportPage = lazy(() => import('@/pages/HelpSupportPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Fast loading fallback component
+// Optimized loading fallback component
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div className="flex flex-col items-center space-y-4">
-      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex flex-col items-center space-y-3">
+      <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p className="text-sm text-gray-600 font-medium">Loading...</p>
     </div>
   </div>
@@ -90,12 +90,12 @@ function App() {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 300); // Reduced delay
+          setTimeout(() => setIsLoading(false), 200); // Reduced delay for faster loading
           return 100;
         }
-        return prev + Math.random() * 20; // Faster progress
+        return prev + Math.random() * 25; // Much faster progress
       });
-    }, 100); // Faster updates
+    }, 80); // Faster updates
 
     return () => clearInterval(interval);
   }, []);
