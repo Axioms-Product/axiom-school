@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,10 +24,8 @@ import {
   LogOut,
   Heart,
   Shield,
-  Award,
   ArrowLeft,
   Settings,
-  Star,
   TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -66,6 +63,24 @@ const ProfilePage = () => {
     bloodGroup: profileUser?.bloodGroup || '',
     hobbies: profileUser?.hobbies || ''
   });
+
+  // Calculate profile completion percentage
+  const profileCompletion = useMemo(() => {
+    const fields = [
+      formData.name,
+      formData.email,
+      formData.phone,
+      formData.address,
+      formData.bio,
+      formData.dateOfBirth,
+      formData.emergencyContact,
+      formData.bloodGroup,
+      formData.hobbies
+    ];
+    
+    const filledFields = fields.filter(field => field && field.trim() !== '').length;
+    return Math.round((filledFields / fields.length) * 100);
+  }, [formData]);
 
   const handleSave = async () => {
     if (!updateUserProfile || isViewingOtherProfile) return;
@@ -206,11 +221,12 @@ const ProfilePage = () => {
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">Profile Complete</span>
-                    <span className="text-sm font-bold text-blue-600">85%</span>
+                    <span className="text-sm font-bold text-blue-600">{profileCompletion}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" style={{ width: '85%' }}></div>
-                  </div>
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${profileCompletion}%` }}
+                  ></div>
                 </div>
               </CardContent>
             </Card>
@@ -224,19 +240,6 @@ const ProfilePage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <Star className="h-5 w-5 text-blue-600 mx-auto mb-1" />
-                    <div className="text-lg font-bold text-blue-600">4.8</div>
-                    <div className="text-xs text-gray-600">Rating</div>
-                  </div>
-                  <div className="text-center p-3 bg-green-50 rounded-lg">
-                    <Award className="h-5 w-5 text-green-600 mx-auto mb-1" />
-                    <div className="text-lg font-bold text-green-600">12</div>
-                    <div className="text-xs text-gray-600">Achievements</div>
-                  </div>
-                </div>
-                
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                     <span className="text-gray-600 text-sm flex items-center gap-2">
