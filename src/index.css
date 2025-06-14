@@ -95,6 +95,21 @@
     overflow-x: hidden;
   }
 
+  /* Hide Lovable watermark */
+  iframe[src*="lovable.dev"],
+  div[data-lovable-watermark],
+  div[data-lovable-badge],
+  a[href*="lovable.dev"],
+  .lovable-watermark,
+  .lovable-badge,
+  [class*="lovable-watermark"],
+  [class*="lovable-badge"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   /* Fast scrolling optimizations */
   * {
     scroll-behavior: smooth;
