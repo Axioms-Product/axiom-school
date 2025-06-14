@@ -29,12 +29,12 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const HelpSupportPage = lazy(() => import('@/pages/HelpSupportPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Optimized loading fallback component
+// Ultra-fast loading fallback component
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div className="flex flex-col items-center space-y-3">
-      <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-sm text-gray-600 font-medium">Loading...</p>
+    <div className="flex flex-col items-center space-y-2">
+      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-xs text-gray-600 font-medium">Loading...</p>
     </div>
   </div>
 );
@@ -85,17 +85,17 @@ function App() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Faster loading simulation
+    // Ultra-fast loading - complete in under 1 second
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 200); // Reduced delay for faster loading
+          setTimeout(() => setIsLoading(false), 100); // Minimal delay
           return 100;
         }
-        return prev + Math.random() * 25; // Much faster progress
+        return prev + Math.random() * 40; // Very fast progress jumps
       });
-    }, 80); // Faster updates
+    }, 40); // Very frequent updates for smooth animation
 
     return () => clearInterval(interval);
   }, []);
