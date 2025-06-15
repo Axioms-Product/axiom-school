@@ -224,23 +224,6 @@ const MarksView = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Quick Actions */}
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg">Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-0">
-                  <div className="space-y-3">
-                    <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition-all duration-300">
-                      View Detailed Report
-                    </button>
-                    <button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300">
-                      Download Performance Report
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           )}
         </div>
