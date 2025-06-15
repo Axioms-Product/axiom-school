@@ -1,31 +1,17 @@
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Users, UserCheck, GraduationCap } from 'lucide-react';
-import ClassSelector from './ClassSelector';
 
 const ClassMembersView = () => {
   const { currentUser } = useAuth();
   const { getStudentsForClass } = useData();
-  
-  // State for selected class (for teachers managing multiple classes)
-  const [selectedClass, setSelectedClass] = useState<string>(
-    currentUser?.role === 'teacher' && currentUser.classes 
-      ? currentUser.classes[0] 
-      : currentUser?.class || ''
-  );
-
-  // Get the current class to display
-  const currentClass = currentUser?.role === 'student' 
-    ? currentUser.class 
-    : selectedClass;
 
   // Get students for the current class
-  const students = getStudentsForClass(currentClass || '');
+  const students = getStudentsForClass(currentUser?.class || '');
   
   // Mock teachers data (since we don't have getTeachersForClass in the context)
   const teachers = currentUser?.role === 'teacher' ? [currentUser] : [];
@@ -34,14 +20,6 @@ const ClassMembersView = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-2 sm:p-4">
       <div className="max-w-6xl mx-auto space-y-4">
-        {/* Class Selector for Teachers */}
-        {currentUser?.role === 'teacher' && (
-          <ClassSelector 
-            selectedClass={selectedClass}
-            onClassChange={setSelectedClass}
-          />
-        )}
-
         {/* Header */}
         <div className="bg-white rounded-xl shadow-lg p-4 border border-blue-100">
           <div className="flex items-center gap-3 mb-2">
@@ -49,7 +27,7 @@ const ClassMembersView = () => {
               <Users className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Class {currentClass} Members</h1>
+              <h1 className="text-xl font-bold text-gray-900">Class {currentUser?.class} Members</h1>
               <p className="text-sm text-gray-600">{allMembers.length} total members</p>
             </div>
           </div>
@@ -87,14 +65,7 @@ const ClassMembersView = () => {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 truncate text-sm">{teacher.name}</p>
                         <p className="text-xs text-gray-500">{teacher.subject || 'Subject Teacher'}</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          <Badge className="bg-purple-100 text-purple-700 text-xs">Teacher</Badge>
-                          {teacher.classes && teacher.classes.length > 1 && (
-                            <Badge className="bg-blue-100 text-blue-700 text-xs">
-                              {teacher.classes.length} Classes
-                            </Badge>
-                          )}
-                        </div>
+                        <Badge className="bg-purple-100 text-purple-700 text-xs mt-1">Teacher</Badge>
                       </div>
                     </div>
                   </div>

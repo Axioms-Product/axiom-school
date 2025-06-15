@@ -1,7 +1,30 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Subject, User } from '../models/types';
+import { Subject } from '../models/types';
 
 export type UserRole = 'student' | 'teacher';
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  class: string;
+  subject?: Subject;
+  avatar?: string;
+  phone?: string;
+  address?: string;
+  joiningDate?: string;
+  bio?: string;
+  qualifications?: string[];
+  achievements?: string[];
+  emergencyContact?: string;
+  experienceYears?: number;
+  dateOfBirth?: string;
+  bloodGroup?: string;
+  hobbies?: string;
+}
 
 interface AuthContextType {
   currentUser: User | null;
@@ -113,10 +136,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         username: userData.username,
         email: userData.email,
         role: userData.role,
-        ...(userData.role === 'student' 
-          ? { class: userData.assignedClass }
-          : { classes: [userData.assignedClass] }
-        ),
+        class: userData.assignedClass,
+        joiningDate: new Date().toISOString().split('T')[0],
         ...(userData.role === 'teacher' && userData.subject ? { subject: userData.subject } : {})
       };
       

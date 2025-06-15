@@ -1,3 +1,4 @@
+
 export enum Subject {
   MATHEMATICS = 'Mathematics',
   SCIENCE = 'Science',
@@ -5,29 +6,6 @@ export enum Subject {
   ENGLISH = 'English',
   HINDI = 'Hindi',
   COMPUTER = 'Computer'
-}
-
-export interface User {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-  role: 'student' | 'teacher' | 'admin';
-  class?: string; // For students, this is their assigned class
-  classes?: string[]; // For teachers, this is array of classes they manage
-  subject?: Subject; // For teachers, their primary subject
-  avatar?: string;
-  phone?: string;
-  address?: string;
-  joiningDate?: string;
-  bio?: string;
-  qualifications?: string[];
-  achievements?: string[];
-  emergencyContact?: string;
-  experienceYears?: number;
-  dateOfBirth?: string;
-  bloodGroup?: string;
-  hobbies?: string;
 }
 
 export interface Homework {

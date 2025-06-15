@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Homework, Notice, Event, Message, Mark, Subject, FeePayment, ExamSchedule, User } from '../models/types';
-import { useAuth } from './AuthContext';
+import { Homework, Notice, Event, Message, Mark, Subject, FeePayment, ExamSchedule } from '../models/types';
+import { useAuth, User } from './AuthContext';
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
 

@@ -9,9 +9,9 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import SplashScreen from '@/components/SplashScreen';
 import { ExitConfirmDialog } from '@/components/ExitConfirmDialog';
 import { useExitHandler } from '@/hooks/useExitHandler';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton, SkeletonCard } from '@/components/ui/skeleton';
 
-// Lazy load with preloading for critical routes
+// Lazy load components for better performance
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -30,14 +30,38 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const HelpSupportPage = lazy(() => import('@/pages/HelpSupportPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Minimal optimized loading fallback
+// Enhanced loading fallback component with skeleton UI
 const LoadingFallback = () => (
-  <div className="h-screen bg-gray-50 flex items-center justify-center">
-    <div className="w-full max-w-sm space-y-4 px-4">
-      <Skeleton className="h-12 w-12 rounded-full mx-auto" />
-      <Skeleton className="h-4 w-3/4 mx-auto" />
-      <Skeleton className="h-4 w-1/2 mx-auto" />
-      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="max-w-4xl mx-auto">
+      {/* Header skeleton */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-12 w-12 rounded-xl" />
+            <div>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-24" />
+        </div>
+      </div>
+
+      {/* Content skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+
+      {/* Loading indicator */}
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-gray-600 font-medium">Loading content...</p>
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -88,17 +112,18 @@ function App() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Reduced splash screen to 2 seconds for faster loading
+    // Extended loading to 5 seconds with smooth progress
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 2000);
+          // Keep splash screen for 5 seconds total
+          setTimeout(() => setIsLoading(false), 5000);
           return 100;
         }
-        return prev + Math.random() * 25; // Faster progress
+        return prev + Math.random() * 20; // Slower progress for 5 second duration
       });
-    }, 80); // More frequent updates
+    }, 100); // More frequent updates for smoother animation
 
     return () => clearInterval(interval);
   }, []);
