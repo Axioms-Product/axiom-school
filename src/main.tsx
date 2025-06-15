@@ -15,12 +15,17 @@ webAppCapable.name = 'mobile-web-app-capable';
 webAppCapable.content = 'yes';
 document.head.appendChild(webAppCapable);
 
-// Preload critical font
+// Preload critical font - fixed implementation
 const preloadFont = document.createElement('link');
 preloadFont.rel = 'preload';
 preloadFont.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap';
 preloadFont.as = 'style';
-preloadFont.onload = function() { this.rel = 'stylesheet'; };
+preloadFont.addEventListener('load', function() { 
+  const styleLink = document.createElement('link');
+  styleLink.rel = 'stylesheet';
+  styleLink.href = this.href;
+  document.head.appendChild(styleLink);
+});
 document.head.appendChild(preloadFont);
 
 // Performance optimization styles
