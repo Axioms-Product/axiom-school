@@ -8,6 +8,16 @@ export enum Subject {
   COMPUTER = 'Computer'
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'teacher' | 'admin';
+  class?: string; // For students, this is their assigned class
+  classes?: string[]; // For teachers, this is array of classes they manage
+  subject?: Subject; // For teachers, their primary subject
+}
+
 export interface Homework {
   id: string;
   title: string;
