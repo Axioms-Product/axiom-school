@@ -9,9 +9,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import SplashScreen from '@/components/SplashScreen';
 import { ExitConfirmDialog } from '@/components/ExitConfirmDialog';
 import { useExitHandler } from '@/hooks/useExitHandler';
-import { Skeleton } from '@/components/ui/skeleton';
 
-// Lazy load with preloading for critical routes
+// Lazy load components
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -30,14 +29,12 @@ const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const HelpSupportPage = lazy(() => import('@/pages/HelpSupportPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Minimal optimized loading fallback
+// Simple loading fallback
 const LoadingFallback = () => (
-  <div className="h-screen bg-gray-50 flex items-center justify-center">
-    <div className="w-full max-w-sm space-y-4 px-4">
-      <Skeleton className="h-12 w-12 rounded-full mx-auto" />
-      <Skeleton className="h-4 w-3/4 mx-auto" />
-      <Skeleton className="h-4 w-1/2 mx-auto" />
-      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+  <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600 font-medium">Loading...</p>
     </div>
   </div>
 );
@@ -88,17 +85,17 @@ function App() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Reduced splash screen to 2 seconds for faster loading
+    // Fast splash screen - 1.5 seconds
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setIsLoading(false), 2000);
+          setTimeout(() => setIsLoading(false), 500);
           return 100;
         }
-        return prev + Math.random() * 25; // Faster progress
+        return prev + Math.random() * 30;
       });
-    }, 80); // More frequent updates
+    }, 60);
 
     return () => clearInterval(interval);
   }, []);

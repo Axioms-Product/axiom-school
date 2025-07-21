@@ -15,7 +15,7 @@ webAppCapable.name = 'mobile-web-app-capable';
 webAppCapable.content = 'yes';
 document.head.appendChild(webAppCapable);
 
-// Preload critical font - fixed implementation
+// Preload critical font
 const preloadFont = document.createElement('link');
 preloadFont.rel = 'preload';
 preloadFont.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap';
@@ -28,7 +28,7 @@ preloadFont.addEventListener('load', function() {
 });
 document.head.appendChild(preloadFont);
 
-// Performance optimization styles
+// Enhanced styles with new animations
 const style = document.createElement('style');
 style.textContent = `
   * {
@@ -53,10 +53,34 @@ style.textContent = `
   .will-change-auto {
     will-change: auto;
   }
+
+  @keyframes float {
+    0%, 100% { 
+      transform: translateY(0px) rotate(0deg); 
+    }
+    50% { 
+      transform: translateY(-10px) rotate(5deg); 
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .animate-gradient {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
 `;
 document.head.appendChild(style);
 
-// Create root and render immediately
+// Create root and render
 const rootElement = document.getElementById("root");
 if (rootElement) {
   createRoot(rootElement).render(<App />);
